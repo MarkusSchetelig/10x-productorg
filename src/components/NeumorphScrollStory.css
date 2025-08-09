@@ -1570,7 +1570,7 @@
 /* Robot CTA */
 .robot-cta {
   position: absolute;
-  bottom: 90px; /* Shifted 50px upwards from 40px */
+  bottom: 115px; /* Shifted 75px upwards from 40px */
   right: 40px;
   width: 160px;
   height: 160px;
