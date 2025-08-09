@@ -175,6 +175,7 @@
 /* Different black shades for each section */
 .hero-section {
   background: #000000;
+  padding-top: 0px; /* Removed top padding completely */
 }
 
 .stats-section {
