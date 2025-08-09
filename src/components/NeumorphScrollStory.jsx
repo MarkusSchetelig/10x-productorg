@@ -4,15 +4,84 @@ import * as Icons from 'lucide-react'
 import { challenges, consultingAreas, stats, tenXPillars } from '../data/consultingData'
 import './NeumorphScrollStory.css'
 
+// Robot CTA Component
+const RobotCTA = ({ sectionName, show, onClick, tooltip }) => {
+  if (!show) return null
+  
+  return (
+    <motion.div
+      className="robot-cta"
+      initial={{ opacity: 0, scale: 0.5, y: 50 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.5, y: 50 }}
+      transition={{ type: "spring", damping: 20, stiffness: 300 }}
+      onClick={onClick}
+    >
+      <img src="/robot.png" alt="AI Assistant" className="robot-icon" />
+      <div className="robot-pulse"></div>
+      <span className="robot-tooltip">{tooltip}</span>
+    </motion.div>
+  )
+}
+
 const NeumorphScrollStory = () => {
   const containerRef = useRef(null)
   const [activeSection, setActiveSection] = useState(0)
-  const [activeSlide, setActiveSlide] = useState(0)
-  const [isTransitioning, setIsTransitioning] = useState(false)
-  const [isHoveringGallery, setIsHoveringGallery] = useState(false)
   const [selectedArea, setSelectedArea] = useState(null)
   const [selectedPillar, setSelectedPillar] = useState(null)
+  const [iconDelays, setIconDelays] = useState([])
+  const [showRobotCTA, setShowRobotCTA] = useState({
+    hero: false,
+    pillars: false,
+    challenges: false,
+    process: false,
+    solutions: false,
+    cta: false
+  })
+  const [showRobotModal, setShowRobotModal] = useState(false)
+  const [currentSectionForModal, setCurrentSectionForModal] = useState(null)
+  const section1Ref = useRef(null) // Hero section
+  const section2Ref = useRef(null) // 5 Pillars section
+  const section3Ref = useRef(null) // Challenges section
+  const section4Ref = useRef(null) // Process section
+  const section5Ref = useRef(null) // Solutions section
+  const section6Ref = useRef(null) // CTA section
+  const [isGravityActive, setIsGravityActive] = useState(false)
+  const gravityTimeoutRef = useRef(null)
+  const gravitySection3TimeoutRef = useRef(null)
+  const gravitySection4TimeoutRef = useRef(null)
+  const robotCTATimeoutRef = useRef(null)
   
+  // Generate random animation delays for icons
+  const generateRandomDelays = () => {
+    const delays = [];
+    const usedDelays = new Set();
+    
+    // Generate 5 unique random delays between 0 and 13.6 seconds
+    while (delays.length < 5) {
+      const delay = (Math.random() * 13.6).toFixed(1);
+      if (!usedDelays.has(delay)) {
+        usedDelays.add(delay);
+        delays.push(delay);
+      }
+    }
+    
+    return delays;
+  };
+
+  // Initialize and update random delays
+  useEffect(() => {
+    // Set initial delays
+    setIconDelays(generateRandomDelays());
+    
+    // Update delays every cycle (13.6 seconds) to change the order
+    const interval = setInterval(() => {
+      setIconDelays(generateRandomDelays());
+    }, 13600);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (selectedArea || selectedPillar !== null) {
@@ -26,6 +95,366 @@ const NeumorphScrollStory = () => {
       document.body.style.overflow = 'unset';
     };
   }, [selectedArea, selectedPillar])
+  
+  // Extended gravity effect for section 2 (also pulls from section 1)
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!section2Ref.current || !section1Ref.current || isGravityActive) return
+      
+      const section2 = section2Ref.current
+      const section1 = section1Ref.current
+      const rect2 = section2.getBoundingClientRect()
+      const rect1 = section1.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      const sectionHeight = rect2.height
+      
+      // Calculate how much of section 2 is visible
+      const visibleTop = Math.max(0, rect2.top)
+      const visibleBottom = Math.min(viewportHeight, rect2.bottom)
+      const visibleHeight = Math.max(0, visibleBottom - visibleTop)
+      const visibilityPercentage = visibleHeight / sectionHeight
+      
+      // Check if we're in section 1 with section 2 partially visible
+      const section1Visible = rect1.top <= 0 && rect1.bottom > viewportHeight * 0.3
+      const section2PartiallyVisible = rect2.top < viewportHeight && rect2.top > 0
+      
+      // Extended gravity conditions:
+      // 1. Original: More than 50% of section 2 is visible
+      // 2. Extended: Gravity starts when just 5% of section 2 is visible
+      const shouldApplyGravity = visibilityPercentage > 0.5 || 
+                                 (visibilityPercentage > 0.05 && rect2.top < viewportHeight)
+      
+      if (shouldApplyGravity) {
+        const sectionCenter = rect2.top + sectionHeight / 2
+        const viewportCenter = viewportHeight / 2
+        const offset = Math.abs(sectionCenter - viewportCenter)
+        
+        // Only trigger gravity if section is not already reasonably centered (within 50px)
+        if (offset > 50) {
+          // Clear any existing timeout
+          if (gravityTimeoutRef.current) {
+            clearTimeout(gravityTimeoutRef.current)
+          }
+          
+          // Wait 2 seconds after user stops interacting to avoid flickering
+          gravityTimeoutRef.current = setTimeout(() => {
+            setIsGravityActive(true)
+            
+            // Calculate the scroll position to center the section
+            const targetScrollY = window.scrollY + (sectionCenter - viewportCenter)
+            
+            // Create a custom slower animation (50% speed reduction)
+            const startY = window.scrollY
+            const distance = targetScrollY - startY
+            const duration = 1600 // Doubled from ~800ms (browser smooth default) to 1600ms
+            const startTime = performance.now()
+            
+            const animateScroll = (currentTime) => {
+              const elapsed = currentTime - startTime
+              const progress = Math.min(elapsed / duration, 1)
+              
+              // Easing function for smooth animation
+              const easeInOutCubic = progress < 0.5
+                ? 4 * progress * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2
+              
+              window.scrollTo(0, startY + distance * easeInOutCubic)
+              
+              if (progress < 1) {
+                requestAnimationFrame(animateScroll)
+              }
+            }
+            
+            requestAnimationFrame(animateScroll)
+            
+            // Reset gravity flag after animation completes
+            setTimeout(() => {
+              setIsGravityActive(false)
+            }, 1600)
+          }, 2000) // 2 seconds delay to ensure user has stopped scrolling and avoid flickering
+        }
+      } else {
+        // Clear timeout if conditions not met
+        if (gravityTimeoutRef.current) {
+          clearTimeout(gravityTimeoutRef.current)
+        }
+      }
+    }
+    
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (gravityTimeoutRef.current) {
+        clearTimeout(gravityTimeoutRef.current)
+      }
+    }
+  }, [isGravityActive])
+  
+  // Gravity effect between section 2 and section 3
+  useEffect(() => {
+    const handleSection2to3Gravity = () => {
+      if (!section2Ref.current || !section3Ref.current || isGravityActive) return
+      
+      const section2 = section2Ref.current
+      const section3 = section3Ref.current
+      const rect2 = section2.getBoundingClientRect()
+      const rect3 = section3.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      
+      // Calculate visible portions of both sections
+      const section2VisibleTop = Math.max(0, Math.min(viewportHeight, rect2.top))
+      const section2VisibleBottom = Math.max(0, Math.min(viewportHeight, rect2.bottom))
+      const section2VisibleHeight = section2VisibleBottom - section2VisibleTop
+      
+      const section3VisibleTop = Math.max(0, Math.min(viewportHeight, rect3.top))
+      const section3VisibleBottom = Math.max(0, Math.min(viewportHeight, rect3.bottom))
+      const section3VisibleHeight = section3VisibleBottom - section3VisibleTop
+      
+      // Check if we're in the transition zone between sections 2 and 3
+      const inTransitionZone = section2VisibleHeight > 0 && section3VisibleHeight > 0
+      
+      if (inTransitionZone) {
+        // Calculate which section has more screen space
+        const section2Percentage = section2VisibleHeight / viewportHeight
+        const section3Percentage = section3VisibleHeight / viewportHeight
+        
+        let targetSection, targetRect, targetHeight
+        
+        if (section2Percentage > 0.5) {
+          // Pull toward section 2
+          targetSection = section2
+          targetRect = rect2
+          targetHeight = rect2.height
+        } else if (section3Percentage > 0.5) {
+          // Pull toward section 3
+          targetSection = section3
+          targetRect = rect3
+          targetHeight = rect3.height
+        } else {
+          // No clear majority, don't apply gravity
+          return
+        }
+        
+        const sectionCenter = targetRect.top + targetHeight / 2
+        const viewportCenter = viewportHeight / 2
+        const offset = Math.abs(sectionCenter - viewportCenter)
+        
+        // Only trigger gravity if not already reasonably centered
+        if (offset > 50) {
+          // Clear any existing timeout
+          if (gravitySection3TimeoutRef.current) {
+            clearTimeout(gravitySection3TimeoutRef.current)
+          }
+          
+          // Wait 2 seconds after user stops interacting
+          gravitySection3TimeoutRef.current = setTimeout(() => {
+            setIsGravityActive(true)
+            
+            // Calculate the scroll position to center the section
+            const targetScrollY = window.scrollY + (sectionCenter - viewportCenter)
+            
+            // Custom slower animation
+            const startY = window.scrollY
+            const distance = targetScrollY - startY
+            const duration = 1600
+            const startTime = performance.now()
+            
+            const animateScroll = (currentTime) => {
+              const elapsed = currentTime - startTime
+              const progress = Math.min(elapsed / duration, 1)
+              
+              // Easing function for smooth animation
+              const easeInOutCubic = progress < 0.5
+                ? 4 * progress * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2
+              
+              window.scrollTo(0, startY + distance * easeInOutCubic)
+              
+              if (progress < 1) {
+                requestAnimationFrame(animateScroll)
+              }
+            }
+            
+            requestAnimationFrame(animateScroll)
+            
+            // Reset gravity flag after animation completes
+            setTimeout(() => {
+              setIsGravityActive(false)
+            }, 1600)
+          }, 2000)
+        }
+      } else {
+        // Clear timeout if not in transition zone
+        if (gravitySection3TimeoutRef.current) {
+          clearTimeout(gravitySection3TimeoutRef.current)
+        }
+      }
+    }
+    
+    window.addEventListener('scroll', handleSection2to3Gravity, { passive: true })
+    
+    return () => {
+      window.removeEventListener('scroll', handleSection2to3Gravity)
+      if (gravitySection3TimeoutRef.current) {
+        clearTimeout(gravitySection3TimeoutRef.current)
+      }
+    }
+  }, [isGravityActive])
+  
+  // Gravity effect between section 3 (Challenges) and section 4 (Process)
+  useEffect(() => {
+    const handleSection3to4Gravity = () => {
+      if (!section3Ref.current || !section4Ref.current || isGravityActive) return
+      
+      const section3 = section3Ref.current
+      const section4 = section4Ref.current
+      const rect3 = section3.getBoundingClientRect()
+      const rect4 = section4.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      
+      // Calculate visible portions of both sections
+      const section3VisibleTop = Math.max(0, Math.min(viewportHeight, rect3.top))
+      const section3VisibleBottom = Math.max(0, Math.min(viewportHeight, rect3.bottom))
+      const section3VisibleHeight = section3VisibleBottom - section3VisibleTop
+      
+      const section4VisibleTop = Math.max(0, Math.min(viewportHeight, rect4.top))
+      const section4VisibleBottom = Math.max(0, Math.min(viewportHeight, rect4.bottom))
+      const section4VisibleHeight = section4VisibleBottom - section4VisibleTop
+      
+      // Check if we're in the transition zone between sections 3 and 4
+      const inTransitionZone = section3VisibleHeight > 0 && section4VisibleHeight > 0
+      
+      if (inTransitionZone) {
+        // Calculate which section has more screen space
+        const section3Percentage = section3VisibleHeight / viewportHeight
+        const section4Percentage = section4VisibleHeight / viewportHeight
+        
+        let targetSection, targetRect, targetHeight
+        
+        if (section3Percentage > 0.5) {
+          // Pull toward section 3
+          targetSection = section3
+          targetRect = rect3
+          targetHeight = rect3.height
+        } else if (section4Percentage > 0.5) {
+          // Pull toward section 4
+          targetSection = section4
+          targetRect = rect4
+          targetHeight = rect4.height
+        } else {
+          // No clear majority, don't apply gravity
+          return
+        }
+        
+        const sectionCenter = targetRect.top + targetHeight / 2
+        const viewportCenter = viewportHeight / 2
+        const offset = Math.abs(sectionCenter - viewportCenter)
+        
+        // Only trigger gravity if not already reasonably centered
+        if (offset > 50) {
+          // Clear any existing timeout
+          if (gravitySection4TimeoutRef.current) {
+            clearTimeout(gravitySection4TimeoutRef.current)
+          }
+          
+          // Wait 2 seconds after user stops interacting
+          gravitySection4TimeoutRef.current = setTimeout(() => {
+            setIsGravityActive(true)
+            
+            // Calculate the scroll position to center the section
+            const targetScrollY = window.scrollY + (sectionCenter - viewportCenter)
+            
+            // Custom slower animation
+            const startY = window.scrollY
+            const distance = targetScrollY - startY
+            const duration = 1600
+            const startTime = performance.now()
+            
+            const animateScroll = (currentTime) => {
+              const elapsed = currentTime - startTime
+              const progress = Math.min(elapsed / duration, 1)
+              
+              // Easing function for smooth animation
+              const easeInOutCubic = progress < 0.5
+                ? 4 * progress * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2
+              
+              window.scrollTo(0, startY + distance * easeInOutCubic)
+              
+              if (progress < 1) {
+                requestAnimationFrame(animateScroll)
+              }
+            }
+            
+            requestAnimationFrame(animateScroll)
+            
+            // Reset gravity flag after animation completes
+            setTimeout(() => {
+              setIsGravityActive(false)
+            }, 1600)
+          }, 2000)
+        }
+      } else {
+        // Clear timeout if not in transition zone
+        if (gravitySection4TimeoutRef.current) {
+          clearTimeout(gravitySection4TimeoutRef.current)
+        }
+      }
+    }
+    
+    window.addEventListener('scroll', handleSection3to4Gravity, { passive: true })
+    
+    return () => {
+      window.removeEventListener('scroll', handleSection3to4Gravity)
+      if (gravitySection4TimeoutRef.current) {
+        clearTimeout(gravitySection4TimeoutRef.current)
+      }
+    }
+  }, [isGravityActive])
+  
+  // Show robot CTA after 5 seconds in each section
+  useEffect(() => {
+    const timers = {}
+    const sections = [
+      { ref: section1Ref, name: 'hero' },
+      { ref: section2Ref, name: 'pillars' },
+      { ref: section3Ref, name: 'challenges' },
+      { ref: section4Ref, name: 'process' },
+      { ref: section5Ref, name: 'solutions' },
+      { ref: section6Ref, name: 'cta' }
+    ]
+    
+    const checkSections = () => {
+      const viewportHeight = window.innerHeight
+      
+      sections.forEach(section => {
+        if (!section.ref.current) return
+        
+        const rect = section.ref.current.getBoundingClientRect()
+        const visibleTop = Math.max(0, Math.min(viewportHeight, rect.top))
+        const visibleBottom = Math.max(0, Math.min(viewportHeight, rect.bottom))
+        const visibleHeight = visibleBottom - visibleTop
+        const visibilityPercentage = visibleHeight / rect.height
+        
+        // If section is more than 50% visible and robot not shown yet
+        if (visibilityPercentage > 0.5 && !showRobotCTA[section.name] && !timers[section.name]) {
+          // Set timer to show robot for this section
+          timers[section.name] = setTimeout(() => {
+            setShowRobotCTA(prev => ({ ...prev, [section.name]: true }))
+          }, 5000)
+        }
+      })
+    }
+    
+    window.addEventListener('scroll', checkSections, { passive: true })
+    checkSections() // Check initial state
+    
+    return () => {
+      window.removeEventListener('scroll', checkSections)
+      Object.values(timers).forEach(timer => clearTimeout(timer))
+    }
+  }, [])
   
   const pillarContent = [
     {
@@ -70,11 +499,44 @@ const NeumorphScrollStory = () => {
     });
   };
 
+  const renderTextWithTooltip = (item) => {
+    if (typeof item === 'string') {
+      // Legacy support for plain strings
+      return renderTextWithBold(item);
+    }
+    
+    // New structure with tooltips
+    const { text, keyword, tooltip } = item;
+    const parts = text.split(/(\*\*[^*]+\*\*)/g);
+    
+    return parts.map((part, index) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        const cleanText = part.slice(2, -2);
+        // Check if this bold text is the keyword with tooltip
+        if (cleanText === keyword) {
+          return (
+            <span key={index} className="keyword-tooltip-wrapper">
+              <strong className="keyword-highlight" style={{ color: '#3979e9', cursor: 'help' }}>
+                {cleanText}
+              </strong>
+              <span className="keyword-tooltip neumorph-raised">
+                {tooltip}
+              </span>
+            </span>
+          );
+        }
+        return <strong key={index} style={{ color: '#3979e9' }}>{cleanText}</strong>;
+      }
+      return part;
+    });
+  };
+
   const getIcon = (iconName, size = 32) => {
     const Icon = Icons[iconName] || Icons.Circle
     return <Icon size={size} />
   }
 
+  /* Removed sdlcSlides data - section deleted
   const sdlcSlides = [
     {
       id: 2,
@@ -386,77 +848,71 @@ const NeumorphScrollStory = () => {
       type: "transformation"
     }
   ]
+  */
 
   const processSteps = [
     {
       number: "01",
-      title: "High Value / Risk Use Cases",
-      description: "Erhebung, Bewertung, Definition und Priorisierung der relevanten Anwendungsfälle (unternehmenstrategisch).",
-      icon: "FileCheck",
-      color: "#67e8f9"
+      title: "Strategy & Portfolio Governance",
+      description: "Unify strategy, roadmapping, and governance to align AI investments with business outcomes and manage risk at scale.",
+      icon: "Target",
+      color: "#0891b2"
     },
     {
       number: "02",
-      title: "Architecture & Data",
-      description: "Erhebung, Bewertung, Priorisierung der relevanten Systeme und Daten, Definition der Data & Analytics Ziel-Architektur.",
-      icon: "Database",
-      color: "#60a5fa"
-    },
-    {
-      number: "03",
-      title: "People & Culture",
-      description: "Definition der relevanten Rollen und Skills sowie Gap-Analyse. Data Leadership, Definition Aus- und Weiterbildung.",
+      title: "People, Culture & Capability",
+      description: "Build literacy and hands-on skills while fostering psychological safety and ethical AI practices across teams.",
       icon: "Users",
-      color: "#818cf8"
-    },
-    {
-      number: "04",
-      title: "Processes",
-      description: "Definition der Data Management-, Data Governance-Analytics Prozesse.",
-      icon: "Workflow",
       color: "#6366f1"
     },
     {
+      number: "03",
+      title: "Product & Service Innovation",
+      description: "Embed AI into product strategy, design, and GTM to deliver copilots, personalization, and intelligent automation.",
+      icon: "Lightbulb",
+      color: "#f59e0b"
+    },
+    {
+      number: "04",
+      title: "Process & Workflow Transformation",
+      description: "Redesign end-to-end processes with process mining, lean principles, and AI/RPA orchestration to remove waste.",
+      icon: "Workflow",
+      color: "#14b8a6"
+    },
+    {
       number: "05",
-      title: "Organization",
-      description: "Definition des passfähigen Ziel-Organisationsmodells, Way of Working, Steering Committee und Gap-Analyse.",
-      icon: "Building",
-      color: "#8b5cf6"
+      title: "Data Platform & Architecture",
+      description: "Build a scalable, governed data foundation with strong contracts, semantics, and privacy-by-design to power analytics and ML.",
+      icon: "Database",
+      color: "#3b82f6"
     },
     {
       number: "06",
-      title: "Business Case",
-      description: "Konkretisierung und Definition des Data Driven Business Cases (Kosten, Nutzen, ROI) und Roadmap.",
-      icon: "TrendingUp",
-      color: "#a78bfa"
+      title: "AI Platform, Models & AgentOps",
+      description: "Stand up an AI platform for experimentation-to-production across models and agent frameworks with safety and cost control.",
+      icon: "Brain",
+      color: "#8b5cf6"
     },
     {
       number: "07",
-      title: "Value Steering Model",
-      description: "Definition der KPI's, Monitoring und der kontinuierlichen Erfolgskontrolle.",
-      icon: "BarChart3",
-      color: "#c084fc"
+      title: "Governance, Risk, Security & Compliance",
+      description: "Operationalize ethical principles and regulatory requirements across data and AI lifecycles without slowing delivery.",
+      icon: "Shield",
+      color: "#ec4899"
     },
     {
       number: "08",
-      title: "Implementation Partner",
-      description: "Definition des know-how Partnerprofils und Evaluierung der passfähigen Implementierungs-Partner und Technologie.",
-      icon: "Handshake",
-      color: "#e879f9"
+      title: "Organization & Operating Model",
+      description: "Clarify roles, responsibilities, and decision rights to reduce friction and speed decisions across teams.",
+      icon: "Building",
+      color: "#84cc16"
     },
     {
       number: "09",
-      title: "Approval",
-      description: "Freigabe des Data Driven Business Cases durch das Board und Institutionalisierung des Steering Committee.",
-      icon: "CheckCircle2",
-      color: "#f472b6"
-    },
-    {
-      number: "10",
-      title: "Implementation & Operation",
-      description: "Sie übernehmen, wir begleiten bei Bedarf zur erfolgreichen Etablierung und stetigen Verbesserung einer Data Inspired und Digital Culture.",
-      icon: "Rocket",
-      color: "#fb923c"
+      title: "Measurement, Progress & Learning",
+      description: "Build a balanced system to measure impact and amplify organizational learning through demos and case studies.",
+      icon: "TrendingUp",
+      color: "#ef4444"
     }
   ]
 
@@ -468,23 +924,6 @@ const NeumorphScrollStory = () => {
     return () => unsubscribe()
   }, [scrollYProgress])
 
-  // Auto-advance slides every 4.2 seconds with synchronized dimming
-  useEffect(() => {
-    if (isHoveringGallery) {
-      return // Don't set up interval when hovering
-    }
-    
-    const interval = setInterval(() => {
-      setIsTransitioning(true)
-      setTimeout(() => {
-        setActiveSlide((prev) => (prev + 1) % sdlcSlides.length)
-        setTimeout(() => {
-          setIsTransitioning(false)
-        }, 150)
-      }, 450)
-    }, 4200)
-    return () => clearInterval(interval)
-  }, [isHoveringGallery])
 
   // Parallax transforms
   const heroY = useTransform(scrollYProgress, [0, 0.2], [0, -100])
@@ -500,10 +939,11 @@ const NeumorphScrollStory = () => {
   const challengesBrightness = useTransform(scrollYProgress, [0.16, 0.25, 0.38, 0.42], [0.6, 1.4, 1.4, 0.8])
   const challengesScale = useTransform(scrollYProgress, [0.16, 0.25, 0.38, 0.42], [0.85, 1.05, 1.05, 0.95])
   
-  const galleryScale = useTransform(scrollYProgress, [0.35, 0.45], [0.85, 1])
-  const galleryOpacity = useTransform(scrollYProgress, [0.35, 0.45], [0, 1])
+  // Removed gallery transforms - section deleted
+  // const galleryScale = useTransform(scrollYProgress, [0.35, 0.45], [0.85, 1])
+  // const galleryOpacity = useTransform(scrollYProgress, [0.35, 0.45], [0, 1])
 
-  const solutionsScale = useTransform(scrollYProgress, [0.55, 0.65], [0.9, 1])
+  const solutionsScale = useTransform(scrollYProgress, [0.45, 0.55], [0.9, 1])
 
   return (
     <div className="neumorph-scroll-story" ref={containerRef}>
@@ -523,7 +963,7 @@ const NeumorphScrollStory = () => {
       </div>
 
       {/* Section 1: Hero */}
-      <section className="neumorph-section hero-section">
+      <section className="neumorph-section hero-section" ref={section1Ref} style={{ position: 'relative' }}>
         <div className="background-pattern">
           <div className="pattern-grid"></div>
         </div>
@@ -545,10 +985,20 @@ const NeumorphScrollStory = () => {
             </div>
           </div>
         </motion.div>
+        
+        <RobotCTA
+          sectionName="hero"
+          show={showRobotCTA.hero}
+          onClick={() => {
+            setCurrentSectionForModal('hero')
+            setShowRobotModal(true)
+          }}
+          tooltip="Ready to start your AI journey?"
+        />
       </section>
 
       {/* Section 2: 5 Pillars of 10X Product Organization */}
-      <section className="neumorph-section pillars-section">
+      <section className="neumorph-section pillars-section" ref={section2Ref} style={{ position: 'relative' }}>
         {/* Dynamic background glow */}
         <motion.div 
           className="section-glow"
@@ -586,7 +1036,7 @@ const NeumorphScrollStory = () => {
                 transition={{ delay: 0.1 }}
                 onClick={() => setSelectedPillar(0)}
               >
-                <div className="click-indicator">
+                <div className="click-indicator" style={{ animationDelay: `${iconDelays[0] || 0}s` }}>
                   <Icons.Maximize2 size={16} />
                 </div>
                 <img src="/image1.png" alt="Exponential Speed & Agility" className="pillar-image" />
@@ -599,7 +1049,7 @@ const NeumorphScrollStory = () => {
                 transition={{ delay: 0.2 }}
                 onClick={() => setSelectedPillar(1)}
               >
-                <div className="click-indicator">
+                <div className="click-indicator" style={{ animationDelay: `${iconDelays[1] || 1.5}s` }}>
                   <Icons.Maximize2 size={16} />
                 </div>
                 <img src="/image2.png" alt="Customer-Centric Value Delivery" className="pillar-image" />
@@ -612,7 +1062,7 @@ const NeumorphScrollStory = () => {
                 transition={{ delay: 0.3 }}
                 onClick={() => setSelectedPillar(2)}
               >
-                <div className="click-indicator">
+                <div className="click-indicator" style={{ animationDelay: `${iconDelays[2] || 3}s` }}>
                   <Icons.Maximize2 size={16} />
                 </div>
                 <img src="/image3.png" alt="Unleashing Innovation through Experimentation" className="pillar-image" />
@@ -625,7 +1075,7 @@ const NeumorphScrollStory = () => {
                 transition={{ delay: 0.4 }}
                 onClick={() => setSelectedPillar(3)}
               >
-                <div className="click-indicator">
+                <div className="click-indicator" style={{ animationDelay: `${iconDelays[3] || 4.5}s` }}>
                   <Icons.Maximize2 size={16} />
                 </div>
                 <img src="/image4.png" alt="AI-Augmented Teams & Talent" className="pillar-image" />
@@ -638,7 +1088,7 @@ const NeumorphScrollStory = () => {
                 transition={{ delay: 0.5 }}
                 onClick={() => setSelectedPillar(4)}
               >
-                <div className="click-indicator">
+                <div className="click-indicator" style={{ animationDelay: `${iconDelays[4] || 6}s` }}>
                   <Icons.Maximize2 size={16} />
                 </div>
                 <img src="/image5.png" alt="Built-In Quality, Compliance & Resilience" className="pillar-image" />
@@ -655,10 +1105,20 @@ const NeumorphScrollStory = () => {
             </p>
           </div>
         </motion.div>
+        
+        <RobotCTA
+          sectionName="pillars"
+          show={showRobotCTA.pillars}
+          onClick={() => {
+            setCurrentSectionForModal('pillars')
+            setShowRobotModal(true)
+          }}
+          tooltip="Want to learn about 10X transformation?"
+        />
       </section>
 
       {/* Section 3: The Challenges */}
-      <section className="neumorph-section challenges-story">
+      <section className="neumorph-section challenges-story" ref={section3Ref} style={{ position: 'relative' }}>
         {/* Dynamic background glow for challenges */}
         <motion.div 
           className="section-glow"
@@ -681,122 +1141,50 @@ const NeumorphScrollStory = () => {
         >
           <div className="neumorph-card central">
             <h2>But Transformation Isn't Easy</h2>
-            <p className="section-lead">
-              Every organization faces critical barriers on the path to AI adoption
-            </p>
           </div>
           
-          <div className="challenges-timeline">
-            {challenges.map((challenge, idx) => (
-              <motion.div 
-                key={challenge.id}
-                className="timeline-item"
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ delay: idx * 0.15 }}
-              >
-                <div className="timeline-connector">
-                  <div className="connector-line neumorph-inset" />
-                  <div className="timeline-marker neumorph-raised round">
-                    <div className="marker-icon">{getIcon(challenge.icon, 20)}</div>
+          <div className="challenges-bubbles">
+            {challenges.map((challenge, idx) => {
+              // Use prime numbers and different multipliers for better distribution
+              const horizontalSeed = (idx * 37 + idx * idx * 5) % 100
+              const verticalSeed = (idx * 29 + idx * idx * 7) % 100
+              
+              return (
+                <div
+                  key={challenge.id}
+                  className="challenge-bubble"
+                  style={{
+                    '--bubble-delay': `${idx * 4}s`,
+                    '--bubble-duration': '20s',
+                    left: `${2 + (horizontalSeed * 0.85)}%`,
+                    top: `${2 + (verticalSeed * 0.85)}%`
+                  }}
+                >
+                  <div className="bubble-content">
+                    <h3>{challenge.title}</h3>
+                    <p className="bubble-description">{challenge.description}</p>
                   </div>
                 </div>
-                <div className="timeline-content neumorph-card">
-                  <h3>{challenge.title}</h3>
-                  <p>{challenge.description}</p>
-                </div>
-              </motion.div>
-            ))}
+              )
+            })}
           </div>
         </motion.div>
-      </section>
-
-
-      {/* Section 5: SDLC Gallery */}
-      <section className="neumorph-section gallery-section">
-        <motion.div 
-          className="section-content"
-          style={{
-            scale: galleryScale,
-            opacity: galleryOpacity
+        
+        <RobotCTA
+          sectionName="challenges"
+          show={showRobotCTA.challenges}
+          onClick={() => {
+            setCurrentSectionForModal('challenges')
+            setShowRobotModal(true)
           }}
-        >
-          <div className="neumorph-card central">
-            <h2>BLUEPRINT<br />towards AI-assisted Software engineering</h2>
-          </div>
-          
-          <div 
-            className="gallery-container"
-            onMouseEnter={() => setIsHoveringGallery(true)}
-            onMouseLeave={() => setIsHoveringGallery(false)}
-          >
-            <div className={`gallery-slide neumorph-card ${isTransitioning ? 'transitioning' : ''}`}>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeSlide}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.6, ease: "easeInOut" }}
-                  style={{ width: '100%', position: 'relative', zIndex: 2 }}
-                >
-                <h3 className="slide-title">{sdlcSlides[activeSlide].title}</h3>
-                <p className="slide-subtitle">{sdlcSlides[activeSlide].subtitle}</p>
-                
-                <div className="slide-content-transformation">
-                  {sdlcSlides[activeSlide].content.map((item, tIdx) => (
-                    <div 
-                      key={tIdx} 
-                      className="transformation-item"
-                    >
-                      <div className="transformation-dimension">
-                        {item.dimension}
-                      </div>
-                      <div className="transformation-content">
-                        {item.today && (
-                          <div className="transformation-today">
-                            <span className="label">Today:</span> {item.today}
-                          </div>
-                        )}
-                        <div className="transformation-target">
-                          <span className="label">Target:</span> {item.target}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-            
-            {/* Navigation dots */}
-            <div className={`gallery-navigation ${isHoveringGallery ? 'paused' : ''}`}>
-              {sdlcSlides.map((_, idx) => (
-                <button
-                  key={idx}
-                  className={`gallery-dot ${activeSlide === idx ? 'active' : ''}`}
-                  onClick={() => {
-                    if (!isTransitioning) {
-                      setIsTransitioning(true)
-                      setTimeout(() => {
-                        setActiveSlide(idx)
-                        setTimeout(() => {
-                          setIsTransitioning(false)
-                        }, 150)
-                      }, 450)
-                    }
-                  }}
-                  aria-label={`Go to slide ${idx + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-        </motion.div>
+          tooltip="Need help navigating challenges?"
+        />
       </section>
+
+
 
       {/* Section 6: Process Chart */}
-      <section className="neumorph-section process-section">
+      <section className="neumorph-section process-section" ref={section4Ref} style={{ position: 'relative' }}>
         <div className="animated-bg">
           <div className="bg-gradient-1"></div>
           <div className="bg-gradient-2"></div>
@@ -809,9 +1197,9 @@ const NeumorphScrollStory = () => {
           viewport={{ once: true }}
         >
           <div className="neumorph-card central">
-            <h2>Our Data-Driven Transformation Process</h2>
+            <h2>Our AI Transformation Process</h2>
             <p className="section-lead">
-              10 strategic steps to build your AI-powered organization
+              9 strategic pillars to build your AI-powered organization
             </p>
           </div>
           
@@ -834,6 +1222,7 @@ const NeumorphScrollStory = () => {
                     className="step-icon neumorph-raised round"
                     style={{ 
                       background: `linear-gradient(135deg, ${step.color}20, ${step.color}10)`,
+                      border: `2px solid ${step.color}`,
                       '--glow-color': step.color 
                     }}
                   >
@@ -865,10 +1254,21 @@ const NeumorphScrollStory = () => {
             ))}
           </div>
         </motion.div>
+        
+        {/* Robot CTA for Process Section */}
+        <RobotCTA
+          sectionName="process"
+          show={showRobotCTA.process}
+          onClick={() => {
+            setCurrentSectionForModal('process')
+            setShowRobotModal(true)
+          }}
+          tooltip="Need help with process transformation?"
+        />
       </section>
 
       {/* Section 7: Our Solutions */}
-      <section className="neumorph-section solutions-story">
+      <section className="neumorph-section solutions-story" ref={section5Ref}>
         <motion.div 
           className="section-content"
           style={{ scale: solutionsScale }}
@@ -882,7 +1282,17 @@ const NeumorphScrollStory = () => {
           
           <LayoutGroup>
           <div className="solutions-showcase">
-            {consultingAreas.map((area, idx) => (
+            {[
+              consultingAreas[0], // Strategy & Portfolio Governance (id: 1)
+              consultingAreas[7], // People, Culture & Capability (id: 8)
+              consultingAreas[1], // Product & Service Innovation (id: 2)
+              consultingAreas[2], // Process & Workflow Transformation (id: 3)
+              consultingAreas[3], // Data Platform & Architecture (id: 4)
+              consultingAreas[4], // AI Platform, Models & AgentOps (id: 5)
+              consultingAreas[5], // Governance, Risk, Security & Compliance (id: 6)
+              consultingAreas[6], // Organization & Operating Model (id: 7)
+              consultingAreas[8]  // Measurement, Progress & Learning (id: 9)
+            ].map((area, idx) => (
               <motion.div
                 key={area.id}
                 className="solution-showcase-card neumorph-raised"
@@ -930,10 +1340,21 @@ const NeumorphScrollStory = () => {
           </div>
           </LayoutGroup>
         </motion.div>
+        
+        {/* Robot CTA for Solutions Section */}
+        <RobotCTA
+          sectionName="solutions"
+          show={showRobotCTA.solutions}
+          onClick={() => {
+            setCurrentSectionForModal('solutions')
+            setShowRobotModal(true)
+          }}
+          tooltip="Explore our solutions?"
+        />
       </section>
 
       {/* Section 8: CTA */}
-      <section className="neumorph-section cta-story">
+      <section className="neumorph-section cta-story" ref={section6Ref}>
         <motion.div 
           className="section-content"
           initial={{ opacity: 0, scale: 0.9 }}
@@ -987,7 +1408,19 @@ const NeumorphScrollStory = () => {
             </div>
           </div>
         </motion.div>
+        
+        {/* Robot CTA for CTA Section */}
+        <RobotCTA
+          sectionName="cta"
+          show={showRobotCTA.cta}
+          onClick={() => {
+            setCurrentSectionForModal('cta')
+            setShowRobotModal(true)
+          }}
+          tooltip="Ready to transform?"
+        />
       </section>
+
 
       {/* Modal */}
       <LayoutGroup>
@@ -1062,7 +1495,7 @@ const NeumorphScrollStory = () => {
                     </h3>
                     <ul>
                       {selectedArea.strategy?.map((item, idx) => (
-                        <li key={idx}>{renderTextWithBold(item)}</li>
+                        <li key={idx}>{renderTextWithTooltip(item)}</li>
                       ))}
                     </ul>
                   </div>
@@ -1074,7 +1507,7 @@ const NeumorphScrollStory = () => {
                     </h3>
                     <ul>
                       {selectedArea.implementation?.map((item, idx) => (
-                        <li key={idx}>{renderTextWithBold(item)}</li>
+                        <li key={idx}>{renderTextWithTooltip(item)}</li>
                       ))}
                     </ul>
                   </div>
@@ -1183,6 +1616,82 @@ const NeumorphScrollStory = () => {
         )}
       </AnimatePresence>
       </LayoutGroup>
+      
+      {/* Robot Modal */}
+      <AnimatePresence>
+        {showRobotModal && (
+          <>
+            <motion.div
+              className="modal-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowRobotModal(false)}
+              transition={{ duration: 0.3 }}
+            />
+            <div className="modal-wrapper">
+              <motion.div
+                className="robot-modal neumorph-raised"
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ 
+                  type: "spring", 
+                  damping: 30, 
+                  stiffness: 200
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <motion.button
+                  className="modal-close"
+                  onClick={() => setShowRobotModal(false)}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <Icons.X size={20} />
+                </motion.button>
+                
+                <div className="robot-modal-header">
+                  <img src="/robot.png" alt="AI Assistant" className="robot-modal-icon" />
+                  <h2>AI Transformation Assistant</h2>
+                </div>
+                
+                <div className="robot-modal-content">
+                  <p className="robot-greeting">Hello! I'm here to help you navigate the complexities of AI transformation.</p>
+                  
+                  <div className="robot-suggestions">
+                    <h3>How can I assist you today?</h3>
+                    <ul>
+                      <li>🎯 Identify which challenges are most critical for your organization</li>
+                      <li>📊 Create a customized transformation roadmap</li>
+                      <li>💡 Get expert recommendations for overcoming specific obstacles</li>
+                      <li>🤝 Connect with our transformation specialists</li>
+                      <li>📚 Access relevant case studies and best practices</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="robot-cta-buttons">
+                    <button className="neumorph-button primary">
+                      <Icons.Calendar size={18} />
+                      Schedule Consultation
+                    </button>
+                    <button className="neumorph-button secondary">
+                      <Icons.Download size={18} />
+                      Download Assessment Guide
+                    </button>
+                  </div>
+                  
+                  <p className="robot-footer">
+                    Our AI transformation experts have helped over 500+ organizations successfully navigate their journey. Let us help you turn these challenges into opportunities.
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
