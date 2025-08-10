@@ -1791,7 +1791,7 @@ const NeumorphScrollStory = () => {
                 
                 <div className="robot-modal-header">
                   <img src="/robot.png" alt="AI Assistant" className="robot-modal-icon" />
-                  <h2>Your AI Transformation Journey<br />Starts Here!</h2>
+                  <h2>Your AI transformation starts here!</h2>
                 </div>
                 
                 <div className="robot-modal-content">
@@ -1809,15 +1809,48 @@ const NeumorphScrollStory = () => {
                   </div>
                   
                   <div className="robot-cta-buttons">
-                    <a href="mailto:contact@10x-productorg.com" className="neumorph-button primary" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                      <Icons.Mail size={18} />
-                      Contact Us at contact@10x-productorg.com
-                    </a>
+                    <div style={{ position: 'relative', display: 'inline-block' }}>
+                      <a 
+                        href="mailto:contact@10x-productorg.com" 
+                        className="neumorph-button primary email-button" 
+                        style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '18px', fontWeight: 'bold' }}
+                      >
+                        <Icons.Mail size={20} />
+                        Contact Us at contact@10x-productorg.com
+                      </a>
+                      <button
+                        className="copy-tooltip"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigator.clipboard.writeText('contact@10x-productorg.com');
+                          e.currentTarget.textContent = '✓ Copied!';
+                          setTimeout(() => {
+                            e.currentTarget.textContent = '📋 Copy Email';
+                          }, 2000);
+                        }}
+                        style={{
+                          position: 'absolute',
+                          top: '-35px',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          padding: '6px 12px',
+                          background: '#1a1a1a',
+                          border: '1px solid #4fc3f7',
+                          borderRadius: '6px',
+                          color: '#4fc3f7',
+                          fontSize: '13px',
+                          cursor: 'pointer',
+                          opacity: 0,
+                          visibility: 'hidden',
+                          transition: 'opacity 0.2s, visibility 0.2s',
+                          whiteSpace: 'nowrap',
+                          zIndex: 10
+                        }}
+                      >
+                        📋 Copy Email
+                      </button>
+                    </div>
                   </div>
-                  
-                  <p className="robot-footer">
-                    The future is being written now. Join the leaders who are already transforming their PDLC with AI and achieving 3-5x productivity gains in critical workflows!
-                  </p>
                 </div>
               </motion.div>
             </div>
