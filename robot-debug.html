@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot Debug Instructions</title>
+</head>
+<body>
+    <h1>Debugging Robot in Pillars Section</h1>
+    
+    <h2>Steps to Debug:</h2>
+    
+    <ol>
+        <li>Open the app at <a href="http://localhost:5176/" target="_blank">http://localhost:5176/</a></li>
+        <li>Open Browser Developer Console (F12 or right-click → Inspect → Console)</li>
+        <li>Scroll to the "Key pillars of success" section (the one with 5 image tiles)</li>
+        <li>Wait 5 seconds while viewing this section</li>
+        <li>You should see in console: "Enabling robot for section: pillars"</li>
+        <li>Then after 1 more second: "Showing pillars robot initially"</li>
+        <li>The robot should appear fixed to the bottom-right of your viewport</li>
+    </ol>
+    
+    <h2>If Robot Doesn't Appear:</h2>
+    <ul>
+        <li>Check console for any errors</li>
+        <li>Verify the section is more than 50% visible in viewport</li>
+        <li>Try refreshing the page and waiting on the pillars section</li>
+        <li>Check if the robot appears in other sections (to verify basic functionality)</li>
+    </ul>
+    
+    <h2>Expected Console Logs:</h2>
+    <pre>
+Enabling robot for section: pillars
+Showing pillars robot initially
+    </pre>
+    
+    <h2>Robot Behavior After Appearing:</h2>
+    <ul>
+        <li>Scroll within the pillars section → robot disappears</li>
+        <li>Stop scrolling → robot reappears after 3 seconds</li>
+        <li>Scroll out of pillars section → robot disappears</li>
+        <li>Return to pillars section → robot reappears after scroll stops</li>
+    </ul>
+</body>
+</html>
