@@ -1360,12 +1360,12 @@ const NeumorphScrollStory = () => {
             </div>
             <div className="phase-content">
               <h3 style={{ background: 'linear-gradient(135deg, #e91e63, #ffc107)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>AI Opportunity Discovery</h3>
-              <p>We analyze both internal and customer-facing workflows to identify and unlock gains through AI assistance and automation. By mapping your processes end-to-end, we pinpoint where AI can transform operations, enhance customer experiences, and create competitive advantages that deliver exceptional value.</p>
+              <p>Opportunities arise where needs or painpoints can be solved in an innovative or better way with AI. By mapping customer journeys, business processes and workflows together with your teams, we pinpoint where AI can transform operations, enhance customer experiences, and create competitive advantages that deliver exceptional value.</p>
               <div className="phase-activities">
                 <span className="activity-tag neumorph-flat">AI Bootcamps</span>
                 <span className="activity-tag neumorph-flat">Design Thinking</span>
-                <span className="activity-tag neumorph-flat">Opportunity Mapping</span>
                 <span className="activity-tag neumorph-flat">Business Process Analysis</span>
+                <span className="activity-tag neumorph-flat">Opportunity Mapping</span>
               </div>
             </div>
           </motion.div>
@@ -1385,6 +1385,7 @@ const NeumorphScrollStory = () => {
               <h3 style={{ background: 'linear-gradient(135deg, #e91e63, #ffc107)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Create Focus & Alignment</h3>
               <p>We help you establish clear objectives and measurable outcomes that align teams across all levels. By creating shared goals and transparent metrics, we ensure everyone moves in the same direction with purpose and clarity.</p>
               <div className="phase-activities">
+                <span className="activity-tag neumorph-flat">Facilitation Prioritization</span>
                 <span className="activity-tag neumorph-flat">Goal Setting</span>
                 <span className="activity-tag neumorph-flat">Strategic Alignment</span>
                 <span className="activity-tag neumorph-flat">Performance Metrics</span>
@@ -1431,7 +1432,6 @@ const NeumorphScrollStory = () => {
               <p>Our approach uniquely combines analytical rigor with human empathy. We believe that successful transformation requires both analytical insights and innovative AI capabilities as well as a deep understanding of people's motivations, needs and fears during this transformation journey.</p>
               <div className="phase-activities">
                 <span className="activity-tag neumorph-flat">Change Management</span>
-                <span className="activity-tag neumorph-flat">Data-Driven Insights</span>
                 <span className="activity-tag neumorph-flat">Empathetic Leadership</span>
               </div>
             </div>
@@ -1505,7 +1505,7 @@ const NeumorphScrollStory = () => {
             <div className="cta-glow"></div>
             <h2>The Future is Being Written Now</h2>
             <p className="cta-lead">
-              Join the leaders who are already transforming their SDLC with AI
+              Join the leaders who are already transforming their PDLC with AI
             </p>
             
             <div className="cta-stats">
