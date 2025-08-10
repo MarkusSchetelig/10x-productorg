@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Transformation Process - 9 Pillars</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #ffffff 0%, #a0a0c0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #8a8aa8;
+            font-weight: 400;
+        }
+
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .pillar-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .pillar-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .pillar-number {
+            position: absolute;
+            top: -15px;
+            left: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .pillar-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .pillar-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        .pillar-description {
+            font-size: 14px;
+            color: #a0a0c0;
+            line-height: 1.6;
+        }
+
+        .connection-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
+            top: 50%;
+            left: 0;
+            z-index: -1;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .process-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 60px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .flow-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .flow-arrow {
+            color: #667eea;
+            font-size: 24px;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+            
+            .subtitle {
+                font-size: 16px;
+            }
+            
+            .pillars-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        .highlight-badge {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.2);
+            color: #a0a0ff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 12px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Our AI-Powered Transformation Process</h1>
+            <p class="subtitle">9 strategic pillars to build your AI-powered organization</p>
+        </div>
+
+        <div class="connection-line"></div>
+
+        <div class="pillars-grid">
+            <!-- Pillar 1 -->
+            <div class="pillar-card">
+                <div class="pillar-number">1</div>
+                <div class="pillar-icon">📊</div>
+                <h3 class="pillar-title">Strategy & Portfolio Governance</h3>
+                <p class="pillar-description">
+                    Unify strategy, roadmapping, and governance into a single operating rhythm that aligns AI investments to business outcomes.
+                </p>
+                <span class="highlight-badge">Vision → Execution</span>
+            </div>
+
+            <!-- Pillar 2 -->
+            <div class="pillar-card">
+                <div class="pillar-number">2</div>
+                <div class="pillar-icon">🏗️</div>
+                <h3 class="pillar-title">Data Platform & Architecture</h3>
+                <p class="pillar-description">
+                    Build a scalable, governed data foundation with strong contracts, semantics, and privacy-by-design to power analytics and ML.
+                </p>
+                <span class="highlight-badge">Trusted Data Backbone</span>
+            </div>
+
+            <!-- Pillar 3 -->
+            <div class="pillar-card">
+                <div class="pillar-number">3</div>
+                <div class="pillar-icon">🤖</div>
+                <h3 class="pillar-title">AI Platform, Models & AgentOps</h3>
+                <p class="pillar-description">
+                    Stand up an AI platform for experimentation-to-production across models and agent frameworks with safety and cost control.
+                </p>
+                <span class="highlight-badge">Industrial AI</span>
+            </div>
+
+            <!-- Pillar 4 -->
+            <div class="pillar-card">
+                <div class="pillar-number">4</div>
+                <div class="pillar-icon">🛡️</div>
+                <h3 class="pillar-title">Governance, Risk, Security & Compliance</h3>
+                <p class="pillar-description">
+                    Operationalize ethical principles and regulatory requirements across data and AI lifecycles without slowing delivery.
+                </p>
+                <span class="highlight-badge">Responsible Innovation</span>
+            </div>
+
+            <!-- Pillar 5 -->
+            <div class="pillar-card">
+                <div class="pillar-number">5</div>
+                <div class="pillar-icon">💡</div>
+                <h3 class="pillar-title">Product & Service Innovation</h3>
+                <p class="pillar-description">
+                    Embed AI into product strategy, design, and GTM to deliver copilots, personalization, and intelligent automation.
+                </p>
+                <span class="highlight-badge">AI-Native Experiences</span>
+            </div>
+
+            <!-- Pillar 6 -->
+            <div class="pillar-card">
+                <div class="pillar-number">6</div>
+                <div class="pillar-icon">⚙️</div>
+                <h3 class="pillar-title">Process & Workflow Transformation</h3>
+                <p class="pillar-description">
+                    Redesign end-to-end processes with process mining, lean principles, and AI/RPA orchestration to remove waste.
+                </p>
+                <span class="highlight-badge">Intelligent Automation</span>
+            </div>
+
+            <!-- Pillar 7 -->
+            <div class="pillar-card">
+                <div class="pillar-number">7</div>
+                <div class="pillar-icon">🏢</div>
+                <h3 class="pillar-title">Organization & Operating Model</h3>
+                <p class="pillar-description">
+                    Clarify roles, responsibilities, and decision rights to reduce friction and speed decisions across teams.
+                </p>
+                <span class="highlight-badge">Speed & Clarity</span>
+            </div>
+
+            <!-- Pillar 8 -->
+            <div class="pillar-card">
+                <div class="pillar-number">8</div>
+                <div class="pillar-icon">👥</div>
+                <h3 class="pillar-title">People, Culture & Capability</h3>
+                <p class="pillar-description">
+                    Build literacy and hands-on skills while fostering psychological safety and ethical AI practices across teams.
+                </p>
+                <span class="highlight-badge">AI-Capable Teams</span>
+            </div>
+
+            <!-- Pillar 9 -->
+            <div class="pillar-card">
+                <div class="pillar-number">9</div>
+                <div class="pillar-icon">📈</div>
+                <h3 class="pillar-title">Measurement, Progress & Learning</h3>
+                <p class="pillar-description">
+                    Build a balanced system to measure impact and amplify organizational learning through demos and case studies.
+                </p>
+                <span class="highlight-badge">Continuous Improvement</span>
+            </div>
+        </div>
+
+        <div class="process-flow">
+            <div class="flow-item">
+                <span style="color: #667eea;">Foundation</span>
+                <span class="flow-arrow">→</span>
+            </div>
+            <div class="flow-item">
+                <span style="color: #764ba2;">Transformation</span>
+                <span class="flow-arrow">→</span>
+            </div>
+            <div class="flow-item">
+                <span style="color: #f093fb;">Scale & Optimize</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

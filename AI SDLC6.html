@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformation into AI SDLC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        /* This container will hold the slides and manage their positioning */
+        #slides-container {
+            position: relative;
+            min-height: 620px; /* Set a minimum height to prevent layout collapse during transitions */
+        }
+        .slide {
+            /* All slides are stacked absolutely within the container */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Hidden by default with zero opacity and non-interactive */
+            opacity: 0;
+            pointer-events: none;
+            /* Define the smooth transition for the opacity property */
+            transition: opacity 0.4s ease-in-out;
+        }
+        .slide.active {
+            /* The active slide is made visible and interactive */
+            opacity: 1;
+            pointer-events: auto;
+            /* The active slide is brought to the front */
+            z-index: 1;
+        }
+        .timeline-container {
+            position: relative;
+            height: 80px; /* Increased height to accommodate the new arrow */
+        }
+        .timeline {
+            position: absolute;
+            width: 100%;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            bottom: 0; /* Position the main timeline at the bottom of the container */
+        }
+        .timeline-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: #0F172A;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .timeline-arrow {
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 10px solid #0F172A;
+        }
+        .timeline-point {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: white;
+            border: 2px solid #0F172A;
+            border-radius: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+        .timeline-point.active {
+            background-color: #0F172A;
+        }
+        .timeline-label {
+            position: absolute;
+            top: -25px;
+            transform: translateX(-50%);
+            font-size: 12px;
+            font-weight: 500;
+            color: #0F172A;
+            white-space: nowrap;
+        }
+        /* Styles for the new overarching arrow */
+        .overarching-arrow {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+        }
+        .overarching-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: #94a3b8; /* Lighter color for distinction */
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .overarching-arrowhead {
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-left: 8px solid #94a3b8;
+        }
+        .overarching-label {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+            background-color: white;
+            padding: 0 8px;
+        }
+        /* New style for the dot on the overarching arrow */
+        .overarching-point {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: #0F172A; /* Active color */
+            border: 2px solid #0F172A;
+            border-radius: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 11; /* Ensure it's above the line */
+        }
+        /* Styles for pagination dots */
+        .pagination-dots {
+            position: absolute;
+            bottom: -20px; /* Position below the timeline */
+            left: 0;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+        }
+        .pagination-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #cbd5e1; /* Inactive color */
+        }
+        .pagination-dot.active {
+            background-color: #0F172A; /* Active color */
+        }
+        /* Custom styles for indented lists with smaller font */
+        .indented-list {
+            list-style-position: outside;
+            padding-left: 1.25rem; /* Equivalent to pl-5 for hanging indent */
+        }
+        .indented-list li {
+            font-size: 85%; /* 15% smaller font size */
+            margin-bottom: 0.225rem; /* 10% reduction in space between items */
+            line-height: 1.4; /* Tighter line-height for wrapped text */
+        }
+        .indented-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Custom styles for diagram arrows */
+        .arrow {
+            position: absolute;
+            background-color: #0F172A;
+        }
+        .arrow-horizontal {
+            height: 2px;
+        }
+        .arrow-vertical {
+            width: 2px;
+            transform: translateX(-50%);
+        }
+        .arrow-head {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+        .arrow-head-right {
+            border-width: 6px 0 6px 8px;
+            border-color: transparent transparent transparent #0F172A;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .arrow-head-left {
+            border-width: 6px 8px 6px 0;
+            border-color: transparent #0F172A transparent transparent;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .arrow-head-down {
+            border-width: 8px 6px 0 6px;
+            border-color: #0F172A transparent transparent transparent;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .arrow-head-up {
+            border-width: 0 6px 8px 6px;
+            border-color: transparent transparent #0F172A transparent;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .tile-headline {
+            line-height: 0.90;
+        }
+        .tile-text {
+            font-size: 84%;
+            line-height: 1.26;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-6xl bg-white shadow-2xl rounded-lg overflow-hidden">
+        <div class="p-8 md:p-12">
+            <!-- Slides Container -->
+            <div id="slides-container">
+                <!-- Slide 0: Title Slide -->
+                <div class="slide active" data-slide="0">
+                    <div class="text-center h-full flex flex-col justify-center">
+                        <h1 class="text-5xl md:text-7xl font-bold text-slate-800 mb-4">Transformation into</h1>
+                          <h1 class="text-5xl md:text-7xl font-bold text-slate-800 mb-4">AI SDLC</h1>
+                        <p class="text-xl md:text-2xl text-slate-600">Blueprint towards AI-Assisted Software Engineering</p>
+                    </div>
+                </div>
+
+                <!-- Slide 1: Industry Perspective -->
+                <div class="slide" data-slide="1">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">Industry Perspective on Productivity</h1>
+                    <p class="text-lg text-slate-500 mb-8">Recent data confirms a seismic shift in development capabilities.</p>
+                    <div class="space-y-6 mt-12">
+                        <blockquote class="border-l-4 border-slate-800 pl-4">
+                            <p class="text-lg italic text-slate-700">"What once required 20 developers can increasingly be accomplished by <span class="font-bold">2-3 engineers</span> working with sophisticated AI assistants... Individual developer productivity [sees a] <span class="font-bold">3-5x increase</span>."</p>
+                            <footer class="text-right text-sm text-slate-500 mt-2">- Accenture-aligned Analysis, "The End of Big Dev Teams", Apr 2025</footer>
+                        </blockquote>
+                        <blockquote class="border-l-4 border-slate-800 pl-4">
+                            <p class="text-lg italic text-slate-700">"AI now generates <span class="font-bold">more than 25% of new code</span> at Google."</p>
+                            <footer class="text-right text-sm text-slate-500 mt-2">- Sundar Pichai, CEO of Google, reported by Yahoo Finance, Jul 2025</footer>
+                        </blockquote>
+                        <blockquote class="border-l-4 border-slate-800 pl-4">
+                            <p class="text-lg italic text-slate-700">"On the SWE-bench Verified benchmark... Claude Opus 4 scored <span class="font-bold">72.5 percent</span>... a figure that jumped from just 4.4 percent for AI systems in 2023."</p>
+                            <footer class="text-right text-sm text-slate-500 mt-2">- Anthropic & The Register, May 2025 / Stanford AI Index 2025</footer>
+                        </blockquote>
+                        <blockquote class="border-l-4 border-slate-800 pl-4">
+                            <p class="text-lg italic text-slate-700">"Three out of four (<span class="font-bold">76%</span>) [developers] already use - or intend to use - AI coding tools... Daily use rocketed from 44% to <span class="font-bold">62%</span> in the last year."</p>
+                            <footer class="text-right text-sm text-slate-500 mt-2">- Stack Overflow 2024 Survey, reported by HackerNoon, Jul 2025</footer>
+                        </blockquote>
+                        <blockquote class="border-l-4 border-slate-800 pl-4">
+                            <p class="text-lg italic text-slate-700">"Microsoft CTO Kevin Scott recently predicted that '<span class="font-bold">95% of code could be AI-generated by 2030</span>,' with humans setting the creative direction."</p>
+                            <footer class="text-right text-sm text-slate-500 mt-2">- Microsoft, reported by TechSpot, Jul 2025</footer>
+                        </blockquote>
+                    </div>
+                </div>
+
+                <!-- Slide 2: Strategic Foundation (1/2) -->
+                <div class="slide" data-slide="2">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">1. Set the Strategic Foundation (1/2)</h1>
+                    <p class="text-lg text-slate-500 mb-8">Overarching Decisions for the AI-Assisted SDLC</p>
+                    <div class="timeline-container mb-12">
+                        <div class="overarching-arrow">
+                            <div class="overarching-line"></div>
+                            <div class="overarching-arrowhead"></div>
+                            <div class="overarching-label">Overarching Alignment</div>
+                            <!-- Active dot on the overarching arrow -->
+                            <div class="overarching-point" style="left: 5%;">
+                                <div class="timeline-label">Strategy</div>
+                            </div>
+                            <!-- Active dot on the overarching arrow -->
+                            <div class="timeline-point" style="left: 95%;"></div>
+
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-arrow"></div>
+                            <!-- SDLC points are inactive on this slide -->
+                            <div class="timeline-point" style="left: 11%;"></div>
+                            <div class="timeline-point" style="left: 22%;"></div>
+                            <div class="timeline-point" style="left: 33%;"></div>
+                            <div class="timeline-point" style="left: 44%;"></div>
+                            <div class="timeline-point" style="left: 55%;"></div>
+                            <div class="timeline-point" style="left: 66%;"></div>
+                            <div class="timeline-point" style="left: 77%;"></div>
+                            <div class="timeline-point" style="left: 88%;"></div>
+                            <div class="absolute right-0 top-full mt-2 text-slate-800 font-bold">AI SDLC</div>
+                        </div>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="w-1/5 bg-slate-800 text-white p-4 rounded-tl-lg">Dimension</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4">Today</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4 rounded-tr-lg">Target Picture</th>
+                            </tr>
+                        </thead>
+                           <tbody>
+                            <tr class="bg-slate-50">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Strategic Improvement Focus</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Driven by Corporate</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Add business-specific Why(now), What, How</li>
+                                        <li>Who</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr class="bg-slate-50">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">AI Toolchain & Model Selection</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Ad-hoc use of various AI tools without a unified strategy (at least in business line).</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Establish clear criteria for tool selection (workflow integration, data privacy/security, IP protection, ...).</li>
+                                        <li>Strategic choice: ***Agent Platform***</li>
+                                        <li>Strategic choice: AI Models</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Slide 3: Strategic Foundation (2/2) -->
+                <div class="slide" data-slide="3">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">1. Set the Strategic Foundation (2/2)</h1>
+                    <p class="text-lg text-slate-500 mb-8">Overarching Decisions for the AI-Assisted SDLC</p>
+                    <div class="timeline-container mb-12">
+                        <div class="overarching-arrow">
+                            <div class="overarching-line"></div>
+                            <div class="overarching-arrowhead"></div>
+                            <div class="overarching-label">Overarching Alignment</div>
+                            <!-- Active dot on the overarching arrow -->
+                            <div class="overarching-point" style="left: 5%;">
+                                <div class="timeline-label">Strategy</div>
+                            </div>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-arrow"></div>
+                            <!-- SDLC points are inactive on this slide -->
+                            <div class="timeline-point" style="left: 11%;"></div>
+                            <div class="timeline-point" style="left: 22%;"></div>
+                            <div class="timeline-point" style="left: 33%;"></div>
+                            <div class="timeline-point" style="left: 44%;"></div>
+                            <div class="timeline-point" style="left: 55%;"></div>
+                            <div class="timeline-point" style="left: 66%;"></div>
+                            <div class="timeline-point" style="left: 77%;"></div>
+                            <div class="timeline-point" style="left: 88%;"></div>
+                            <div class="absolute right-0 top-full mt-2 text-slate-800 font-bold">AI SDLC</div>
+                        </div>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="w-1/5 bg-slate-800 text-white p-4 rounded-tl-lg">Dimension</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4">Today</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4 rounded-tr-lg">Target Picture</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-white">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">AI Governance</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Focus on data privacy and security</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Establish an AI Governance Committee (CoE)</li>
+                                        <li>Set Acceptable Use Policies</li>
+                                        <li>Buildup capabilities</li>
+                                        <li>Enforce</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                             <tr class="bg-slate-50">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Process Alignment Across Development Sites</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Aligned in current SDLC</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Unified AI SDLC development framework</li>
+                                        <li>Collaborative approach towards learning & framework improvement</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Slide 4: Product Discovery (1/2) -->
+                <div class="slide" data-slide="4">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">2. Product Discovery (1/2)</h1>
+                    <p class="text-lg text-slate-500 mb-8">From Manual Guesswork to AI-Powered Foresight</p>
+                    <div class="timeline-container mb-12">
+                        <div class="overarching-arrow">
+                            <div class="overarching-line"></div>
+                            <div class="overarching-arrowhead"></div>
+                            <div class="overarching-label">Overarching Alignment</div>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-arrow"></div>
+                            <div class="timeline-point active" style="left: 11%;">
+                                <div class="timeline-label">Product Discovery</div>
+                                <div class="pagination-dots">
+                                    <div class="pagination-dot active"></div>
+                                    <div class="pagination-dot"></div>
+                                </div>
+                            </div>
+                            <div class="timeline-point" style="left: 22%;"></div>
+                            <div class="timeline-point" style="left: 33%;"></div>
+                            <div class="timeline-point" style="left: 44%;"></div>
+                            <div class="timeline-point" style="left: 55%;"></div>
+                            <div class="timeline-point" style="left: 66%;"></div>
+                            <div class="timeline-point" style="left: 77%;"></div>
+                            <div class="timeline-point" style="left: 88%;"></div>
+                            <div class="absolute right-0 top-full mt-2 text-slate-800 font-bold">AI SDLC</div>
+                        </div>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="w-1/5 bg-slate-800 text-white p-4 rounded-tl-lg">Transformation Dimension</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4">Today</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4 rounded-tr-lg">Target Picture</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-slate-50">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Market & Competitor Intelligence</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Manual review of competitor websites and reports</li>
+                                        <li>Analysis is less frequent, slow and prone to human bias</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>AI agents regularly monitor (scrape, crawl, extract) competitors' digital footprints</li>
+                                        <li>AI assisted market analysis and competitive benchmarking reports</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Customer Understanding</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Manual, fragmented analysis of user feedback</li>
+                                        <li>Static, assumption-based personas</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>AI synthesizes feedback from all (accessible) channels into actionable insights</li>
+                                        <li>Creates "living user persona documents" continuously updated with real analytics</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                                 <tr class="bg-white">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Ideation</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Low-fidelity ideation in workshops</li>
+                                        <li>Limited by understanding what is possible</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Inspired by AI </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Slide 5: Product Discovery (2/2) -->
+                <div class="slide" data-slide="5">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">2. Product Discovery (2/2)</h1>
+                    <p class="text-lg text-slate-500 mb-8">From Manual Guesswork to AI-Powered Foresight</p>
+                    <div class="timeline-container mb-12">
+                        <div class="overarching-arrow">
+                            <div class="overarching-line"></div>
+                            <div class="overarching-arrowhead"></div>
+                            <div class="overarching-label">Overarching Alignment</div>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-arrow"></div>
+                            <div class="timeline-point active" style="left: 11%;">
+                                <div class="timeline-label">Product Discovery</div>
+                                <div class="pagination-dots">
+                                    <div class="pagination-dot"></div>
+                                    <div class="pagination-dot active"></div>
+                                </div>
+                            </div>
+                            <div class="timeline-point" style="left: 22%;"></div>
+                            <div class="timeline-point" style="left: 33%;"></div>
+                            <div class="timeline-point" style="left: 44%;"></div>
+                            <div class="timeline-point" style="left: 55%;"></div>
+                            <div class="timeline-point" style="left: 66%;"></div>
+                            <div class="timeline-point" style="left: 77%;"></div>
+                            <div class="timeline-point" style="left: 88%;"></div>
+                            <div class="absolute right-0 top-full mt-2 text-slate-800 font-bold">AI SDLC</div>
+                        </div>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="w-1/5 bg-slate-800 text-white p-4 rounded-tl-lg">Transformation Dimension</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4">Today</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4 rounded-tr-lg">Target Picture</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             <tr class="bg-slate-50">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Idea Validation & Rapid Prototyping</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Validation is slow and expensive</li>
+                                        <li>High cost of pursuing a flawed idea</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>AI generates interactive prototypes from text or sketches in "minutes"</li>
+                                        <li>Reduces the cost of failure by enabling teams to "fail faster"</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Business Case & Feasibility Analysis</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Manual financial modeling and "gut-feel" feasibility.</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>AI drafts initial business cases, outlining value proposition and ROI.</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Slide 6: Requirements -->
+                <div class="slide" data-slide="6">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">3. Requirements Analysis</h1>
+                    <p class="text-lg text-slate-500 mb-8">From Ambiguous Guide to Unambiguous Source Code</p>
+                    <div class="timeline-container mb-12">
+                        <div class="overarching-arrow">
+                            <div class="overarching-line"></div>
+                            <div class="overarching-arrowhead"></div>
+                            <div class="overarching-label">Overarching Alignment</div>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-arrow"></div>
+                            <div class="timeline-point" style="left: 11%;"></div>
+                            <div class="timeline-point active" style="left: 22%;"><div class="timeline-label">Requirements</div></div>
+                            <div class="timeline-point" style="left: 33%;"></div>
+                            <div class="timeline-point" style="left: 44%;"></div>
+                            <div class="timeline-point" style="left: 55%;"></div>
+                            <div class="timeline-point" style="left: 66%;"></div>
+                            <div class="timeline-point" style="left: 77%;"></div>
+                            <div class="timeline-point" style="left: 88%;"></div>
+                            <div class="absolute right-0 top-full mt-2 text-slate-800 font-bold">AI SDLC</div>
+                        </div>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="w-1/5 bg-slate-800 text-white p-4 rounded-tl-lg">Transformation Dimension</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4">Today</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4 rounded-tr-lg">Target Picture</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-slate-50">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Requirement Elicitation</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Manual synthesis of notes from stakeholder interviews.</li>
+                                        <li>Process is labor-intensive and prone to ambiguity.</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>AI transcribes and analyzes stakeholder interviews using NLP.</li>
+                                        <li>AI identifies key themes, user needs, and conflicting requirements.</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Specification Generation</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Agile principle: "Working software over comprehensive documentation."</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Acknowledge and align 2 (competing) cultures:</li>
+                                        <li>Writing-first culture: specification becomes the new reference for automated implementation pipelines</li>
+                                        <li>Building-first culture: Show dont tell. Iterate like hell.</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Slide 7: Design (1/2) -->
+                <div class="slide" data-slide="7">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">4. Architecture & Design (1/2)</h1>
+                    <p class="text-lg text-slate-500 mb-8">From System Designer to Cognitive Modeler</p>
+                    <div class="timeline-container mb-12">
+                        <div class="overarching-arrow">
+                            <div class="overarching-line"></div>
+                            <div class="overarching-arrowhead"></div>
+                            <div class="overarching-label">Overarching Alignment</div>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-arrow"></div>
+                            <div class="timeline-point" style="left: 11%;"></div>
+                            <div class="timeline-point" style="left: 22%;"></div>
+                            <div class="timeline-point active" style="left: 33%;">
+                                <div class="timeline-label">Design</div>
+                                <div class="pagination-dots">
+                                    <div class="pagination-dot active"></div>
+                                    <div class="pagination-dot"></div>
+                                </div>
+                            </div>
+                            <div class="timeline-point" style="left: 44%;"></div>
+                            <div class="timeline-point" style="left: 55%;"></div>
+                            <div class="timeline-point" style="left: 66%;"></div>
+                            <div class="timeline-point" style="left: 77%;"></div>
+                            <div class="timeline-point" style="left: 88%;"></div>
+                            <div class="absolute right-0 top-full mt-2 text-slate-800 font-bold">AI SDLC</div>
+                        </div>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="w-1/5 bg-slate-800 text-white p-4 rounded-tl-lg">Transformation Dimension</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4">Today</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4 rounded-tr-lg">Target Picture</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-slate-50">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">UI/UX Design</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Manual wireframing in tools like Figma; exploration is limited by time</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>AI generates multiple design concepts from text prompts for rapid exploration</li>
+                                        <li>AI is trained on the existing Design System to ensure brand consistency</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                                <tr class="bg-white">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">System Architecture Design</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Following the "experience pattern" of the architect at work.</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>AI-assisted formal analysis and justification of solution options versus key quality attributes</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">System Diagrams</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Manual creation of diagrams that quickly become obsolete</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>AI generates "living" diagrams from source code, always synchronized via CI/CD</li>
+                                    </ul>
+                                </td>
+                            </tr>
+
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Slide 8: Design (2/2) -->
+                <div class="slide" data-slide="8">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">4. Architecture & Design (2/2)</h1>
+                    <p class="text-lg text-slate-500 mb-8">From System Designer to Cognitive Modeler</p>
+                    <div class="timeline-container mb-12">
+                        <div class="overarching-arrow">
+                            <div class="overarching-line"></div>
+                            <div class="overarching-arrowhead"></div>
+                            <div class="overarching-label">Overarching Alignment</div>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-arrow"></div>
+                            <div class="timeline-point" style="left: 11%;"></div>
+                            <div class="timeline-point" style="left: 22%;"></div>
+                            <div class="timeline-point active" style="left: 33%;">
+                                <div class="timeline-label">Design</div>
+                                <div class="pagination-dots">
+                                    <div class="pagination-dot"></div>
+                                    <div class="pagination-dot active"></div>
+                                </div>
+                            </div>
+                            <div class="timeline-point" style="left: 44%;"></div>
+                            <div class="timeline-point" style="left: 55%;"></div>
+                            <div class="timeline-point" style="left: 66%;"></div>
+                            <div class="timeline-point" style="left: 77%;"></div>
+                            <div class="timeline-point" style="left: 88%;"></div>
+                            <div class="absolute right-0 top-full mt-2 text-slate-800 font-bold">AI SDLC</div>
+                        </div>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="w-1/5 bg-slate-800 text-white p-4 rounded-tl-lg">Transformation Dimension</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4">Today</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4 rounded-tr-lg">Target Picture</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-slate-50">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Architectural Guardrails</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Decisions documented for human interpretation.</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Architect defines machine-readable constraints (NFRs, approved tech).</li>
+                                        <li>Writes "Fitness Function" tests to continuously validate architecture in CI/CD.</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Technology Stack Curation</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Tech stack choices based on team familiarity or industry trends.</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>AI analyzes requirements and suggests optimal tech stacks with trade-offs.</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Slide 9: Implementation -->
+                <div class="slide" data-slide="9">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">5. Implementation</h1>
+                    <p class="text-lg text-slate-500 mb-8">From Code Writer to System Validator</p>
+                    <div class="timeline-container mb-12">
+                        <div class="overarching-arrow">
+                            <div class="overarching-line"></div>
+                            <div class="overarching-arrowhead"></div>
+                            <div class="overarching-label">Overarching Alignment</div>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-arrow"></div>
+                            <div class="timeline-point" style="left: 11%;"></div>
+                            <div class="timeline-point" style="left: 22%;"></div>
+                            <div class="timeline-point" style="left: 33%;"></div>
+                            <div class="timeline-point active" style="left: 44%;"><div class="timeline-label">Implementation</div></div>
+                            <div class="timeline-point" style="left: 55%;"></div>
+                            <div class="timeline-point" style="left: 66%;"></div>
+                            <div class="timeline-point" style="left: 77%;"></div>
+                            <div class="timeline-point" style="left: 88%;"></div>
+                            <div class="absolute right-0 top-full mt-2 text-slate-800 font-bold">AI SDLC</div>
+                        </div>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="w-1/5 bg-slate-800 text-white p-4 rounded-tl-lg">Transformation Dimension</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4">Today</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4 rounded-tr-lg">Target Picture</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                               <tr class="bg-slate-50">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">AI enabled Productivity Gains</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Absorbed by organization.</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Self-define & track improvement KPI</li>
+                                        <li>Accomplish first net positive effects.</li>
+                                        <li>...</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Code Generation</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Manual, line-by-line code writing.</li>
+                                        <li>Test-cases are add-on. Limited test-coverage</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>AI generates code, unit tests, and algorithms from natural language.</li>
+                                        <li>AI can make Test-Driven-Development (TDD) standard practice.</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                             <tr class="bg-white">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Developer's Core Task</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Implementing business logic; focus is on the "how" of execution.</li>
+                                        <li>Performance measured by lines of code or features shipped.</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Developer as "AI Output Auditor": forensic validation of AI-generated code.</li>
+                                        <li>Performance metrics evolve to reward finding defects and improving AI output.</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Slide 10: Testing -->
+                <div class="slide" data-slide="10">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">6. Testing & Quality Assurance</h1>
+                    <p class="text-lg text-slate-500 mb-8">From Manual Detection to Autonomous Quality</p>
+                    <div class="timeline-container mb-12">
+                        <div class="overarching-arrow">
+                            <div class="overarching-line"></div>
+                            <div class="overarching-arrowhead"></div>
+                            <div class="overarching-label">Overarching Alignment</div>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-arrow"></div>
+                            <div class="timeline-point" style="left: 11%;"></div>
+                            <div class="timeline-point" style="left: 22%;"></div>
+                            <div class="timeline-point" style="left: 33%;"></div>
+                            <div class="timeline-point" style="left: 44%;"></div>
+                            <div class="timeline-point active" style="left: 55%;"><div class="timeline-label">Testing</div></div>
+                            <div class="timeline-point" style="left: 66%;"></div>
+                            <div class="timeline-point" style="left: 77%;"></div>
+                            <div class="timeline-point" style="left: 88%;"></div>
+                            <div class="absolute right-0 top-full mt-2 text-slate-800 font-bold">AI SDLC</div>
+                        </div>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="w-1/5 bg-slate-800 text-white p-4 rounded-tl-lg">Transformation Dimension</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4">Today</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4 rounded-tr-lg">Target Picture</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-slate-50">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Test Case Generation</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>QA engineers manually write test plans and cases.</li>
+                                        <li>Incomplete coverage, especially for edge cases.</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>AI analyzes requirements or code to generate comprehensive test cases (unit, integration, E2E).</li>
+                                        <li>AI generates negative tests and complex edge cases.</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Test Automation & Execution</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Writing and maintaining brittle automation scripts is a major effort.</li>
+                                        <li>Tests fail with minor UI or locator changes.</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>"Self-healing" test automation where AI automatically updates scripts when UI changes.</li>
+                                        <li>AI prioritizes running the most relevant tests based on code changes.</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Slide 11: Deployment & Code Review -->
+                <div class="slide" data-slide="11">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">7. Code Review & Deployment</h1>
+                    <p class="text-lg text-slate-500 mb-8">AI-Augmented Quality Gates</p>
+                    <div class="timeline-container mb-12">
+                        <div class="overarching-arrow">
+                            <div class="overarching-line"></div>
+                            <div class="overarching-arrowhead"></div>
+                            <div class="overarching-label">Overarching Alignment</div>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-arrow"></div>
+                            <div class="timeline-point" style="left: 11%;"></div>
+                            <div class="timeline-point" style="left: 22%;"></div>
+                            <div class="timeline-point" style="left: 33%;"></div>
+                            <div class="timeline-point" style="left: 44%;"></div>
+                            <div class="timeline-point" style="left: 55%;"></div>
+                            <div class="timeline-point active" style="left: 66%;"><div class="timeline-label">Integration & Deployment</div></div>
+                            <div class="timeline-point" style="left: 77%;"></div>
+                            <div class="timeline-point" style="left: 88%;"></div>
+                            <div class="absolute right-0 top-full mt-2 text-slate-800 font-bold">AI SDLC</div>
+                        </div>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="w-1/5 bg-slate-800 text-white p-4 rounded-tl-lg">Transformation Dimension</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4">Today</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4 rounded-tr-lg">Target Picture</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-slate-50">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Pull Request (PR) Process</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Slow, manual peer reviews that create bottlenecks.</li>
+                                        <li>Inconsistent reviews; human reviewers may miss subtle bugs.</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>AI acts as an immediate first-pass reviewer, checking standards, bugs, and performance.</li>
+                                        <li>AI automatically generates PR summaries to accelerate human review.</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Security Scanning</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Security scans run late in the CI pipeline, delaying feedback.</li>
+                                        <li>Reactive vulnerability detection.</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Real-time, in-IDE security feedback as code is written ("shift left to the keystroke").</li>
+                                        <li>AI-powered SAST tools suggest secure alternatives instantly.</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Slide 12: Maintenance -->
+                <div class="slide" data-slide="12">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">8. Maintenance & Operations</h1>
+                    <p class="text-lg text-slate-500 mb-8">Predictive and Automated System Management (AIOps)</p>
+                    <div class="timeline-container mb-12">
+                        <div class="overarching-arrow">
+                            <div class="overarching-line"></div>
+                            <div class="overarching-arrowhead"></div>
+                            <div class="overarching-label">Overarching Alignment</div>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-arrow"></div>
+                            <div class="timeline-point" style="left: 11%;"></div>
+                            <div class="timeline-point" style="left: 22%;"></div>
+                            <div class="timeline-point" style="left: 33%;"></div>
+                            <div class="timeline-point" style="left: 44%;"></div>
+                            <div class="timeline-point" style="left: 55%;"></div>
+                            <div class="timeline-point" style="left: 66%;"></div>
+                            <div class="timeline-point active" style="left: 77%;"><div class="timeline-label">Maintenance</div></div>
+                            <div class="timeline-point" style="left: 88%;"></div>
+                            <div class="absolute right-0 top-full mt-2 text-slate-800 font-bold">AI SDLC</div>
+                        </div>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="w-1/5 bg-slate-800 text-white p-4 rounded-tl-lg">Transformation Dimension</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4">Today</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4 rounded-tr-lg">Target Picture</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-slate-50">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Monitoring</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Reactive monitoring based on static, predefined thresholds.</li>
+                                        <li>Alert fatigue from numerous, often low-impact, notifications.</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Predictive monitoring (AIOps) learns normal system behavior.</li>
+                                        <li>AI detects subtle anomalies that are precursors to outages.</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Incident Response</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Manual investigation of logs and metrics to find root cause.</li>
+                                        <li>High Mean Time to Resolution (MTTR).</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>AI performs automated root cause analysis by correlating alerts across the stack.</li>
+                                        <li>Automated remediation for common issues (e.g., restarting a service).</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Slide 13: Documentation -->
+                <div class="slide" data-slide="13">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">9. Documentation</h1>
+                    <p class="text-lg text-slate-500 mb-8">From Afterthought to Automated Asset</p>
+                    <div class="timeline-container mb-12">
+                        <div class="overarching-arrow">
+                            <div class="overarching-line"></div>
+                            <div class="overarching-arrowhead"></div>
+                            <div class="overarching-label">Overarching Alignment</div>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-arrow"></div>
+                            <div class="timeline-point" style="left: 11%;"></div>
+                            <div class="timeline-point" style="left: 22%;"></div>
+                            <div class="timeline-point" style="left: 33%;"></div>
+                            <div class="timeline-point" style="left: 44%;"></div>
+                            <div class="timeline-point" style="left: 55%;"></div>
+                            <div class="timeline-point" style="left: 66%;"></div>
+                            <div class="timeline-point" style="left: 77%;"></div>
+                            <div class="timeline-point active" style="left: 88%;"><div class="timeline-label">Documentation</div></div>
+                            <div class="absolute right-0 top-full mt-2 text-slate-800 font-bold">AI SDLC</div>
+                        </div>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="w-1/5 bg-slate-800 text-white p-4 rounded-tl-lg">Transformation Dimension</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4">Today</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4 rounded-tr-lg">Target Picture</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-slate-50">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Content Generation</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Documentation is written manually as a final step.</li>
+                                        <li>Often incomplete, inaccurate, and quickly outdated.</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>AI parses source code to automatically generate documentation.</li>
+                                        <li>Generates natural language explanations, API docs, and READMEs.</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Maintenance</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Docs are static artifacts, separate from the code.</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>"Documentation as Code": docs are versioned and updated via CI/CD.</li>
+                                        <li>Documentation becomes a reliable, real-time asset.</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Slide 15: Collect Learnings -->
+                <div class="slide" data-slide="14">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">10. Collect Learnings/ Track Impact</h1>
+                    <p class="text-lg text-slate-500 mb-8">From Siloed Retrospectives to Systemic Improvement</p>
+                    <div class="timeline-container mb-12">
+                        <div class="overarching-arrow">
+                            <div class="overarching-line"></div>
+                            <div class="overarching-arrowhead"></div>
+                            <div class="overarching-label">Overarching Alignment</div>
+                             <!-- Active dot on the overarching arrow -->
+                            <div class="overarching-point" style="left: 95%;"></div>
+                            <!-- Active dot on the overarching arrow -->
+                            <div class="timeline-point" style="left: 5%;"></div>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-arrow"></div>
+                            <div class="timeline-point" style="left: 11%;"></div>
+                            <div class="timeline-point" style="left: 22%;"></div>
+                            <div class="timeline-point" style="left: 33%;"></div>
+                            <div class="timeline-point" style="left: 44%;"></div>
+                            <div class="timeline-point" style="left: 55%;"></div>
+                            <div class="timeline-point" style="left: 66%;"></div>
+                            <div class="timeline-point" style="left: 77%;"></div>
+                            <div class="timeline-point" style="left: 88%;"></div>
+                            <div class="absolute right-0 top-full mt-2 text-slate-800 font-bold">AI SDLC</div>
+                        </div>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="w-1/5 bg-slate-800 text-white p-4 rounded-tl-lg">Dimension</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4">Today</th>
+                                <th class="w-2/5 bg-slate-800 text-white p-4 rounded-tr-lg">Target Picture</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-slate-50">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Process Retrospective & Knowledge Sharing</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Manual, project-specific retrospectives.</li>
+                                        <li>Learnings are siloed in meeting notes or wiki pages.</li>
+                                        <li>Difficult to identify recurring, cross-project patterns.</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>AI analyzes data across all projects (tickets, commits, CI/CD logs) to find systemic bottlenecks.</li>
+                                        <li>AI provides data-driven topics for retrospectives.</li>
+                                        <li>A centralized, AI-queried knowledge base makes all learnings discoverable.</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Tracking Impact</td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Often sole focus on coding productivity.</li>
+                                    </ul>
+                                </td>
+                                <td class="p-4 border-b border-slate-200">
+                                    <ul class="list-disc indented-list">
+                                        <li>Focus on system improvement</li>
+                                        <li>Measure utilization, impact ***and cost*** </li>
+                                        <li>Combine Metrics: Blend quantitative and qualitative data for a holistic view.</li>
+                                        <li>Focus on Actionable Data: Gather data that clearly informs decisions and improvements</li>
+                                        <li>Don't Over-Index on Single Metrics: Be wary of Goodhart's Law and ensure that metrics actually reflect improvement</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- NEW Slide 14: Conceptual Model -->
+                <div class="slide" data-slide="15">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">A Conceptual Model for the AI-Assisted Workflow</h1>
+                    <p class="text-lg text-slate-500 mb-8">Integrating Agents, Guidelines, and Artifacts across the SDLC</p>
+                    
+                    <div style="padding: 40px 0;"></div>
+
+                    <!-- Diagram Container -->
+                    <div class="relative" style="min-height: 420px;">
+                        <!-- ARROWS -->
+                        <div class="absolute w-full h-full z-10">
+                            <!-- 1. Bidirectional Arrow Left <-> Middle -->
+                            <div class="arrow arrow-horizontal" style="left: 25.53%; width: 6.64%; top: 4.5rem; transform: translateY(-50%);"></div>
+                            <div class="arrow-head arrow-head-right" style="left: calc(25.53% + 6.64%); top: 4.5rem;"></div>
+                            <div class="arrow-head arrow-head-left" style="left: 25.53%; top: 4.5rem;"></div>
+
+                            <!-- 2. Bidirectional Arrow Middle <-> Right -->
+                            <div class="arrow arrow-horizontal" style="right: 25.53%; width: 6.64%; top: 4.5rem; transform: translateY(-50%);"></div>
+                            <div class="arrow-head arrow-head-left" style="right: calc(25.53% + 6.64%); top: 4.5rem;"></div>
+                            <div class="arrow-head arrow-head-right" style="right: 25.53%; top: 4.5rem;"></div>
+                            
+                            <!-- 3. Bidirectional Arrow Middle <-> Bottom -->
+                            <div class="arrow arrow-vertical" style="left: 50%; top: 9.5rem; height: 3.6rem;"></div>
+                            <div class="arrow-head arrow-head-up" style="left: 50%; top: 9.5rem;"></div>
+                            <div class="arrow-head arrow-head-down" style="left: 50%; top: 13.1rem;"></div>
+                        </div>
+                        
+                        <!-- BOXES -->
+                        <!-- Top Row -->
+                        <div class="absolute w-full flex justify-between items-center" style="top: 0rem; height: 9rem;">
+                            <!-- Left Box -->
+                            <div class="w-1/4 h-full border-2 border-slate-400 p-4 rounded-lg bg-slate-50 flex flex-col justify-center text-center">
+                                  <h3 class="font-bold text-slate-800"> &lt; YOUR COMPANY &gt; </h3>
+                                <h3 class="font-bold text-slate-800">Process-specific Guidelines</h3>
+                                <p class="text-xs text-slate-600 mt-1">(domain knowledge/rules, coding-conventions, output specifications, ...)</p>
+                            </div>
+                            <!-- Center Box -->
+                            <div class="w-1/3 h-full bg-slate-800 text-white p-4 rounded-lg flex items-center justify-center text-center">
+                                <h3 class="font-bold">SDLC phase-specific<br>Agent(s)</h3>
+                            </div>
+                            <!-- Right Box -->
+                            <div class="w-1/4 h-full border-2 border-slate-400 p-4 rounded-lg bg-slate-50 flex flex-col justify-center text-center">
+                                <h3 class="font-bold text-slate-800">Integrations</h3>
+                                <p class="text-xs text-slate-600 mt-1">(Slack, Confluence, Github, ...)</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Bottom Box -->
+                        <div class="absolute w-full border-2 border-slate-400 p-3 rounded-lg bg-slate-50 text-center" style="top: 14rem; height: 143px;">
+                            <h3 class="font-bold text-slate-800 mb-2">Project-specific</h3>
+                            <div class="flex justify-around items-start">
+                                <div class="w-1/3 px-2">
+                                    <h4 class="font-semibold text-slate-700 text-sm">Planning Artefacts</h4>
+                                    <p class="text-xs text-slate-600">(PRD, Epics/User stories, Testplan...)</p>
+                                </div>
+                                <div class="w-1/3 px-2">
+                                    <h4 class="font-semibold text-slate-700 text-sm">Implementation Artefacts.</h4>
+                                    <p class="text-xs text-slate-600">(Code+Docu, Tests, ...)</p>
+                                </div>
+                                <div class="w-1/3 px-2">
+                                    <h4 class="font-semibold text-slate-700 text-sm">Documentation Artefacts</h4>
+                                    <p class="text-xs text-slate-600">(Test/ Progress Reports, Presentations,...)</p>
+                                </div>
+                            </div>
+                             <p class="text-xs text-slate-700 mt-2 font-medium">Human and Machine-readable, Shared across SDLC phases and agents</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide" data-slide="16">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">Implementation option: Claude Code</h1>
+                    <p class="text-lg text-slate-500 mb-8">CC as the orchestrator of SubAgents in a development environment</p>
+                    
+                    <div class="flex flex-col items-center justify-center mt-8">
+                        <div class="relative border-2 border-white-500 rounded-lg p-6 w-full max-w-5xl">
+                            <span class="absolute -top-3 left-6 bg-white px-2 text-orange-500 font-semibold text-sm"></span>
+                            <div class="relative border-2 border-white-500 rounded-lg p-6">
+                                <span class="absolute -top-3 left-6 bg-white px-2 text-blue-500 font-semibold text-sm"></span>
+                                <div class="bg-teal-700 text-white p-4 rounded-lg text-center w-full">
+                                    <h2 class="text-2xl font-bold">Claude Code</h2>
+                                </div>
+                                <div class="bg-teal-700 p-6 rounded-lg mt-2 w-full">
+                                    <div class="grid grid-cols-4 gap-4">
+                                        <div class="bg-slate-700 text-white p-4 rounded-lg text-center flex items-center justify-center h-24">
+                                            <h3 class="font-semibold">Researcher</h3>
+                                        </div>
+                                        <div class="bg-slate-700 text-white p-4 rounded-lg text-center flex items-center justify-center h-24">
+                                            <h3 class="font-semibold">Architecture<br>Assistant</h3>
+                                        </div>
+                                        <div class="bg-slate-700 text-white p-4 rounded-lg text-center flex items-center justify-center h-24">
+                                            <h3 class="font-semibold">Testing<br>Assistant</h3>
+                                        </div>
+                                        <div class="bg-slate-700 text-white p-4 rounded-lg text-center flex items-center justify-center h-24">
+                                            <h3 class="font-semibold">Reporting<br>Assistant</h3>
+                                        </div>
+                                        <div class="bg-slate-700 text-white p-4 rounded-lg text-center flex items-center justify-center h-24">
+                                            <h3 class="font-semibold">Product<br>Requirements<br>Specialist</h3>
+                                        </div>
+                                        <div class="bg-slate-700 text-white p-4 rounded-lg text-center flex items-center justify-center h-24">
+                                            <h3 class="font-semibold">Coding<br>Assistant</h3>
+                                        </div>
+                                        <div class="bg-slate-700 text-white p-4 rounded-lg text-center flex items-center justify-center h-24">
+                                            <h3 class="font-semibold">Documentation<br>Assistant</h3>
+                                        </div>
+                                        <div class="bg-teal-700 text-white p-4 rounded-lg text-center flex items-center justify-center h-24">
+                                            <h3 class="font-semibold">Claude Code<br>"Subagents"<br>...</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NEW Slide 17: Duplicated and Modified Orchestrator Model -->
+                <div class="slide" data-slide="17">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">Implementation option: Claude Code</h1>
+                    <p class="text-lg text-slate-500 mb-8">CC as the orchestrator of SubAgents in a development environment</p>
+                    
+                    <div class="flex flex-col items-center justify-center mt-8">
+                        <div class="relative border-2 border-orange-500 rounded-lg p-6 w-full max-w-5xl">
+                            <span class="absolute -top-3 left-6 bg-white px-2 text-orange-500 font-semibold text-sm">Virtual Environment</span>
+                            <div class="relative border-2 border-blue-500 rounded-lg p-6">
+                                <span class="absolute -top-3 left-6 bg-white px-2 text-blue-500 font-semibold text-sm">VSCode</span>
+                                <div class="bg-teal-700 text-white p-4 rounded-lg text-center w-full">
+                                    <h2 class="text-2xl font-bold">Claude Code</h2>
+                                </div>
+                                <div class="bg-teal-700 p-6 rounded-lg mt-2 w-full">
+                                    <div class="grid grid-cols-4 gap-4">
+                                        <div class="bg-slate-700 text-white p-4 rounded-lg text-center flex items-center justify-center h-24">
+                                            <h3 class="font-semibold">Researcher</h3>
+                                        </div>
+                                        <div class="bg-slate-700 text-white p-4 rounded-lg text-center flex items-center justify-center h-24">
+                                            <h3 class="font-semibold">Architecture<br>Assistant</h3>
+                                        </div>
+                                        <div class="bg-slate-700 text-white p-4 rounded-lg text-center flex items-center justify-center h-24">
+                                            <h3 class="font-semibold">Testing<br>Assistant</h3>
+                                        </div>
+                                        <div class="bg-slate-700 text-white p-4 rounded-lg text-center flex items-center justify-center h-24">
+                                            <h3 class="font-semibold">Reporting<br>Assistant</h3>
+                                        </div>
+                                        <div class="bg-slate-700 text-white p-4 rounded-lg text-center flex items-center justify-center h-24">
+                                            <h3 class="font-semibold">Product<br>Requirements<br>Specialist</h3>
+                                        </div>
+                                        <div class="bg-slate-700 text-white p-4 rounded-lg text-center flex items-center justify-center h-24">
+                                            <h3 class="font-semibold">Coding<br>Assistant</h3>
+                                        </div>
+                                        <div class="bg-slate-700 text-white p-4 rounded-lg text-center flex items-center justify-center h-24">
+                                            <h3 class="font-semibold">Documentation<br>Assistant</h3>
+                                        </div>
+                                        <div class="bg-teal-700 text-white p-4 rounded-lg text-center flex items-center justify-center h-24">
+                                            <h3 class="font-semibold">Claude Code<br>"Subagents"<br>...</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 18: The Human Dimension (1/2) -->
+                <div class="slide flex flex-col" data-slide="18">
+                    <div>
+                        <h1 class="text-4xl font-bold text-slate-800 mb-2">11. The Human Dimension</h1>
+                        <p class="text-lg text-slate-500 mb-8">Evolving Roles & Teams in an AI-First World</p>
+                        
+                    </div>
+                    <div class="flex-grow flex items-center">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr>
+                                    <th class="w-1/5 bg-slate-800 text-white p-4 rounded-tl-lg">Role</th>
+                                    <th class="w-2/5 bg-slate-800 text-white p-4">Traditional Focus (Execution)</th>
+                                    <th class="w-2/5 bg-slate-800 text-white p-4 rounded-tr-lg">Evolved AI-First Focus (Intention & Validation)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-slate-50">
+                                    <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Product Manager</td>
+                                    <td class="p-4 border-b border-slate-200">
+                                        <ul class="list-disc indented-list">
+                                            <li>Manages feature backlogs and roadmaps.</li>
+                                            <li>Translates business needs for developers.</li>
+                                        </ul>
+                                    </td>
+                                    <td class="p-4 border-b border-slate-200">
+                                        <ul class="list-disc indented-list">
+                                            <li>Shifts to defining the 'why' based on ROI and setting ethical safety boundaries for the AI.</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white">
+                                    <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Architect</td>
+                                    <td class="p-4 border-b border-slate-200">
+                                        <ul class="list-disc indented-list">
+                                            <li>Designs system blueprints and selects technologies.</li>
+                                            <li>Creates diagrams for human interpretation.</li>
+                                        </ul>
+                                    </td>
+                                    <td class="p-4 border-b border-slate-200">
+                                        <ul class="list-disc indented-list">
+                                            <li>Evolves to define the machine-readable 'rules of the game' (constraints) for the AI.</li>
+                                        </ul>
+                                    </td>
+                                    <tr class="bg-slate-50">
+                                    <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Developer</td>
+                                    <td class="p-4 border-b border-slate-200">
+                                        <ul class="list-disc indented-list">
+                                            <li>Writes, debugs, and maintains code.</li>
+                                            <li>Focuses on the "how" of implementation.</li>
+                                        </ul>
+                                    </td>
+                                    <td class="p-4 border-b border-slate-200">
+                                        <ul class="list-disc indented-list">
+                                            <li>Transforms into an auditor focused on forensically validating AI code.</li>
+                                            <li>Uses time saved to solve novel problems beyond the AI's scope.</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                 <tr class="bg-white">
+                                    <td class="p-4 font-semibold text-slate-700 border-b border-slate-200">Talent Pipeline Challenge</td>
+                                    <td class="p-4 border-b border-slate-200">
+                                        <ul class="list-disc indented-list">
+                                            <li>Juniors learn by writing boilerplate code and fixing simple bugs.</li>
+                                        </ul>
+                                    </td>
+                                    <td class="p-4 border-b border-slate-200">
+                                        <ul class="list-disc indented-list">
+                                            <li>Requires new training models (e.g., simulations, AI supervision roles) as entry-level tasks are automated.</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                 <!-- Existing Slide, renumbered -->
+                <div class="slide" data-slide="19">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-2">Top Areas for Consulting Engagement</h1>
+                    <p class="text-lg text-slate-500 mb-6">Key focus areas to accelerate and de-risk the transformation to an AI-driven SDLC.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6 mt-4">
+                        <div class="p-4 rounded-lg" style="background-color: #C5D7D2;">
+                            <h3 class="font-bold text-slate-800 text-lg tile-headline">1. Strategic Alignment & Roadmap</h3>
+                            <p class="tile-text text-slate-600 mt-1">Defining the 'Why', the 'What' and the 'How'. Creating a phased adoption roadmap that aligns AI capabilities with specific business goals and value drivers.</p>
+                        </div>
+                        <div class="p-4 rounded-lg" style="background-color: #C5D7D2;">
+                            <h3 class="font-bold text-slate-800 text-lg tile-headline">2. Toolchain & Platform Selection</h3>
+                            <p class="tile-text text-slate-600 mt-1">Navigating the complex landscape of AI models and agent frameworks to build a cohesive, secure, and future-proof technology stack.</p>
+                        </div>
+                        <div class="p-4 rounded-lg" style="background-color: #C5D7D2;">
+                            <h3 class="font-bold text-slate-800 text-lg tile-headline">3. Governance, Risk & Compliance (GRC)</h3>
+                            <p class="tile-text text-slate-600 mt-1">Establishing robust governance policies for data privacy, IP protection, model bias, and acceptable use to ensure responsible AI implementation.</p>
+                        </div>
+                        <div class="p-4 rounded-lg" style="background-color: #C5D7D2;">
+                            <h3 class="font-bold text-slate-800 text-lg tile-headline">4. Pilot Program & Use Case Prioritization</h3>
+                            <p class="tile-text text-slate-600 mt-1">Identifying and executing high-impact, low-risk pilot projects to demonstrate value, build momentum, and generate key learnings.</p>
+                        </div>
+                        <div class="p-4 rounded-lg" style="background-color: #C5D7D2;">
+                            <h3 class="font-bold text-slate-800 text-lg tile-headline">5. Agent & Workflow Engineering</h3>
+                            <p class="tile-text text-slate-600 mt-1">Designing, building, and refining AI agents and automated workflows for specific SDLC phases, integrating them with existing systems.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg">
+                            <h3 class="font-bold text-slate-800 text-lg tile-headline">6. Organizational Change & Role Evolution</h3>
+                            <p class="tile-text text-slate-600 mt-1">Managing the human dimension of change, including redefining roles, evolving team structures, and developing new skill sets.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg">
+                            <h3 class="font-bold text-slate-800 text-lg tile-headline">7. Knowledge Management & Prompt Engineering</h3>
+                            <p class="tile-text text-slate-600 mt-1">Structuring internal knowledge and developing prompt engineering expertise to provide agents with the right context for high-quality output.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg">
+                            <h3 class="font-bold text-slate-800 text-lg tile-headline">8. Measurement & Impact Tracking (ROI)</h3>
+                            <p class="tile-text text-slate-600 mt-1">Developing a holistic measurement framework to track impact beyond productivity, focusing on quality, speed, cost, and overall system health.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg">
+                            <h3 class="font-bold text-slate-800 text-lg tile-headline">9. Training & Talent Development</h3>
+                            <p class="tile-text text-slate-600 mt-1">Creating new training programs and career paths to upskill the existing workforce and attract new talent for an AI-first engineering culture.</p>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>    
+
+        <!-- Footer with Navigation and Branding -->
+        <div class="bg-slate-800 px-8 md:px-12 py-4 flex justify-between items-center">
+            <div><!-- Empty div for spacing --></div>
+            <div class="flex justify-center items-center">
+                <button id="prev-btn" class="bg-slate-600 hover:bg-slate-500 text-white font-bold py-2 px-4 rounded-lg transition-colors">Previous</button>
+                <span id="slide-counter" class="text-white font-bold mx-4">1 / 20</span>
+                <button id="next-btn" class="bg-slate-600 hover:bg-slate-500 text-white font-bold py-2 px-4 rounded-lg transition-colors">Next</button>
+            </div>
+            <div class="text-white font-bold text-xl">
+                3P&O
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const slideCounter = document.getElementById('slide-counter');
+            let currentSlide = 0;
+            const totalSlides = slides.length;
+
+            function showSlide(n) {
+                // Correctly handle the data-slide attribute for the last slide, which was duplicated.
+                const slideElements = document.querySelectorAll('.slide');
+                slideElements.forEach((slide, index) => {
+                    // Clean up old data-slide attributes to prevent confusion
+                    if(slide.getAttribute('data-slide-fixed') !== 'true') {
+                       slide.setAttribute('data-slide', index);
+                       slide.setAttribute('data-slide-fixed', 'true');
+                    }
+                });
+
+
+                slides.forEach((slide, index) => {
+                    if (parseInt(slide.getAttribute('data-slide')) === n) {
+                        slide.classList.add('active');
+                    } else {
+                        slide.classList.remove('active');
+                    }
+                });
+
+                slideCounter.textContent = `${n + 1} / ${totalSlides}`;
+                
+                prevBtn.disabled = n === 0;
+                nextBtn.disabled = n === totalSlides - 1;
+
+                if (n === 0) {
+                    prevBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    prevBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+
+                if (n === totalSlides - 1) {
+                    nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+
+            function nextSlide() {
+                if (currentSlide < totalSlides - 1) {
+                    currentSlide++;
+                    showSlide(currentSlide);
+                }
+            }
+
+            function prevSlide() {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    showSlide(currentSlide);
+                }
+            }
+
+            prevBtn.addEventListener('click', prevSlide);
+            nextBtn.addEventListener('click', nextSlide);
+
+            // Initialize the first slide
+            showSlide(currentSlide);
+        });
+    </script>
+
+</body>
+</html>
