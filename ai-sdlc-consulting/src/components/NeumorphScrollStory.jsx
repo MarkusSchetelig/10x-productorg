@@ -1515,7 +1515,7 @@ const NeumorphScrollStory = () => {
               </div>
               <div className="cta-stat neumorph-inset">
                 <div className="cta-number">3-5x</div>
-                <div className="cta-label">Productivity Gain in critical workflows</div>
+                <div className="cta-label">Productivity Gains in Critical Workflows</div>
               </div>
               <div className="cta-stat neumorph-inset">
                 <div className="cta-number">90%</div>
@@ -1791,36 +1791,32 @@ const NeumorphScrollStory = () => {
                 
                 <div className="robot-modal-header">
                   <img src="/robot.png" alt="AI Assistant" className="robot-modal-icon" />
-                  <h2>AI Transformation Assistant</h2>
+                  <h2>Your AI Transformation Journey<br />Starts Here!</h2>
                 </div>
                 
                 <div className="robot-modal-content">
-                  <p className="robot-greeting">Hello! I'm here to help you navigate the complexities of AI transformation.</p>
+                  <p className="robot-greeting">Welcome! We're excited to help you discover the incredible opportunities AI can unlock for your organization.</p>
                   
                   <div className="robot-suggestions">
-                    <h3>How can I assist you today?</h3>
+                    <h3>Together, we will:</h3>
                     <ul>
-                      <li>🎯 Identify which challenges are most critical for your organization</li>
-                      <li>📊 Create a customized transformation roadmap</li>
-                      <li>💡 Get expert recommendations for overcoming specific obstacles</li>
-                      <li>🤝 Connect with our transformation specialists</li>
-                      <li>📚 Access relevant case studies and best practices</li>
+                      <li>🎯 <strong>Listen & Understand</strong> - Immerse ourselves in your unique context, ambitions, and challenges</li>
+                      <li>🚀 <strong>Discover AI Opportunities</strong> - Map your customer journeys and workflows to identify transformative AI applications</li>
+                      <li>📊 <strong>Create Focus & Alignment</strong> - Facilitate prioritization and establish clear objectives that unite your teams</li>
+                      <li>⚡ <strong>Transform with Purpose</strong> - Combine analytical rigor with human empathy to ensure successful adoption</li>
+                      <li>💡 <strong>Achieve 10X Impact</strong> - Turn your product organization into a competitive advantage</li>
                     </ul>
                   </div>
                   
                   <div className="robot-cta-buttons">
-                    <button className="neumorph-button primary">
-                      <Icons.Calendar size={18} />
-                      Schedule Consultation
-                    </button>
-                    <button className="neumorph-button secondary">
-                      <Icons.Download size={18} />
-                      Download Assessment Guide
-                    </button>
+                    <a href="mailto:contact@10x-productorg.com" className="neumorph-button primary" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                      <Icons.Mail size={18} />
+                      Contact Us at contact@10x-productorg.com
+                    </a>
                   </div>
                   
                   <p className="robot-footer">
-                    Our AI transformation experts have helped over 15+ organizations successfully navigate their journey. Let us help you turn these challenges into opportunities.
+                    The future is being written now. Join the leaders who are already transforming their PDLC with AI and achieving 3-5x productivity gains in critical workflows!
                   </p>
                 </div>
               </motion.div>
