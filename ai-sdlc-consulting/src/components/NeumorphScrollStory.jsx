@@ -1340,7 +1340,7 @@ const NeumorphScrollStory = () => {
               <p>Before we act, we listen. Deep understanding comes from truly hearing your challenges, goals, and unique context. We take time to understand not just what you say, but what you mean.</p>
               <div className="phase-activities">
                 <span className="activity-tag neumorph-flat">Immersion</span>
-                <span className="activity-tag neumorph-flat">Business & Context</span>
+                <span className="activity-tag neumorph-flat">Understanding</span>
                 <span className="activity-tag neumorph-flat">Ambitions</span>
                 <span className="activity-tag neumorph-flat">Challenges</span>
               </div>
