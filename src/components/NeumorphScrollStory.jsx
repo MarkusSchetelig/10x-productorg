@@ -4,22 +4,27 @@ import * as Icons from 'lucide-react'
 import { challenges, consultingAreas, stats, tenXPillars } from '../data/consultingData'
 import './NeumorphScrollStory.css'
 
-// Robot CTA Component
-const RobotCTA = ({ sectionName, show, onClick, tooltip }) => {
+// Robot CTA Component - Fixed position at bottom-right of viewport
+const RobotCTA = ({ show, onClick }) => {
   if (!show) return null
   
   return (
     <motion.div
-      className="robot-cta"
+      className="robot-cta robot-cta-fixed"
       initial={{ opacity: 0, scale: 0.5, y: 50 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
+      animate={{ 
+        opacity: 1, 
+        scale: 1, 
+        y: 0 
+      }}
       exit={{ opacity: 0, scale: 0.5, y: 50 }}
       transition={{ type: "spring", damping: 20, stiffness: 300 }}
       onClick={onClick}
     >
-      <img src="/robot.png" alt="AI Assistant" className="robot-icon" />
+      <div className="robot-icon-wrapper">
+        <img src="/robot.png" alt="AI Assistant" className="robot-icon" />
+      </div>
       <div className="robot-pulse"></div>
-      <span className="robot-tooltip">{tooltip}</span>
     </motion.div>
   )
 }
@@ -30,22 +35,19 @@ const NeumorphScrollStory = () => {
   const [selectedArea, setSelectedArea] = useState(null)
   const [selectedPillar, setSelectedPillar] = useState(null)
   const [iconDelays, setIconDelays] = useState([])
-  const [showRobotCTA, setShowRobotCTA] = useState({
-    hero: false,
-    pillars: false,
-    challenges: false,
-    process: false,
-    solutions: false,
-    cta: false
-  })
+  const [showGlobalRobot, setShowGlobalRobot] = useState(false)
+  const [robotVisible, setRobotVisible] = useState(false)
   const [showRobotModal, setShowRobotModal] = useState(false)
-  const [currentSectionForModal, setCurrentSectionForModal] = useState(null)
+  const [scrollTimer, setScrollTimer] = useState(null)
+  const [showImprintModal, setShowImprintModal] = useState(false)
+  const [showDataProtectionModal, setShowDataProtectionModal] = useState(false)
   const section1Ref = useRef(null) // Hero section
   const section2Ref = useRef(null) // 5 Pillars section
   const section3Ref = useRef(null) // Challenges section
   const section4Ref = useRef(null) // Process section
   const section5Ref = useRef(null) // Solutions section
-  const section6Ref = useRef(null) // CTA section
+  const section6Ref = useRef(null) // How We Work section
+  const section7Ref = useRef(null) // CTA section
   const [isGravityActive, setIsGravityActive] = useState(false)
   const gravityTimeoutRef = useRef(null)
   const gravitySection3TimeoutRef = useRef(null)
@@ -413,48 +415,48 @@ const NeumorphScrollStory = () => {
     }
   }, [isGravityActive])
   
-  // Show robot CTA after 5 seconds in each section
+  // Global robot visibility with scroll-based hide/show
   useEffect(() => {
-    const timers = {}
-    const sections = [
-      { ref: section1Ref, name: 'hero' },
-      { ref: section2Ref, name: 'pillars' },
-      { ref: section3Ref, name: 'challenges' },
-      { ref: section4Ref, name: 'process' },
-      { ref: section5Ref, name: 'solutions' },
-      { ref: section6Ref, name: 'cta' }
-    ]
+    let timer = null
+    let isScrolling = false
     
-    const checkSections = () => {
-      const viewportHeight = window.innerHeight
+    // Show robot initially after 5 seconds
+    const initialTimer = setTimeout(() => {
+      console.log('Showing global robot initially')
+      setShowGlobalRobot(true)
+      setRobotVisible(true)
+    }, 5000)
+    
+    const handleScroll = () => {
+      if (!showGlobalRobot) return
       
-      sections.forEach(section => {
-        if (!section.ref.current) return
-        
-        const rect = section.ref.current.getBoundingClientRect()
-        const visibleTop = Math.max(0, Math.min(viewportHeight, rect.top))
-        const visibleBottom = Math.max(0, Math.min(viewportHeight, rect.bottom))
-        const visibleHeight = visibleBottom - visibleTop
-        const visibilityPercentage = visibleHeight / rect.height
-        
-        // If section is more than 50% visible and robot not shown yet
-        if (visibilityPercentage > 0.5 && !showRobotCTA[section.name] && !timers[section.name]) {
-          // Set timer to show robot for this section
-          timers[section.name] = setTimeout(() => {
-            setShowRobotCTA(prev => ({ ...prev, [section.name]: true }))
-          }, 5000)
-        }
-      })
+      // Hide robot when scrolling starts
+      if (!isScrolling) {
+        isScrolling = true
+        setRobotVisible(false)
+      }
+      
+      // Clear existing timer
+      if (timer) {
+        clearTimeout(timer)
+      }
+      
+      // Show robot after 3 seconds of no scrolling
+      timer = setTimeout(() => {
+        isScrolling = false
+        setRobotVisible(true)
+      }, 3000)
     }
     
-    window.addEventListener('scroll', checkSections, { passive: true })
-    checkSections() // Check initial state
+    window.addEventListener('scroll', handleScroll, { passive: true })
     
     return () => {
-      window.removeEventListener('scroll', checkSections)
-      Object.values(timers).forEach(timer => clearTimeout(timer))
+      window.removeEventListener('scroll', handleScroll)
+      if (timer) clearTimeout(timer)
+      if (initialTimer) clearTimeout(initialTimer)
     }
-  }, [])
+  }, [showGlobalRobot])
+  
   
   const pillarContent = [
     {
@@ -918,7 +920,7 @@ const NeumorphScrollStory = () => {
 
   useEffect(() => {
     const unsubscribe = scrollYProgress.onChange(progress => {
-      const section = Math.floor(progress * 7) // Updated to 7 sections after removing bridge
+      const section = Math.floor(progress * 8) // Updated to 8 sections with How We Work
       setActiveSection(section)
     })
     return () => unsubscribe()
@@ -985,16 +987,6 @@ const NeumorphScrollStory = () => {
             </div>
           </div>
         </motion.div>
-        
-        <RobotCTA
-          sectionName="hero"
-          show={showRobotCTA.hero}
-          onClick={() => {
-            setCurrentSectionForModal('hero')
-            setShowRobotModal(true)
-          }}
-          tooltip="Ready to start your AI journey?"
-        />
       </section>
 
       {/* Section 2: 5 Pillars of 10X Product Organization */}
@@ -1022,7 +1014,7 @@ const NeumorphScrollStory = () => {
             <h2>
               In the Age of AI
               <br />
-              product organizations must shift from seeking 10% improvements to aiming for 10× impact.
+              product organizations must shift from seeking 10% Improvements to aiming for <span style={{ color: '#3979e9', fontWeight: 'bold' }}>10X Impact.</span>
             </h2>
           </div>
           
@@ -1105,16 +1097,6 @@ const NeumorphScrollStory = () => {
             </p>
           </div>
         </motion.div>
-        
-        <RobotCTA
-          sectionName="pillars"
-          show={showRobotCTA.pillars}
-          onClick={() => {
-            setCurrentSectionForModal('pillars')
-            setShowRobotModal(true)
-          }}
-          tooltip="Want to learn about 10X transformation?"
-        />
       </section>
 
       {/* Section 3: The Challenges */}
@@ -1170,15 +1152,6 @@ const NeumorphScrollStory = () => {
           </div>
         </motion.div>
         
-        <RobotCTA
-          sectionName="challenges"
-          show={showRobotCTA.challenges}
-          onClick={() => {
-            setCurrentSectionForModal('challenges')
-            setShowRobotModal(true)
-          }}
-          tooltip="Need help navigating challenges?"
-        />
       </section>
 
 
@@ -1197,7 +1170,7 @@ const NeumorphScrollStory = () => {
           viewport={{ once: true }}
         >
           <div className="neumorph-card central">
-            <h2>Our AI Transformation Process</h2>
+            <h2>We are here to help in a lean yet structured way!</h2>
             <p className="section-lead">
               9 strategic pillars to build your AI-powered organization
             </p>
@@ -1256,15 +1229,6 @@ const NeumorphScrollStory = () => {
         </motion.div>
         
         {/* Robot CTA for Process Section */}
-        <RobotCTA
-          sectionName="process"
-          show={showRobotCTA.process}
-          onClick={() => {
-            setCurrentSectionForModal('process')
-            setShowRobotModal(true)
-          }}
-          tooltip="Need help with process transformation?"
-        />
       </section>
 
       {/* Section 7: Our Solutions */}
@@ -1342,19 +1306,194 @@ const NeumorphScrollStory = () => {
         </motion.div>
         
         {/* Robot CTA for Solutions Section */}
-        <RobotCTA
-          sectionName="solutions"
-          show={showRobotCTA.solutions}
-          onClick={() => {
-            setCurrentSectionForModal('solutions')
-            setShowRobotModal(true)
-          }}
-          tooltip="Explore our solutions?"
-        />
+      </section>
+
+      {/* Section 7: How We Work */}
+      <section className="neumorph-section how-we-work-section" ref={section6Ref} style={{ position: 'relative' }}>
+        <motion.div 
+          className="section-content"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="neumorph-card central">
+            <h2>How We Work</h2>
+            <p className="section-lead">
+              Our proven methodology combines strategic insight with hands-on execution
+            </p>
+          </div>
+
+          {/* We Listen Philosophy */}
+          <motion.div 
+            className="work-phase neumorph-raised"
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ delay: 0.03 }}
+          >
+            <div className="phase-image-wrapper">
+              <img src="/understand.jpg" alt="We Listen" className="phase-image" />
+            </div>
+            <div className="phase-content">
+              <h3 style={{ background: 'linear-gradient(135deg, #e91e63, #ffc107)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>We Listen</h3>
+              <p>Before we act, we listen. Deep understanding comes from truly hearing your challenges, goals, and unique context. We take time to understand not just what you say, but what you mean.</p>
+              <div className="phase-activities">
+                <span className="activity-tag neumorph-flat">Active Listening</span>
+                <span className="activity-tag neumorph-flat">Contextual Understanding</span>
+                <span className="activity-tag neumorph-flat">Empathetic Engagement</span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* AI Opportunity Discovery - moved to 2nd position */}
+          <motion.div 
+            className="work-phase neumorph-raised"
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ delay: 0.05 }}
+          >
+            <div className="phase-image-wrapper">
+              <img src="/ai-sdlc-consulting/image.jpg" alt="AI Opportunity Discovery" className="phase-image" />
+            </div>
+            <div className="phase-content">
+              <h3 style={{ background: 'linear-gradient(135deg, #e91e63, #ffc107)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>AI Opportunity Discovery</h3>
+              <p>We identify and detail AI opportunities for transforming your products, services, and workflows. Through deep understanding of customer needs and pain points, we craft unique AI-powered solutions that deliver exceptional value and competitive advantage.</p>
+              <div className="phase-activities">
+                <span className="activity-tag neumorph-flat">AI Bootcamps</span>
+                <span className="activity-tag neumorph-flat">Design Thinking</span>
+                <span className="activity-tag neumorph-flat">Opportunity Mapping</span>
+                <span className="activity-tag neumorph-flat">Business Process Analysis</span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Create Focus & Alignment Phase - moved to 3rd position */}
+          <motion.div 
+            className="work-phase neumorph-raised"
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ delay: 0.07 }}
+          >
+            <div className="phase-image-wrapper">
+              <img src="/okr.png" alt="Strategic Alignment" className="phase-image" />
+            </div>
+            <div className="phase-content">
+              <h3 style={{ background: 'linear-gradient(135deg, #e91e63, #ffc107)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Create Focus & Alignment</h3>
+              <p>We help you establish clear objectives and measurable outcomes that align teams across all levels. By creating shared goals and transparent metrics, we ensure everyone moves in the same direction with purpose and clarity.</p>
+              <div className="phase-activities">
+                <span className="activity-tag neumorph-flat">Goal Setting</span>
+                <span className="activity-tag neumorph-flat">Strategic Alignment</span>
+                <span className="activity-tag neumorph-flat">Performance Metrics</span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Implementation Phase - Image on RIGHT */}
+          <motion.div 
+            className="work-phase neumorph-raised"
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ delay: 0.09 }}
+          >
+            <div className="phase-image-wrapper">
+              <img src="/agile.png" alt="Agile Methodology" className="phase-image" />
+            </div>
+            <div className="phase-content">
+              <h3 style={{ background: 'linear-gradient(135deg, #e91e63, #ffc107)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Agile Implementation</h3>
+              <p>We work alongside your teams using lean agile methodologies to achieve tangible value in weeks rather than months. Through rapid sprints and iterative delivery, our experts transfer knowledge while building, ensuring sustainable capability development.</p>
+              <div className="phase-activities">
+                <span className="activity-tag neumorph-flat">Lean Agile Delivery</span>
+                <span className="activity-tag neumorph-flat">Sprint Execution</span>
+                <span className="activity-tag neumorph-flat">Pilot Programs</span>
+                <span className="activity-tag neumorph-flat">Knowledge Transfer</span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Heart & Brain Philosophy */}
+          <motion.div 
+            className="work-phase neumorph-raised heart-brain-phase"
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ delay: 0.11 }}
+          >
+            <div className="phase-image-wrapper">
+              <img src="/heartandbrain.png" alt="Heart and Brain Working Together" className="phase-image" />
+            </div>
+            <div className="phase-content">
+              <h3>Heart & Brain</h3>
+              <p>Our approach uniquely combines analytical rigor with human empathy. We believe that successful transformation requires both analytical insights and innovative AI capabilities as well as a deep understanding of people's motivations, needs and fears during this transformation journey.</p>
+              <div className="phase-activities">
+                <span className="activity-tag neumorph-flat">Change Management</span>
+                <span className="activity-tag neumorph-flat">Data-Driven Insights</span>
+                <span className="activity-tag neumorph-flat">Empathetic Leadership</span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Key Differentiators */}
+          <div className="differentiators-container">
+            <h3 className="differentiators-title">What Sets Us Apart</h3>
+            <div className="differentiators-grid">
+              <motion.div 
+                className="differentiator-card neumorph-inset"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5 }}
+              >
+                <Icons.Users className="differentiator-icon" size={32} />
+                <h4>Collaborative Approach</h4>
+                <p>We work as an extension of your team, not external consultants</p>
+              </motion.div>
+              
+              <motion.div 
+                className="differentiator-card neumorph-inset"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.6 }}
+              >
+                <Icons.Zap className="differentiator-icon" size={32} />
+                <h4>Rapid Time-to-Value</h4>
+                <p>Deliver tangible results within weeks, not months</p>
+              </motion.div>
+              
+              <motion.div 
+                className="differentiator-card neumorph-inset"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.7 }}
+              >
+                <Icons.Brain className="differentiator-icon" size={32} />
+                <h4>AI-Native Expertise</h4>
+                <p>Deep understanding of AI capabilities and practical limitations</p>
+              </motion.div>
+              
+              <motion.div 
+                className="differentiator-card neumorph-inset"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.8 }}
+              >
+                <Icons.Network className="differentiator-icon" size={32} />
+                <h4>Network of Experts</h4>
+                <p>Access to specialized talent and industry leaders worldwide</p>
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       {/* Section 8: CTA */}
-      <section className="neumorph-section cta-story" ref={section6Ref}>
+      <section className="neumorph-section cta-story" ref={section7Ref}>
         <motion.div 
           className="section-content"
           initial={{ opacity: 0, scale: 0.9 }}
@@ -1410,15 +1549,6 @@ const NeumorphScrollStory = () => {
         </motion.div>
         
         {/* Robot CTA for CTA Section */}
-        <RobotCTA
-          sectionName="cta"
-          show={showRobotCTA.cta}
-          onClick={() => {
-            setCurrentSectionForModal('cta')
-            setShowRobotModal(true)
-          }}
-          tooltip="Ready to transform?"
-        />
       </section>
 
 
@@ -1692,6 +1822,202 @@ const NeumorphScrollStory = () => {
           </>
         )}
       </AnimatePresence>
+
+      {/* Imprint Modal */}
+      <AnimatePresence>
+        {showImprintModal && (
+          <>
+            <motion.div
+              className="modal-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowImprintModal(false)}
+              transition={{ duration: 0.3 }}
+            />
+            <div className="modal-wrapper">
+              <motion.div
+                className="legal-modal neumorph-raised"
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ 
+                  type: "spring", 
+                  damping: 30, 
+                  stiffness: 200
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <motion.button
+                  className="modal-close"
+                  onClick={() => setShowImprintModal(false)}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <Icons.X size={20} />
+                </motion.button>
+                
+                <div className="legal-modal-content">
+                  <h2>Imprint</h2>
+                  
+                  <section>
+                    <h3>Contact</h3>
+                    <p>
+                      Markus Schetelig<br />
+                      Phone: +49 1704979152<br />
+                      E-mail: contact@3pando.com
+                    </p>
+                  </section>
+
+                  <section>
+                    <h3>VAT ID</h3>
+                    <p>
+                      Sales tax identification number according to Sect. 27 a of the Sales Tax Law:<br />
+                      DE367364123
+                    </p>
+                  </section>
+
+                  <section>
+                    <h3>Person responsible for editorial</h3>
+                    <p>
+                      Markus Schetelig<br />
+                      Margarethe-Gottliebe-Weg 14B<br />
+                      14476 Potsdam
+                    </p>
+                  </section>
+
+                  <section>
+                    <h3>EU dispute resolution</h3>
+                    <p>
+                      The European Commission provides a platform for online dispute resolution (ODR):{" "}
+                      <a
+                        href="https://ec.europa.eu/consumers/odr/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="legal-link"
+                      >
+                        https://ec.europa.eu/consumers/odr/
+                      </a>
+                      <br />
+                      Our e-mail address can be found above in the site notice.
+                    </p>
+                  </section>
+
+                  <section>
+                    <h3>Dispute resolution proceedings in front of a consumer arbitration board</h3>
+                    <p>
+                      We are not willing or obliged to participate in dispute resolution proceedings in front of a consumer arbitration board.
+                    </p>
+                  </section>
+                </div>
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Data Protection Modal */}
+      <AnimatePresence>
+        {showDataProtectionModal && (
+          <>
+            <motion.div
+              className="modal-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowDataProtectionModal(false)}
+              transition={{ duration: 0.3 }}
+            />
+            <div className="modal-wrapper">
+              <motion.div
+                className="legal-modal neumorph-raised"
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ 
+                  type: "spring", 
+                  damping: 30, 
+                  stiffness: 200
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <motion.button
+                  className="modal-close"
+                  onClick={() => setShowDataProtectionModal(false)}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <Icons.X size={20} />
+                </motion.button>
+                
+                <div className="legal-modal-content">
+                  <h2>Data Protection</h2>
+                  
+                  <p>
+                    We respect your privacy and are committed to protecting it. Our website does not collect, store, or process any personal data, nor do we use cookies or tracking technologies. If you contact us directly (e.g., via email), any personal information you provide will be used solely to respond to your inquiry and handled in compliance with applicable data protection laws.
+                  </p>
+
+                  <p>
+                    For any questions or concerns about our data protection practices,<br />
+                    please feel free to contact us.
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Footer */}
+      <footer className="footer-section">
+        <div className="footer-content">
+          <div className="footer-items">
+            <span className="footer-copyright">© 2024 3P&O. All rights reserved.</span>
+            <span className="footer-divider">|</span>
+            <button
+              onClick={() => setShowImprintModal(true)}
+              className="footer-link footer-button"
+            >
+              Imprint
+            </button>
+            <span className="footer-divider">|</span>
+            <button
+              onClick={() => setShowDataProtectionModal(true)}
+              className="footer-link footer-button"
+            >
+              Data Protection
+            </button>
+            <span className="footer-divider">|</span>
+            <a
+              href="https://www.linkedin.com/in/markus-schetelig-878a29/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-link footer-linkedin"
+            >
+              <svg
+                className="linkedin-icon"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+              </svg>
+              Connect on LinkedIn
+            </a>
+          </div>
+        </div>
+      </footer>
+      
+      {/* Global Fixed Robot CTA */}
+      <RobotCTA
+        show={showGlobalRobot && robotVisible}
+        onClick={() => {
+          setShowRobotModal(true)
+        }}
+      />
     </div>
   )
 }
