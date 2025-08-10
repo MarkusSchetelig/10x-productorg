@@ -1514,7 +1514,7 @@ const NeumorphScrollStory = () => {
                 <div className="cta-label">Successful Projects</div>
               </div>
               <div className="cta-stat neumorph-inset">
-                <div className="cta-number">3-5x</div>
+                <div className="cta-number">3-15x</div>
                 <div className="cta-label">Productivity Gains in Critical Workflows</div>
               </div>
               <div className="cta-stat neumorph-inset">
@@ -1809,47 +1809,14 @@ const NeumorphScrollStory = () => {
                   </div>
                   
                   <div className="robot-cta-buttons">
-                    <div style={{ position: 'relative', display: 'inline-block' }}>
-                      <a 
-                        href="mailto:contact@10x-productorg.com" 
-                        className="neumorph-button primary email-button" 
-                        style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '18px', fontWeight: 'bold' }}
-                      >
-                        <Icons.Mail size={20} />
-                        Contact Us at contact@10x-productorg.com
-                      </a>
-                      <button
-                        className="copy-tooltip"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigator.clipboard.writeText('contact@10x-productorg.com');
-                          e.currentTarget.textContent = '✓ Copied!';
-                          setTimeout(() => {
-                            e.currentTarget.textContent = '📋 Copy Email';
-                          }, 2000);
-                        }}
-                        style={{
-                          position: 'absolute',
-                          top: '-35px',
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          padding: '6px 12px',
-                          background: '#1a1a1a',
-                          border: '1px solid #4fc3f7',
-                          borderRadius: '6px',
-                          color: '#4fc3f7',
-                          fontSize: '13px',
-                          cursor: 'pointer',
-                          opacity: 0,
-                          visibility: 'hidden',
-                          transition: 'opacity 0.2s, visibility 0.2s',
-                          whiteSpace: 'nowrap',
-                          zIndex: 10
-                        }}
-                      >
-                        📋 Copy Email
-                      </button>
-                    </div>
+                    <a 
+                      href="mailto:contact@10x-productorg.com" 
+                      className="neumorph-button primary email-button" 
+                      style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '18px', fontWeight: 'bold' }}
+                    >
+                      <Icons.Mail size={20} />
+                      Contact Us at contact@10x-productorg.com
+                    </a>
                   </div>
                 </div>
               </motion.div>
@@ -2048,7 +2015,7 @@ const NeumorphScrollStory = () => {
       
       {/* Global Fixed Robot CTA */}
       <RobotCTA
-        show={showGlobalRobot && robotVisible}
+        show={showGlobalRobot && robotVisible && !showRobotModal}
         onClick={() => {
           setShowRobotModal(true)
         }}

@@ -2205,12 +2205,6 @@
   flex-wrap: wrap;
 }
 
-.robot-cta-buttons .email-button:hover + .copy-tooltip,
-.robot-cta-buttons .copy-tooltip:hover {
-  opacity: 1 !important;
-  visibility: visible !important;
-}
-
 .robot-cta-buttons button {
   flex: 1;
   min-width: 200px;
