@@ -1339,9 +1339,10 @@ const NeumorphScrollStory = () => {
               <h3 style={{ background: 'linear-gradient(135deg, #e91e63, #ffc107)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>We Listen</h3>
               <p>Before we act, we listen. Deep understanding comes from truly hearing your challenges, goals, and unique context. We take time to understand not just what you say, but what you mean.</p>
               <div className="phase-activities">
-                <span className="activity-tag neumorph-flat">Active Listening</span>
-                <span className="activity-tag neumorph-flat">Contextual Understanding</span>
-                <span className="activity-tag neumorph-flat">Empathetic Engagement</span>
+                <span className="activity-tag neumorph-flat">Immersion</span>
+                <span className="activity-tag neumorph-flat">Business & Context</span>
+                <span className="activity-tag neumorph-flat">Ambitions</span>
+                <span className="activity-tag neumorph-flat">Challenges</span>
               </div>
             </div>
           </motion.div>
