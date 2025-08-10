@@ -1360,7 +1360,7 @@ const NeumorphScrollStory = () => {
             </div>
             <div className="phase-content">
               <h3 style={{ background: 'linear-gradient(135deg, #e91e63, #ffc107)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>AI Opportunity Discovery</h3>
-              <p>We identify and detail AI opportunities for transforming your products, services, and workflows. Through deep understanding of customer needs and pain points, we craft unique AI-powered solutions that deliver exceptional value and competitive advantage.</p>
+              <p>We analyze both internal and customer-facing workflows to identify and unlock gains through AI assistance and automation. By mapping your processes end-to-end, we pinpoint where AI can transform operations, enhance customer experiences, and create competitive advantages that deliver exceptional value.</p>
               <div className="phase-activities">
                 <span className="activity-tag neumorph-flat">AI Bootcamps</span>
                 <span className="activity-tag neumorph-flat">Design Thinking</span>
