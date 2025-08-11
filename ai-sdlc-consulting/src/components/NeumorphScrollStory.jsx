@@ -1808,14 +1808,14 @@ const NeumorphScrollStory = () => {
                     </ul>
                   </div>
                   
-                  <div className="robot-cta-buttons">
+                  <div className="robot-cta-buttons" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <a 
                       href="mailto:contact@10x-productorg.com" 
                       className="neumorph-button primary email-button" 
                       style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '18px' }}
                     >
                       <Icons.Mail size={20} style={{ color: '#4fc3f7' }} />
-                      <span><span style={{ color: '#4fc3f7' }}>Contact us at:</span>&nbsp;<strong style={{ marginLeft: '10px' }}>contact@10x-productorg.com</strong></span>
+                      <span><span style={{ color: '#4fc3f7' }}>Contact us at:</span>&nbsp;<strong>contact@10x-productorg.com</strong></span>
                     </a>
                   </div>
                 </div>
