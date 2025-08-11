@@ -210,6 +210,10 @@
   background: #0c0c0c;
 }
 
+.solutions-story .neumorph-card.central {
+  margin-bottom: 15px; /* Minimal spacing after headline */
+}
+
 .cta-story {
   background: #000000;
 }
@@ -1446,7 +1450,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 30px;
-  margin-top: 60px;
+  margin-top: 0; /* Removed spacing */
 }
 
 .solution-showcase-card {
