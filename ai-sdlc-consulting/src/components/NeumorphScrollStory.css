@@ -636,7 +636,7 @@
 }
 
 .insight-box {
-  max-width: 600px;
+  max-width: 660px; /* Increased by 10% from 600px */
   margin: 0 auto;
   display: flex;
   align-items: center;

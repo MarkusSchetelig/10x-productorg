@@ -1014,7 +1014,7 @@ const NeumorphScrollStory = () => {
             <h2>
               In the Age of AI
               <br />
-              product organizations must shift from seeking 10% Improvements to aiming for <span style={{ color: '#3979e9', fontWeight: 'bold' }}>10X Impact.</span>
+              product organizations must shift from seeking 10% Improvements to aiming at <span style={{ color: '#3979e9', fontWeight: 'bold' }}>10X Impact.</span>
             </h2>
           </div>
           
