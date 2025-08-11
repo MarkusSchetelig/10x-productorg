@@ -2134,8 +2134,9 @@
 /* Robot Modal */
 .robot-modal {
   background: var(--clean-bg);
-  border-radius: 20px;
+  border-radius: 0 0 20px 20px; /* No radius on top */
   padding: 30px; /* Reduced from 40px */
+  padding-top: 20px; /* Less padding on top since we're at viewport edge */
   width: 100%;
   max-height: 100vh; /* Use full viewport height */
   overflow-y: auto;
