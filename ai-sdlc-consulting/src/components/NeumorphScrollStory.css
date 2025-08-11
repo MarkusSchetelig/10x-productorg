@@ -1934,7 +1934,7 @@
 
 .work-phase {
   display: flex;
-  gap: 40px;
+  gap: 75px; /* Increased from 40px by 35px total */
   align-items: center;
   padding: 40px;
   border-radius: 20px;
