@@ -979,7 +979,7 @@ const NeumorphScrollStory = () => {
               Product Organization
             </h1>
             <p className="hero-subtitle">
-              Are you ready to shift gears?
+              Are you ready?
             </p>
             <div className="scroll-indicator neumorph-button">
               <Icons.ChevronDown size={24} />
@@ -1339,10 +1339,9 @@ const NeumorphScrollStory = () => {
               <h3 style={{ background: 'linear-gradient(135deg, #e91e63, #ffc107)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>We Listen</h3>
               <p>Before we act, we listen. Deep understanding comes from truly hearing your challenges, goals, and unique context. We take time to understand not just what you say, but what you mean.</p>
               <div className="phase-activities">
-                <span className="activity-tag neumorph-flat">Immersion</span>
-                <span className="activity-tag neumorph-flat">Understanding</span>
-                <span className="activity-tag neumorph-flat">Ambitions</span>
-                <span className="activity-tag neumorph-flat">Challenges</span>
+                <span className="activity-tag neumorph-flat">Active Listening</span>
+                <span className="activity-tag neumorph-flat">Contextual Understanding</span>
+                <span className="activity-tag neumorph-flat">Empathetic Engagement</span>
               </div>
             </div>
           </motion.div>
@@ -1360,12 +1359,12 @@ const NeumorphScrollStory = () => {
             </div>
             <div className="phase-content">
               <h3 style={{ background: 'linear-gradient(135deg, #e91e63, #ffc107)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>AI Opportunity Discovery</h3>
-              <p>Opportunities arise where needs or painpoints can be solved in an innovative or better way with AI. By mapping customer journeys, business processes and workflows together with your teams, we pinpoint where AI can transform operations, enhance customer experiences, and create competitive advantages that deliver exceptional value.</p>
+              <p>We identify and detail AI opportunities for transforming your products, services, and workflows. Through deep understanding of customer needs and pain points, we craft unique AI-powered solutions that deliver exceptional value and competitive advantage.</p>
               <div className="phase-activities">
                 <span className="activity-tag neumorph-flat">AI Bootcamps</span>
                 <span className="activity-tag neumorph-flat">Design Thinking</span>
-                <span className="activity-tag neumorph-flat">Business Process Analysis</span>
                 <span className="activity-tag neumorph-flat">Opportunity Mapping</span>
+                <span className="activity-tag neumorph-flat">Business Process Analysis</span>
               </div>
             </div>
           </motion.div>
@@ -1385,7 +1384,6 @@ const NeumorphScrollStory = () => {
               <h3 style={{ background: 'linear-gradient(135deg, #e91e63, #ffc107)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Create Focus & Alignment</h3>
               <p>We help you establish clear objectives and measurable outcomes that align teams across all levels. By creating shared goals and transparent metrics, we ensure everyone moves in the same direction with purpose and clarity.</p>
               <div className="phase-activities">
-                <span className="activity-tag neumorph-flat">Facilitation Prioritization</span>
                 <span className="activity-tag neumorph-flat">Goal Setting</span>
                 <span className="activity-tag neumorph-flat">Strategic Alignment</span>
                 <span className="activity-tag neumorph-flat">Performance Metrics</span>
@@ -1432,6 +1430,7 @@ const NeumorphScrollStory = () => {
               <p>Our approach uniquely combines analytical rigor with human empathy. We believe that successful transformation requires both analytical insights and innovative AI capabilities as well as a deep understanding of people's motivations, needs and fears during this transformation journey.</p>
               <div className="phase-activities">
                 <span className="activity-tag neumorph-flat">Change Management</span>
+                <span className="activity-tag neumorph-flat">Data-Driven Insights</span>
                 <span className="activity-tag neumorph-flat">Empathetic Leadership</span>
               </div>
             </div>
@@ -1505,17 +1504,17 @@ const NeumorphScrollStory = () => {
             <div className="cta-glow"></div>
             <h2>The Future is Being Written Now</h2>
             <p className="cta-lead">
-              Join the leaders who are already transforming their PDLC with AI
+              Join the leaders who are already transforming their SDLC with AI
             </p>
             
             <div className="cta-stats">
               <div className="cta-stat neumorph-inset">
-                <div className="cta-number">15+</div>
-                <div className="cta-label">Successful Projects</div>
+                <div className="cta-number">500+</div>
+                <div className="cta-label">Successful Transformations</div>
               </div>
               <div className="cta-stat neumorph-inset">
-                <div className="cta-number">3-15x</div>
-                <div className="cta-label">Productivity Gains in Critical Workflows</div>
+                <div className="cta-number">3-5x</div>
+                <div className="cta-label">Average Productivity Gain</div>
               </div>
               <div className="cta-stat neumorph-inset">
                 <div className="cta-number">90%</div>
@@ -1528,28 +1527,23 @@ const NeumorphScrollStory = () => {
                 className="cta-btn primary neumorph-button"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setShowRobotModal(true)}
               >
                 Start Your Journey
                 <Icons.ArrowRight size={20} />
               </motion.button>
-              <motion.a
-                href="https://docs.google.com/document/d/1A59B92h1k85owCO2II-J5MPoUJ-wuDUgoAHkrM0DIDk/edit?usp=sharing"
-                target="_blank"
-                rel="noopener noreferrer"
+              <motion.button
                 className="cta-btn secondary neumorph-button-outline"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
               >
                 <Icons.FileText size={20} />
-                Whitepaper: 10X Product-Manager
-              </motion.a>
+                Get the Whitepaper
+              </motion.button>
             </div>
             
             <div className="contact-info neumorph-inset">
               <p>Or reach out directly:</p>
-              <a href="mailto:contact@10x-productorg.com">contact@10x-productorg.com</a>
+              <a href="mailto:ai-transformation@consultancy.com">ai-transformation@consultancy.com</a>
             </div>
           </div>
         </motion.div>
@@ -1765,12 +1759,12 @@ const NeumorphScrollStory = () => {
               onClick={() => setShowRobotModal(false)}
               transition={{ duration: 0.3 }}
             />
-            <div className="modal-wrapper">
+            <div className="robot-modal-wrapper">
               <motion.div
                 className="robot-modal neumorph-raised"
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ 
                   type: "spring", 
                   damping: 30, 
@@ -1791,33 +1785,37 @@ const NeumorphScrollStory = () => {
                 
                 <div className="robot-modal-header">
                   <img src="/robot.png" alt="AI Assistant" className="robot-modal-icon" />
-                  <h2>Your AI transformation starts here!</h2>
+                  <h2>AI Transformation Assistant</h2>
                 </div>
                 
                 <div className="robot-modal-content">
-                  <p className="robot-greeting">Welcome! We're excited to help you discover the incredible opportunities AI can unlock for your organization.</p>
+                  <p className="robot-greeting">Hello! I'm here to help you navigate the complexities of AI transformation.</p>
                   
                   <div className="robot-suggestions">
-                    <h3>Together, we will:</h3>
+                    <h3>How can I assist you today?</h3>
                     <ul>
-                      <li>🎯 <strong>Listen & Understand</strong> - Immerse ourselves in your unique context, ambitions, and challenges</li>
-                      <li>🚀 <strong>Discover AI Opportunities</strong> - Map your customer journeys and workflows to identify transformative AI applications</li>
-                      <li>📊 <strong>Create Focus & Alignment</strong> - Facilitate prioritization and establish clear objectives that unite your teams</li>
-                      <li>⚡ <strong>Transform with Purpose</strong> - Combine analytical rigor with human empathy to ensure successful adoption</li>
-                      <li>💡 <strong>Achieve 10X Impact</strong> - Turn your product organization into a competitive advantage</li>
+                      <li>🎯 Identify which challenges are most critical for your organization</li>
+                      <li>📊 Create a customized transformation roadmap</li>
+                      <li>💡 Get expert recommendations for overcoming specific obstacles</li>
+                      <li>🤝 Connect with our transformation specialists</li>
+                      <li>📚 Access relevant case studies and best practices</li>
                     </ul>
                   </div>
                   
                   <div className="robot-cta-buttons">
-                    <a 
-                      href="mailto:contact@10x-productorg.com" 
-                      className="neumorph-button primary email-button" 
-                      style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '18px', fontWeight: 'bold' }}
-                    >
-                      <Icons.Mail size={20} />
-                      Contact Us at contact@10x-productorg.com
-                    </a>
+                    <button className="neumorph-button primary">
+                      <Icons.Calendar size={18} />
+                      Schedule Consultation
+                    </button>
+                    <button className="neumorph-button secondary">
+                      <Icons.Download size={18} />
+                      Download Assessment Guide
+                    </button>
                   </div>
+                  
+                  <p className="robot-footer">
+                    Our AI transformation experts have helped over 500+ organizations successfully navigate their journey. Let us help you turn these challenges into opportunities.
+                  </p>
                 </div>
               </motion.div>
             </div>
@@ -1869,7 +1867,7 @@ const NeumorphScrollStory = () => {
                     <p>
                       Markus Schetelig<br />
                       Phone: +49 1704979152<br />
-                      E-mail: contact@10x-productorg.com
+                      E-mail: contact@3pando.com
                     </p>
                   </section>
 
@@ -2015,7 +2013,7 @@ const NeumorphScrollStory = () => {
       
       {/* Global Fixed Robot CTA */}
       <RobotCTA
-        show={showGlobalRobot && robotVisible && !showRobotModal}
+        show={showGlobalRobot && robotVisible}
         onClick={() => {
           setShowRobotModal(true)
         }}
