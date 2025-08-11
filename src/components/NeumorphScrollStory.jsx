@@ -1759,7 +1759,7 @@ const NeumorphScrollStory = () => {
               onClick={() => setShowRobotModal(false)}
               transition={{ duration: 0.3 }}
             />
-            <div className="modal-wrapper robot-modal-wrapper">
+            <div className="robot-modal-wrapper">
               <motion.div
                 className="robot-modal neumorph-raised"
                 initial={{ opacity: 0, scale: 0.95 }}
