@@ -1812,10 +1812,10 @@ const NeumorphScrollStory = () => {
                     <a 
                       href="mailto:contact@10x-productorg.com" 
                       className="neumorph-button primary email-button" 
-                      style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '18px', fontWeight: 'bold' }}
+                      style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '18px' }}
                     >
                       <Icons.Mail size={20} />
-                      Contact Us at contact@10x-productorg.com
+                      <span>Contact Us at <strong>contact@10x-productorg.com</strong></span>
                     </a>
                   </div>
                 </div>
