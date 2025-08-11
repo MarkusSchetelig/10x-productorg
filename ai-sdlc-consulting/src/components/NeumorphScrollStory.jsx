@@ -1386,7 +1386,7 @@ const NeumorphScrollStory = () => {
               <h3 style={{ background: 'linear-gradient(135deg, #e91e63, #ffc107)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Create Focus & Alignment</h3>
               <p>We help you establish clear objectives and measurable outcomes that align teams across all levels. By creating shared goals and transparent metrics, we ensure everyone moves in the same direction with purpose and clarity.</p>
               <div className="phase-activities">
-                <span className="activity-tag neumorph-flat">Facilitation Prioritization</span>
+                <span className="activity-tag neumorph-flat">Prioritization</span>
                 <span className="activity-tag neumorph-flat">Goal Setting</span>
                 <span className="activity-tag neumorph-flat">Strategic Alignment</span>
                 <span className="activity-tag neumorph-flat">Performance Metrics</span>
