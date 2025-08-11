@@ -636,11 +636,12 @@
 }
 
 .insight-box {
-  max-width: 660px; /* Increased by 10% from 600px */
+  max-width: 750px; /* Increased to fit text on 2 lines */
   margin: 0 auto;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 30px;
+  gap: 20px;
   padding: 40px;
 }
 
@@ -662,6 +663,7 @@
   font-size: 18px;
   margin: 0;
   color: var(--clean-text);
+  text-align: center;
 }
 
 /* Challenges Section */

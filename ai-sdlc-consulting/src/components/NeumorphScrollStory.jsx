@@ -1093,7 +1093,8 @@ const NeumorphScrollStory = () => {
               <Icons.TrendingUp size={24} />
             </div>
             <p>
-              Adopting this 10× mindset is quickly becoming the right playbook in an era where AI is rewriting the rules of the game.
+              Adopting this 10× mindset is quickly becoming the right playbook<br />
+              in an era where AI is rewriting the rules of the game.
             </p>
           </div>
         </motion.div>
