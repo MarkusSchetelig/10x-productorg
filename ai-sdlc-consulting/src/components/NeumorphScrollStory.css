@@ -1961,51 +1961,51 @@
 .work-phase:nth-child(2) .phase-image-wrapper {
   border-color: #3b82f6;
   box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-  transform: rotate(3.75deg);
+  transform: rotate(2.6deg); /* Reduced by 30% from 3.75deg */
 }
 
 .work-phase:nth-child(2) .phase-image-wrapper:hover {
-  transform: rotate(3.75deg) scale(1.05);
+  transform: rotate(2.6deg) scale(1.05);
 }
 
 .work-phase:nth-child(3) .phase-image-wrapper {
   border-color: #8b5cf6;
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-  transform: rotate(-3.75deg);
+  transform: rotate(-2.6deg); /* Reduced by 30% from -3.75deg */
 }
 
 .work-phase:nth-child(3) .phase-image-wrapper:hover {
-  transform: rotate(-3.75deg) scale(1.05);
+  transform: rotate(-2.6deg) scale(1.05);
 }
 
 .work-phase:nth-child(4) .phase-image-wrapper {
   border-color: #14b8a6;
   box-shadow: 0 0 20px rgba(20, 184, 166, 0.3);
-  transform: rotate(3.75deg);
+  transform: rotate(2.6deg); /* Reduced by 30% from 3.75deg */
 }
 
 .work-phase:nth-child(4) .phase-image-wrapper:hover {
-  transform: rotate(3.75deg) scale(1.05);
+  transform: rotate(2.6deg) scale(1.05);
 }
 
 .work-phase:nth-child(5) .phase-image-wrapper {
   border-color: #f59e0b;
   box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
-  transform: rotate(-3.75deg);
+  transform: rotate(-2.6deg); /* Reduced by 30% from -3.75deg */
 }
 
 .work-phase:nth-child(5) .phase-image-wrapper:hover {
-  transform: rotate(-3.75deg) scale(1.05);
+  transform: rotate(-2.6deg) scale(1.05);
 }
 
 .work-phase:nth-child(6) .phase-image-wrapper {
   border-color: #ef4444;
   box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-  transform: rotate(3.75deg);
+  transform: rotate(2.6deg); /* Reduced by 30% from 3.75deg */
 }
 
 .work-phase:nth-child(6) .phase-image-wrapper:hover {
-  transform: rotate(3.75deg) scale(1.05);
+  transform: rotate(2.6deg) scale(1.05);
 }
 
 .phase-image {
