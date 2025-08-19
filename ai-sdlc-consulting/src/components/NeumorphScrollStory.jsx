@@ -21,6 +21,7 @@ const RobotCTA = ({ show, onClick }) => {
       transition={{ type: "spring", damping: 20, stiffness: 300 }}
       onClick={onClick}
     >
+      <div className="robot-help-text">Need support? </div>
       <div className="robot-icon-wrapper">
         <img src="/robot.png" alt="AI Assistant" className="robot-icon" />
       </div>
@@ -53,6 +54,7 @@ const NeumorphScrollStory = () => {
   const gravitySection3TimeoutRef = useRef(null)
   const gravitySection4TimeoutRef = useRef(null)
   const robotCTATimeoutRef = useRef(null)
+  const [challengesInView, setChallengesInView] = useState(false)
   
   // Generate random animation delays for icons
   const generateRandomDelays = () => {
@@ -415,6 +417,32 @@ const NeumorphScrollStory = () => {
     }
   }, [isGravityActive])
   
+  // Intersection Observer for challenges section
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !challengesInView) {
+            setChallengesInView(true)
+          }
+        })
+      },
+      {
+        threshold: 0.3 // Trigger when 30% of the section is visible
+      }
+    )
+
+    if (section3Ref.current) {
+      observer.observe(section3Ref.current)
+    }
+
+    return () => {
+      if (section3Ref.current) {
+        observer.unobserve(section3Ref.current)
+      }
+    }
+  }, [challengesInView])
+
   // Global robot visibility with scroll-based hide/show
   useEffect(() => {
     let timer = null
@@ -462,7 +490,7 @@ const NeumorphScrollStory = () => {
     {
       title: "Exponential Speed and Agility",
       subtitle: "Time-to-Market",
-      content: "AI-powered tools drastically **accelerate** the product development lifecycle, shrinking the time from idea to launch. By automating time-consuming tasks – from coding and testing to project management – AI frees teams to focus on high-value creative work. The result is a much faster **time-to-market**: organizations report that tasks which once took weeks can now be completed in **days or hours**. In fact, some product leaders note their teams \"can now dream up an idea one day and have a functional prototype the next\". This unprecedented **agility** means more frequent releases, quicker pivots, and the ability to capitalize on market opportunities or respond to feedback almost in real-time. In an environment where AI is everywhere, **speed becomes a competitive differentiator** – not by overworking teams, but by augmenting them with AI to accomplish more in less time."
+      content: "AI-powered tools drastically **accelerate** the product development lifecycle, shrinking the time from idea to launch. By automating time-consuming tasks – from coding and testing to project management – AI frees teams to focus on high-value creative work. The result is a much faster **time-to-market**: Our clients report that tasks which once took weeks can now be completed in **days or hours**. In fact, some product leaders note their teams \"can now dream up an idea one day and have a functional prototype the next\". This unprecedented **agility** means more frequent releases, quicker pivots, and the ability to capitalize on market opportunities or respond to feedback almost in real-time. In an environment where AI is everywhere, **speed becomes a competitive differentiator** – not by overworking teams, but by augmenting them with AI to accomplish more in less time."
     },
     {
       title: "Customer-Centric Value Delivery",
@@ -495,7 +523,7 @@ const NeumorphScrollStory = () => {
     const parts = text.split(/(\*\*[^*]+\*\*)/g);
     return parts.map((part, index) => {
       if (part.startsWith('**') && part.endsWith('**')) {
-        return <strong key={index} style={{ color: '#3979e9' }}>{part.slice(2, -2)}</strong>;
+        return <span key={index} style={{ color: '#3979e9' }}>{part.slice(2, -2)}</span>;
       }
       return part;
     });
@@ -518,16 +546,16 @@ const NeumorphScrollStory = () => {
         if (cleanText === keyword) {
           return (
             <span key={index} className="keyword-tooltip-wrapper">
-              <strong className="keyword-highlight" style={{ color: '#3979e9', cursor: 'help' }}>
+              <span className="keyword-highlight" style={{ color: '#3979e9', cursor: 'help' }}>
                 {cleanText}
-              </strong>
+              </span>
               <span className="keyword-tooltip neumorph-raised">
                 {tooltip}
               </span>
             </span>
           );
         }
-        return <strong key={index} style={{ color: '#3979e9' }}>{cleanText}</strong>;
+        return <span key={index} style={{ color: '#3979e9' }}>{cleanText}</span>;
       }
       return part;
     });
@@ -1014,7 +1042,7 @@ const NeumorphScrollStory = () => {
             <h2>
               In the Age of AI
               <br />
-              product organizations must shift from seeking 10% Improvements to aiming at <span style={{ color: '#3979e9', fontWeight: 'bold' }}>10X Impact.</span>
+              product organizations must shift from seeking 10% Improvements to aiming at <span style={{ color: '#3979e9' }}>10X Impact.</span>
             </h2>
           </div>
           
@@ -1093,7 +1121,7 @@ const NeumorphScrollStory = () => {
               <Icons.TrendingUp size={24} />
             </div>
             <p>
-              Adopting this 10× mindset is quickly becoming the right playbook<br />
+              Adopting a 10× mindset is quickly becoming the right playbook<br />
               in an era where AI is rewriting the rules of the game.
             </p>
           </div>
@@ -1135,7 +1163,7 @@ const NeumorphScrollStory = () => {
               return (
                 <div
                   key={challenge.id}
-                  className="challenge-bubble"
+                  className={`challenge-bubble ${challengesInView ? 'animate' : ''}`}
                   style={{
                     '--bubble-delay': `${idx * 4}s`,
                     '--bubble-duration': '20s',

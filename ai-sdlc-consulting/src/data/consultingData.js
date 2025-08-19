@@ -395,7 +395,7 @@ export const tenXPillars = [
     subtitle: "Time-to-Market",
     icon: "Zap",
     description: "AI-powered tools drastically accelerate the product development lifecycle, shrinking the time from idea to launch.",
-    content: "By automating time-consuming tasks – from coding and testing to project management – AI frees teams to focus on high-value creative work. Organizations report that tasks which once took weeks can now be completed in days or hours. Some product leaders note their teams can now dream up an idea one day and have a functional prototype the next.",
+    content: "By automating time-consuming tasks – from coding and testing to project management – AI frees teams to focus on high-value creative work. Our clients report that tasks which once took weeks can now be completed in days or hours. Some product leaders note their teams can now dream up an idea one day and have a functional prototype the next.",
     benefits: [
       "10× faster time-to-market",
       "More frequent releases",

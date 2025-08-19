@@ -702,10 +702,13 @@
 .challenge-bubble {
   position: absolute;
   opacity: 0;
-  animation: bubbleGrow var(--bubble-duration) var(--bubble-delay) infinite ease-in-out;
   pointer-events: all;
   cursor: pointer;
   z-index: 1;
+}
+
+.challenge-bubble.animate {
+  animation: bubbleGrow var(--bubble-duration) var(--bubble-delay) infinite ease-in-out;
 }
 
 .challenge-bubble:hover {
@@ -736,9 +739,13 @@
   font-size: 0.9em;
   margin: 0;
   color: #ffffff;
+  opacity: 1; /* Default visible when not animating */
+  font-weight: 600;
+}
+
+.challenge-bubble.animate .bubble-content h3 {
   opacity: 0;
   animation: fadeInOut var(--bubble-duration) var(--bubble-delay) infinite;
-  font-weight: 600;
 }
 
 .bubble-description {
@@ -1549,10 +1556,11 @@
   bottom: 115px; /* Shifted 75px upwards from 40px */
   right: 40px;
   width: 160px;
-  height: 160px;
+  height: 180px;
   cursor: pointer;
   z-index: 100;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
@@ -1565,6 +1573,18 @@
   z-index: 1000 !important;
 }
 
+.robot-help-text {
+  position: absolute;
+  top: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #9ca3af;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
+  pointer-events: none;
+  margin-bottom: 8px;
+}
+
 .robot-icon-wrapper {
   width: 120px;
   height: 120px;
@@ -1572,23 +1592,24 @@
   align-items: center;
   justify-content: center;
   z-index: 2;
-  animation: robotShake 5s ease-in-out infinite;
+  /* Removed animation */
 }
 
 .robot-icon {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 4px 20px rgba(239, 68, 68, 0.3));
-  animation: robotSpin 20s ease-in-out infinite;
+  /* Removed red glow */
 }
 
 .robot-cta:hover .robot-icon-wrapper {
-  animation: robotShakeOnce 0.8s ease-in-out;
+  /* Removed animation on hover */
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
 }
 
 .robot-cta:hover .robot-icon {
-  animation: none;
+  /* No animation needed */
 }
 
 .robot-pulse {
@@ -1596,8 +1617,8 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(239, 68, 68, 0.4), transparent);
-  animation: robotPulse 2s ease-in-out infinite;
+  /* Removed red pulse glow */
+  display: none;
 }
 
 @keyframes robotPulse {
