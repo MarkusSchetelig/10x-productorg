@@ -1578,7 +1578,10 @@
   top: 0;
   font-size: 14px;
   font-weight: 600;
-  color: #9ca3af;
+  background: linear-gradient(135deg, #3979e9 0%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   white-space: nowrap;
   pointer-events: none;
