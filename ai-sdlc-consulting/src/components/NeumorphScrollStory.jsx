@@ -1572,7 +1572,15 @@ const NeumorphScrollStory = () => {
                 className="cta-btn primary neumorph-button"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setShowRobotModal(true)}
+                onClick={() => {
+                  // Close any other open modals first
+                  setSelectedArea(null)
+                  setSelectedPillar(null)
+                  setShowImprintModal(false)
+                  setShowDataProtectionModal(false)
+                  // Then open robot modal
+                  setShowRobotModal(true)
+                }}
               >
                 Start Your Journey
                 <Icons.ArrowRight size={20} />
@@ -2061,6 +2069,12 @@ const NeumorphScrollStory = () => {
       <RobotCTA
         show={showGlobalRobot && robotVisible && !showRobotModal}
         onClick={() => {
+          // Close any other open modals first
+          setSelectedArea(null)
+          setSelectedPillar(null)
+          setShowImprintModal(false)
+          setShowDataProtectionModal(false)
+          // Then open robot modal
           setShowRobotModal(true)
         }}
       />
