@@ -19,8 +19,8 @@ export const challenges = [
   },
   {
     id: 4,
-    title: "Confusing AI Features",
-    description: "People don't understand what the AI does or how to fix mistakes, so they don't trust it.",
+    title: "Unreliable AI Features",
+    description: "Inconsistent performance, unpredictable outputs, and frequent failures undermine user confidence and adoption.",
     icon: "Users"
   },
   {
@@ -37,8 +37,8 @@ export const challenges = [
   },
   {
     id: 7,
-    title: "No Data Agreements Between Teams",
-    description: "Without clear owners, quality rules, and handover checklists, data breaks and work must be redone.",
+    title: "Data in Silos",
+    description: "Each department keeps their own data locked away, making it impossible to get a complete picture or leverage insights across the organization.",
     icon: "FileCheck"
   },
   {
@@ -91,7 +91,7 @@ export const challenges = [
   },
   {
     id: 16,
-    title: "Inventory Black Holes",
+    title: "Missing Model Governance",
     description: "No live registry, model cards, lineage, or logs slows audits and weakens provenance.",
     icon: "Archive"
   },
@@ -145,7 +145,7 @@ export const challenges = [
   },
   {
     id: 25,
-    title: "Incentives Fight Learning",
+    title: "Wrong Rewards",
     description: "Recognition and advancement aren't tied to safe experimentation and sharing, so the culture stalls.",
     icon: "Award"
   }

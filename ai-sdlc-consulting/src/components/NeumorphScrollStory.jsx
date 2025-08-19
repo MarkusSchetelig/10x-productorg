@@ -447,20 +447,31 @@ const NeumorphScrollStory = () => {
   useEffect(() => {
     let timer = null
     let isScrolling = false
+    let lastScrollTime = 0
     
-    // Show robot initially after 5 seconds
+    // Show robot initially after 6 seconds
     const initialTimer = setTimeout(() => {
       console.log('Showing global robot initially')
       setShowGlobalRobot(true)
       setRobotVisible(true)
-    }, 5000)
+    }, 6000)
     
     const handleScroll = () => {
       if (!showGlobalRobot) return
       
+      // Don't hide robot during gravity animations
+      if (isGravityActive) {
+        console.log('Ignoring scroll during gravity animation')
+        return
+      }
+      
+      const currentTime = Date.now()
+      lastScrollTime = currentTime
+      
       // Hide robot when scrolling starts
       if (!isScrolling) {
         isScrolling = true
+        console.log('Hiding robot during scroll')
         setRobotVisible(false)
       }
       
@@ -469,11 +480,15 @@ const NeumorphScrollStory = () => {
         clearTimeout(timer)
       }
       
-      // Show robot after 3 seconds of no scrolling
+      // Show robot after 6 seconds of no scrolling
       timer = setTimeout(() => {
-        isScrolling = false
-        setRobotVisible(true)
-      }, 3000)
+        // Only show robot if enough time has passed since last scroll and not during gravity
+        if (Date.now() - lastScrollTime >= 6000 && !isGravityActive) {
+          isScrolling = false
+          console.log('Showing robot after scroll timeout')
+          setRobotVisible(true)
+        }
+      }, 6000)
     }
     
     window.addEventListener('scroll', handleScroll, { passive: true })
@@ -483,7 +498,7 @@ const NeumorphScrollStory = () => {
       if (timer) clearTimeout(timer)
       if (initialTimer) clearTimeout(initialTimer)
     }
-  }, [showGlobalRobot])
+  }, [showGlobalRobot, isGravityActive])
   
   
   const pillarContent = [
