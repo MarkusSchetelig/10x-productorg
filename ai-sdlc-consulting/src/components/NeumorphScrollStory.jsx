@@ -813,8 +813,8 @@ const NeumorphScrollStory = () => {
           }
           return
         } else if (section5Percentage > 0.5) {
-          // Pull toward section 5 - position headline 40px below viewport top
-          const targetTop = -40 // Position section so headline is ~40px from viewport top
+          // Pull toward section 5 - position headline 20px below viewport top
+          const targetTop = -140 // Position section higher to account for internal padding
           const section5AbsoluteTop = section5.offsetTop
           const targetScrollY = section5AbsoluteTop - targetTop
           const currentScrollY = window.scrollY
@@ -2212,7 +2212,7 @@ AI driven Workflows & Processes
               if (section5Ref.current) {
                 const section5 = section5Ref.current
                 const section5AbsoluteTop = section5.offsetTop
-                const targetTop = -40 // Same positioning as section 5 gravity
+                const targetTop = -20 // Same positioning as section 5 gravity
                 const targetScrollY = section5AbsoluteTop - targetTop
                 
                 // Smooth scroll animation
