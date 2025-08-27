@@ -813,8 +813,8 @@ const NeumorphScrollStory = () => {
           }
           return
         } else if (section5Percentage > 0.5) {
-          // Pull toward section 5 - align top with viewport top
-          const targetTop = 0 // Align section top with viewport top
+          // Pull toward section 5 - position headline 40px below viewport top
+          const targetTop = -40 // Position section so headline is ~40px from viewport top
           const section5AbsoluteTop = section5.offsetTop
           const targetScrollY = section5AbsoluteTop - targetTop
           const currentScrollY = window.scrollY
@@ -2383,8 +2383,8 @@ AI driven Workflows & Processes
               <img src="/agile.png" alt="Agile Methodology" className="phase-image" />
             </div>
             <div className="phase-content">
-              <h3 style={{ background: 'linear-gradient(135deg, #e91e63, #ffc107)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Agile Implementation</h3>
-              <p>We work alongside your teams using lean agile methodologies to achieve tangible value in weeks rather than months. Through rapid sprints and iterative delivery, our experts transfer knowledge while building, ensuring sustainable capability development.</p>
+              <h3 style={{ background: 'linear-gradient(135deg, #e91e63, #ffc107)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>(Scaled) Agile Implementation</h3>
+              <p>We work alongside your teams using lean agile methodologies (including SAFe framework) to achieve tangible value in weeks rather than months. Through rapid sprints and iterative delivery, our experts transfer knowledge while building, ensuring sustainable capability development.</p>
               <div className="phase-activities">
                 <span className="activity-tag neumorph-flat">Lean Agile Delivery</span>
                 <span className="activity-tag neumorph-flat">Sprint Execution</span>
@@ -2927,7 +2927,7 @@ AI driven Workflows & Processes
                     <a 
                       href="mailto:contact@10x-productorg.com" 
                       className="neumorph-button primary email-button" 
-                      style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '18px' }}
+                      style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '20px' }}
                     >
                       <Icons.Mail size={20} style={{ color: '#4fc3f7' }} />
                       <span><span style={{ color: '#4fc3f7' }}>Contact us at:</span>&nbsp;&nbsp;<strong>contact@10x-productorg.com</strong></span>
