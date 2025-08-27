@@ -47,16 +47,16 @@ const NeumorphScrollStory = () => {
   const section2Ref = useRef(null) // AI Impact Framework section
   const section3Ref = useRef(null) // Challenges section
   const section4Ref = useRef(null) // Process section
-  const section5Ref = useRef(null) // Process section
-  const section6Ref = useRef(null) // Solutions section
-  const section7Ref = useRef(null) // How We Work section
-  const section8Ref = useRef(null) // CTA section
+  const section5Ref = useRef(null) // Solutions section  
+  const section6Ref = useRef(null) // How We Work section
+  const section7Ref = useRef(null) // CTA section
   const [isGravityActive, setIsGravityActive] = useState(false)
   const gravityTimeoutRef = useRef(null)
   const gravitySection1TimeoutRef = useRef(null)
   const gravitySection2TimeoutRef = useRef(null)
   const gravitySection3TimeoutRef = useRef(null)
   const gravitySection4TimeoutRef = useRef(null)
+  const gravitySection5TimeoutRef = useRef(null)
   const robotCTATimeoutRef = useRef(null)
   const [challengesInView, setChallengesInView] = useState(false)
   
@@ -107,6 +107,8 @@ const NeumorphScrollStory = () => {
   // Extended gravity effect for section 3 (5 Pillars - also pulls from section 2)
   useEffect(() => {
     const handleScroll = () => {
+      // TEMPORARILY DISABLED to debug section 4 conflict
+      return;
       if (!section3Ref.current || !section2Ref.current || isGravityActive) return
       
       const section3 = section3Ref.current
@@ -419,15 +421,17 @@ const NeumorphScrollStory = () => {
   // Gravity effect between section 2 and section 3 (framework to challenges)
   useEffect(() => {
     const handleSection2to3Gravity = () => {
-      if (!section2Ref.current || !section3Ref.current || isGravityActive) return
+      if (!section2Ref.current || !section3Ref.current || !section4Ref.current || isGravityActive) return
       
       const section2 = section2Ref.current
       const section3 = section3Ref.current
+      const section4 = section4Ref.current
       const rect2 = section2.getBoundingClientRect()
       const rect3 = section3.getBoundingClientRect()
+      const rect4 = section4.getBoundingClientRect()
       const viewportHeight = window.innerHeight
       
-      // Calculate visible portions of both sections
+      // Calculate visible portions of all sections
       const section2VisibleTop = Math.max(0, Math.min(viewportHeight, rect2.top))
       const section2VisibleBottom = Math.max(0, Math.min(viewportHeight, rect2.bottom))
       const section2VisibleHeight = section2VisibleBottom - section2VisibleTop
@@ -435,6 +439,22 @@ const NeumorphScrollStory = () => {
       const section3VisibleTop = Math.max(0, Math.min(viewportHeight, rect3.top))
       const section3VisibleBottom = Math.max(0, Math.min(viewportHeight, rect3.bottom))
       const section3VisibleHeight = section3VisibleBottom - section3VisibleTop
+      
+      const section4VisibleTop = Math.max(0, Math.min(viewportHeight, rect4.top))
+      const section4VisibleBottom = Math.max(0, Math.min(viewportHeight, rect4.bottom))
+      const section4VisibleHeight = section4VisibleBottom - section4VisibleTop
+      
+      // Calculate percentages
+      const section4Percentage = section4VisibleHeight / viewportHeight
+      
+      // Don't interfere if section 4 has ANY visibility (let section 3-4 gravity handle it)
+      if (section4Percentage > 0) {
+        // Also clear any existing timeout to prevent delayed activation
+        if (gravitySection3TimeoutRef.current) {
+          clearTimeout(gravitySection3TimeoutRef.current)
+        }
+        return
+      }
       
       // Check if we're in the transition zone between sections 2 and 3
       const inTransitionZone = section2VisibleHeight > 0 && section3VisibleHeight > 0
@@ -599,67 +619,92 @@ const NeumorphScrollStory = () => {
         let targetSection, targetRect, targetHeight
         
         if (section3Percentage > 0.5) {
-          // Pull toward section 3
-          targetSection = section3
-          targetRect = rect3
-          targetHeight = rect3.height
+          // Pull toward section 3 - center it but 50px higher
+          const targetTop = (viewportHeight - rect3.height) / 2 - 50
+          const section3AbsoluteTop = section3.offsetTop
+          const targetScrollY = section3AbsoluteTop - targetTop
+          const currentScrollY = window.scrollY
+          const offset = Math.abs(currentScrollY - targetScrollY)
+          
+          if (offset > 50) {
+            if (gravitySection4TimeoutRef.current) {
+              clearTimeout(gravitySection4TimeoutRef.current)
+            }
+            
+            gravitySection4TimeoutRef.current = setTimeout(() => {
+              setIsGravityActive(true)
+              
+              const startY = window.scrollY
+              const distance = targetScrollY - startY
+              const duration = 1600
+              const startTime = performance.now()
+              
+              const animateScroll = (currentTime) => {
+                const elapsed = currentTime - startTime
+                const progress = Math.min(elapsed / duration, 1)
+                
+                const easeInOutCubic = progress < 0.5
+                  ? 4 * progress * progress * progress
+                  : 1 - Math.pow(-2 * progress + 2, 3) / 2
+                
+                window.scrollTo(0, startY + distance * easeInOutCubic)
+                
+                if (progress < 1) {
+                  requestAnimationFrame(animateScroll)
+                } else {
+                  setIsGravityActive(false)
+                }
+              }
+              
+              requestAnimationFrame(animateScroll)
+            }, 2000)
+          }
+          return
         } else if (section4Percentage > 0.5) {
-          // Pull toward section 4
-          targetSection = section4
-          targetRect = rect4
-          targetHeight = rect4.height
+          // Pull toward section 4 - center it  
+          const targetTop = (viewportHeight - rect4.height) / 2
+          const section4AbsoluteTop = section4.offsetTop
+          const targetScrollY = section4AbsoluteTop - targetTop
+          const currentScrollY = window.scrollY
+          const offset = Math.abs(currentScrollY - targetScrollY)
+          
+          if (offset > 50) {
+            if (gravitySection4TimeoutRef.current) {
+              clearTimeout(gravitySection4TimeoutRef.current)
+            }
+            
+            gravitySection4TimeoutRef.current = setTimeout(() => {
+              setIsGravityActive(true)
+              
+              const startY = window.scrollY
+              const distance = targetScrollY - startY
+              const duration = 1600
+              const startTime = performance.now()
+              
+              const animateScroll = (currentTime) => {
+                const elapsed = currentTime - startTime
+                const progress = Math.min(elapsed / duration, 1)
+                
+                const easeInOutCubic = progress < 0.5
+                  ? 4 * progress * progress * progress
+                  : 1 - Math.pow(-2 * progress + 2, 3) / 2
+                
+                window.scrollTo(0, startY + distance * easeInOutCubic)
+                
+                if (progress < 1) {
+                  requestAnimationFrame(animateScroll)
+                } else {
+                  setIsGravityActive(false)
+                }
+              }
+              
+              requestAnimationFrame(animateScroll)
+            }, 2000)
+          }
+          return
         } else {
           // No clear majority, don't apply gravity
           return
-        }
-        
-        const sectionCenter = targetRect.top + targetHeight / 2
-        const viewportCenter = viewportHeight / 2
-        const offset = Math.abs(sectionCenter - viewportCenter)
-        
-        // Only trigger gravity if not already reasonably centered
-        if (offset > 50) {
-          // Clear any existing timeout
-          if (gravitySection4TimeoutRef.current) {
-            clearTimeout(gravitySection4TimeoutRef.current)
-          }
-          
-          // Wait 2 seconds after user stops interacting
-          gravitySection4TimeoutRef.current = setTimeout(() => {
-            setIsGravityActive(true)
-            
-            // Calculate the scroll position to center the section
-            const targetScrollY = window.scrollY + (sectionCenter - viewportCenter)
-            
-            // Custom slower animation
-            const startY = window.scrollY
-            const distance = targetScrollY - startY
-            const duration = 1600
-            const startTime = performance.now()
-            
-            const animateScroll = (currentTime) => {
-              const elapsed = currentTime - startTime
-              const progress = Math.min(elapsed / duration, 1)
-              
-              // Easing function for smooth animation
-              const easeInOutCubic = progress < 0.5
-                ? 4 * progress * progress * progress
-                : 1 - Math.pow(-2 * progress + 2, 3) / 2
-              
-              window.scrollTo(0, startY + distance * easeInOutCubic)
-              
-              if (progress < 1) {
-                requestAnimationFrame(animateScroll)
-              }
-            }
-            
-            requestAnimationFrame(animateScroll)
-            
-            // Reset gravity flag after animation completes
-            setTimeout(() => {
-              setIsGravityActive(false)
-            }, 1600)
-          }, 2000)
         }
       } else {
         // Clear timeout if not in transition zone
@@ -675,6 +720,158 @@ const NeumorphScrollStory = () => {
       window.removeEventListener('scroll', handleSection3to4Gravity)
       if (gravitySection4TimeoutRef.current) {
         clearTimeout(gravitySection4TimeoutRef.current)
+      }
+    }
+  }, [isGravityActive])
+  
+  // Gravity effect between section 4 (Process) and section 5 (Solutions)
+  useEffect(() => {
+    const handleSection4to5Gravity = () => {
+      if (!section3Ref.current || !section4Ref.current || !section5Ref.current || isGravityActive) return
+      
+      const section3 = section3Ref.current
+      const section4 = section4Ref.current
+      const section5 = section5Ref.current
+      const rect3 = section3.getBoundingClientRect()
+      const rect4 = section4.getBoundingClientRect()
+      const rect5 = section5.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      
+      // Calculate visible portions of all sections
+      const section3VisibleTop = Math.max(0, Math.min(viewportHeight, rect3.top))
+      const section3VisibleBottom = Math.max(0, Math.min(viewportHeight, rect3.bottom))
+      const section3VisibleHeight = section3VisibleBottom - section3VisibleTop
+      
+      const section4VisibleTop = Math.max(0, Math.min(viewportHeight, rect4.top))
+      const section4VisibleBottom = Math.max(0, Math.min(viewportHeight, rect4.bottom))
+      const section4VisibleHeight = section4VisibleBottom - section4VisibleTop
+      
+      const section5VisibleTop = Math.max(0, Math.min(viewportHeight, rect5.top))
+      const section5VisibleBottom = Math.max(0, Math.min(viewportHeight, rect5.bottom))
+      const section5VisibleHeight = section5VisibleBottom - section5VisibleTop
+      
+      // Calculate percentages
+      const section3Percentage = section3VisibleHeight / viewportHeight
+      
+      // Don't interfere if section 3 has ANY visibility (let section 3-4 gravity handle it)
+      if (section3Percentage > 0) {
+        // Also clear any existing timeout to prevent delayed activation
+        if (gravitySection5TimeoutRef.current) {
+          clearTimeout(gravitySection5TimeoutRef.current)
+        }
+        return
+      }
+      
+      // Check if we're in the transition zone between sections 4 and 5
+      const inTransitionZone = section4VisibleHeight > 0 && section5VisibleHeight > 0
+      
+      if (inTransitionZone) {
+        // Calculate which section has more screen space
+        const section4Percentage = section4VisibleHeight / viewportHeight
+        const section5Percentage = section5VisibleHeight / viewportHeight
+        
+        if (section4Percentage > 0.5) {
+          // Pull toward section 4 - align top with viewport top
+          const targetTop = 0 // Align section top with viewport top
+          const section4AbsoluteTop = section4.offsetTop
+          const targetScrollY = section4AbsoluteTop - targetTop
+          const currentScrollY = window.scrollY
+          const offset = Math.abs(currentScrollY - targetScrollY)
+          
+          if (offset > 50) {
+            if (gravitySection5TimeoutRef.current) {
+              clearTimeout(gravitySection5TimeoutRef.current)
+            }
+            
+            gravitySection5TimeoutRef.current = setTimeout(() => {
+              setIsGravityActive(true)
+              
+              const startY = window.scrollY
+              const distance = targetScrollY - startY
+              const duration = 1600
+              const startTime = performance.now()
+              
+              const animateScroll = (currentTime) => {
+                const elapsed = currentTime - startTime
+                const progress = Math.min(elapsed / duration, 1)
+                
+                const easeInOutCubic = progress < 0.5
+                  ? 4 * progress * progress * progress
+                  : 1 - Math.pow(-2 * progress + 2, 3) / 2
+                
+                window.scrollTo(0, startY + distance * easeInOutCubic)
+                
+                if (progress < 1) {
+                  requestAnimationFrame(animateScroll)
+                } else {
+                  setIsGravityActive(false)
+                }
+              }
+              
+              requestAnimationFrame(animateScroll)
+            }, 2000)
+          }
+          return
+        } else if (section5Percentage > 0.5) {
+          // Pull toward section 5 - align top with viewport top
+          const targetTop = 0 // Align section top with viewport top
+          const section5AbsoluteTop = section5.offsetTop
+          const targetScrollY = section5AbsoluteTop - targetTop
+          const currentScrollY = window.scrollY
+          const offset = Math.abs(currentScrollY - targetScrollY)
+          
+          if (offset > 50) {
+            if (gravitySection5TimeoutRef.current) {
+              clearTimeout(gravitySection5TimeoutRef.current)
+            }
+            
+            gravitySection5TimeoutRef.current = setTimeout(() => {
+              setIsGravityActive(true)
+              
+              const startY = window.scrollY
+              const distance = targetScrollY - startY
+              const duration = 1600
+              const startTime = performance.now()
+              
+              const animateScroll = (currentTime) => {
+                const elapsed = currentTime - startTime
+                const progress = Math.min(elapsed / duration, 1)
+                
+                const easeInOutCubic = progress < 0.5
+                  ? 4 * progress * progress * progress
+                  : 1 - Math.pow(-2 * progress + 2, 3) / 2
+                
+                window.scrollTo(0, startY + distance * easeInOutCubic)
+                
+                if (progress < 1) {
+                  requestAnimationFrame(animateScroll)
+                } else {
+                  setIsGravityActive(false)
+                }
+              }
+              
+              requestAnimationFrame(animateScroll)
+            }, 2000)
+          }
+          return
+        } else {
+          // No clear majority, don't apply gravity
+          return
+        }
+      } else {
+        // Clear timeout if not in transition zone
+        if (gravitySection5TimeoutRef.current) {
+          clearTimeout(gravitySection5TimeoutRef.current)
+        }
+      }
+    }
+    
+    window.addEventListener('scroll', handleSection4to5Gravity, { passive: true })
+    
+    return () => {
+      window.removeEventListener('scroll', handleSection4to5Gravity)
+      if (gravitySection5TimeoutRef.current) {
+        clearTimeout(gravitySection5TimeoutRef.current)
       }
     }
   }, [isGravityActive])
@@ -1881,7 +2078,7 @@ AI driven Workflows & Processes
 
 
       {/* Section 3: The Challenges */}
-      <section className="neumorph-section challenges-story" ref={section3Ref} style={{ position: 'relative' }}>
+      <section className="neumorph-section challenges-story" ref={section3Ref} style={{ position: 'relative', paddingBottom: '30px' }}>
         {/* Dynamic background glow for challenges */}
         <motion.div 
           className="section-glow"
@@ -1937,8 +2134,8 @@ AI driven Workflows & Processes
 
 
 
-      {/* Section 5: Process Chart */}
-      <section className="neumorph-section process-section" ref={section5Ref} style={{ position: 'relative' }}>
+      {/* Section 4: Process Chart */}
+      <section className="neumorph-section process-section" ref={section4Ref} style={{ position: 'relative', marginTop: '80px' }}>
         <div className="animated-bg">
           <div className="bg-gradient-1"></div>
           <div className="bg-gradient-2"></div>
@@ -1950,7 +2147,7 @@ AI driven Workflows & Processes
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          <div className="neumorph-card central">
+          <div className="neumorph-card central" style={{ paddingTop: '90px' }}>
             <h2>We are here to help in a lean yet structured way!</h2>
             <p className="section-lead">
               9 strategic pillars to build your AI-powered organization
@@ -2012,8 +2209,8 @@ AI driven Workflows & Processes
         {/* Robot CTA for Process Section */}
       </section>
 
-      {/* Section 6: Our Solutions */}
-      <section className="neumorph-section solutions-story" ref={section6Ref}>
+      {/* Section 5: Our Solutions */}
+      <section className="neumorph-section solutions-story" ref={section5Ref}>
         <motion.div 
           className="section-content"
           style={{ scale: solutionsScale }}
@@ -2089,8 +2286,8 @@ AI driven Workflows & Processes
         {/* Robot CTA for Solutions Section */}
       </section>
 
-      {/* Section 7: How We Work */}
-      <section className="neumorph-section how-we-work-section" ref={section7Ref} style={{ position: 'relative' }}>
+      {/* Section 6: How We Work */}
+      <section className="neumorph-section how-we-work-section" ref={section6Ref} style={{ position: 'relative' }}>
         <motion.div 
           className="section-content"
           initial={{ opacity: 0 }}
@@ -2274,8 +2471,8 @@ AI driven Workflows & Processes
         </motion.div>
       </section>
 
-      {/* Section 8: CTA */}
-      <section className="neumorph-section cta-story" ref={section8Ref}>
+      {/* Section 7: CTA */}
+      <section className="neumorph-section cta-story" ref={section7Ref}>
         <motion.div 
           className="section-content"
           initial={{ opacity: 0, scale: 0.9 }}
