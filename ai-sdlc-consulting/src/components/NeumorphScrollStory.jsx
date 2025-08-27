@@ -1828,7 +1828,7 @@ const NeumorphScrollStory = () => {
               The AI Impact Framework
               <br />
               <span style={{ fontSize: '0.765em', fontWeight: 'normal', opacity: 0.9, lineHeight: '1.4', marginTop: '15px', display: 'inline-block' }}>
-                In the Age of AI product organizations must shift<br />from seeking 10% Improvements to aiming at <span style={{ color: '#3979e9' }}>10X Impact.</span>
+                In the Age of AI product organizations must shift<br />from seeking 10% Improvements to aiming at <span style={{ color: '#00bcd4' }}>10X Impact.</span>
               </span>
             </h2>
           </div>
@@ -2203,6 +2203,48 @@ AI driven Workflows & Processes
                 )}
               </motion.div>
             ))}
+          </div>
+          
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '40px' }}>
+            <div 
+              className="scroll-indicator neumorph-button"
+            onClick={() => {
+              if (section5Ref.current) {
+                const section5 = section5Ref.current
+                const section5AbsoluteTop = section5.offsetTop
+                const targetTop = -40 // Same positioning as section 5 gravity
+                const targetScrollY = section5AbsoluteTop - targetTop
+                
+                // Smooth scroll animation
+                const startY = window.scrollY
+                const distance = targetScrollY - startY
+                const duration = 1200
+                const startTime = performance.now()
+                
+                const animateScroll = (currentTime) => {
+                  const elapsed = currentTime - startTime
+                  const progress = Math.min(elapsed / duration, 1)
+                  
+                  // Easing function for smooth animation
+                  const easeInOutCubic = progress < 0.5
+                    ? 4 * progress * progress * progress
+                    : 1 - Math.pow(-2 * progress + 2, 3) / 2
+                  
+                  window.scrollTo(0, startY + distance * easeInOutCubic)
+                  
+                  if (progress < 1) {
+                    requestAnimationFrame(animateScroll)
+                  }
+                }
+                
+                requestAnimationFrame(animateScroll)
+              }
+            }}
+            style={{ cursor: 'pointer' }}
+          >
+            <Icons.ChevronDown size={24} />
+            <span>Scroll to explore</span>
+            </div>
           </div>
         </motion.div>
         
