@@ -35,6 +35,7 @@ const NeumorphScrollStory = () => {
   const [activeSection, setActiveSection] = useState(0)
   const [selectedArea, setSelectedArea] = useState(null)
   const [selectedPillar, setSelectedPillar] = useState(null)
+  const [selectedFrameworkComponent, setSelectedFrameworkComponent] = useState(null)
   const [iconDelays, setIconDelays] = useState([])
   const [showGlobalRobot, setShowGlobalRobot] = useState(false)
   const [robotVisible, setRobotVisible] = useState(false)
@@ -43,14 +44,17 @@ const NeumorphScrollStory = () => {
   const [showImprintModal, setShowImprintModal] = useState(false)
   const [showDataProtectionModal, setShowDataProtectionModal] = useState(false)
   const section1Ref = useRef(null) // Hero section
-  const section2Ref = useRef(null) // 5 Pillars section
+  const section2Ref = useRef(null) // AI Impact Framework section
   const section3Ref = useRef(null) // Challenges section
   const section4Ref = useRef(null) // Process section
-  const section5Ref = useRef(null) // Solutions section
-  const section6Ref = useRef(null) // How We Work section
-  const section7Ref = useRef(null) // CTA section
+  const section5Ref = useRef(null) // Process section
+  const section6Ref = useRef(null) // Solutions section
+  const section7Ref = useRef(null) // How We Work section
+  const section8Ref = useRef(null) // CTA section
   const [isGravityActive, setIsGravityActive] = useState(false)
   const gravityTimeoutRef = useRef(null)
+  const gravitySection1TimeoutRef = useRef(null)
+  const gravitySection2TimeoutRef = useRef(null)
   const gravitySection3TimeoutRef = useRef(null)
   const gravitySection4TimeoutRef = useRef(null)
   const robotCTATimeoutRef = useRef(null)
@@ -88,7 +92,7 @@ const NeumorphScrollStory = () => {
 
   // Prevent body scroll when modal is open
   useEffect(() => {
-    if (selectedArea || selectedPillar !== null) {
+    if (selectedArea || selectedPillar !== null || selectedFrameworkComponent !== null) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -100,36 +104,36 @@ const NeumorphScrollStory = () => {
     };
   }, [selectedArea, selectedPillar])
   
-  // Extended gravity effect for section 2 (also pulls from section 1)
+  // Extended gravity effect for section 3 (5 Pillars - also pulls from section 2)
   useEffect(() => {
     const handleScroll = () => {
-      if (!section2Ref.current || !section1Ref.current || isGravityActive) return
+      if (!section3Ref.current || !section2Ref.current || isGravityActive) return
       
+      const section3 = section3Ref.current
       const section2 = section2Ref.current
-      const section1 = section1Ref.current
+      const rect3 = section3.getBoundingClientRect()
       const rect2 = section2.getBoundingClientRect()
-      const rect1 = section1.getBoundingClientRect()
       const viewportHeight = window.innerHeight
-      const sectionHeight = rect2.height
+      const sectionHeight = rect3.height
       
-      // Calculate how much of section 2 is visible
-      const visibleTop = Math.max(0, rect2.top)
-      const visibleBottom = Math.min(viewportHeight, rect2.bottom)
+      // Calculate how much of section 3 is visible
+      const visibleTop = Math.max(0, rect3.top)
+      const visibleBottom = Math.min(viewportHeight, rect3.bottom)
       const visibleHeight = Math.max(0, visibleBottom - visibleTop)
       const visibilityPercentage = visibleHeight / sectionHeight
       
-      // Check if we're in section 1 with section 2 partially visible
-      const section1Visible = rect1.top <= 0 && rect1.bottom > viewportHeight * 0.3
-      const section2PartiallyVisible = rect2.top < viewportHeight && rect2.top > 0
+      // Check if we're in section 2 with section 3 partially visible
+      const section2Visible = rect2.top <= 0 && rect2.bottom > viewportHeight * 0.3
+      const section3PartiallyVisible = rect3.top < viewportHeight && rect3.top > 0
       
       // Extended gravity conditions:
-      // 1. Original: More than 50% of section 2 is visible
-      // 2. Extended: Gravity starts when just 5% of section 2 is visible
+      // 1. Original: More than 50% of section 3 is visible
+      // 2. Extended: Gravity starts when just 5% of section 3 is visible
       const shouldApplyGravity = visibilityPercentage > 0.5 || 
-                                 (visibilityPercentage > 0.05 && rect2.top < viewportHeight)
+                                 (visibilityPercentage > 0.05 && rect3.top < viewportHeight)
       
       if (shouldApplyGravity) {
-        const sectionCenter = rect2.top + sectionHeight / 2
+        const sectionCenter = rect3.top + sectionHeight / 2
         const viewportCenter = viewportHeight / 2
         const offset = Math.abs(sectionCenter - viewportCenter)
         
@@ -195,7 +199,224 @@ const NeumorphScrollStory = () => {
     }
   }, [isGravityActive])
   
-  // Gravity effect between section 2 and section 3
+  // Deeplink functionality for hash-based navigation
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1) // Remove the #
+      if (hash === 'ai-impact-framework' && section2Ref.current) {
+        // Smooth scroll to the AI Impact Framework section
+        const section2 = section2Ref.current
+        const rect2 = section2.getBoundingClientRect()
+        const viewportHeight = window.innerHeight
+        
+        // Calculate position to center the section
+        const sectionCenter = rect2.top + rect2.height / 2
+        const viewportCenter = viewportHeight / 2
+        const targetScrollY = window.scrollY + (sectionCenter - viewportCenter)
+        
+        // Smooth scroll animation
+        const startY = window.scrollY
+        const distance = targetScrollY - startY
+        const duration = 1200
+        const startTime = performance.now()
+        
+        const animateScroll = (currentTime) => {
+          const elapsed = currentTime - startTime
+          const progress = Math.min(elapsed / duration, 1)
+          
+          // Easing function for smooth animation
+          const easeInOutCubic = progress < 0.5
+            ? 4 * progress * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 3) / 2
+          
+          window.scrollTo(0, startY + distance * easeInOutCubic)
+          
+          if (progress < 1) {
+            requestAnimationFrame(animateScroll)
+          }
+        }
+        
+        requestAnimationFrame(animateScroll)
+      }
+    }
+    
+    // Handle initial load with hash
+    handleHashChange()
+    
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange)
+    
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange)
+    }
+  }, [])
+  
+  // Gravity effect for section 1 (Hero section) when 50% visible
+  useEffect(() => {
+    const handleSection1Gravity = () => {
+      if (!section1Ref.current || isGravityActive) return
+      
+      const section1 = section1Ref.current
+      const rect1 = section1.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      
+      // Calculate visible portion of section 1
+      const section1VisibleTop = Math.max(0, Math.min(viewportHeight, rect1.top))
+      const section1VisibleBottom = Math.max(0, Math.min(viewportHeight, rect1.bottom))
+      const section1VisibleHeight = section1VisibleBottom - section1VisibleTop
+      const section1Percentage = section1VisibleHeight / viewportHeight
+      
+      // Trigger gravity when 50% or more of section 1 is visible
+      if (section1Percentage >= 0.5) {
+        const sectionCenter = rect1.top + rect1.height / 2
+        const viewportCenter = viewportHeight / 2
+        const offset = Math.abs(sectionCenter - viewportCenter)
+        
+        // Only trigger gravity if not already reasonably centered
+        if (offset > 50) {
+          // Clear any existing timeout
+          if (gravitySection1TimeoutRef.current) {
+            clearTimeout(gravitySection1TimeoutRef.current)
+          }
+          
+          // Wait 2 seconds after user stops interacting
+          gravitySection1TimeoutRef.current = setTimeout(() => {
+            setIsGravityActive(true)
+            
+            // Calculate the scroll position to center the section
+            const targetScrollY = window.scrollY + (sectionCenter - viewportCenter)
+            
+            // Custom slower animation
+            const startY = window.scrollY
+            const distance = targetScrollY - startY
+            const duration = 1600
+            const startTime = performance.now()
+            
+            const animateScroll = (currentTime) => {
+              const elapsed = currentTime - startTime
+              const progress = Math.min(elapsed / duration, 1)
+              
+              // Easing function for smooth animation
+              const easeInOutCubic = progress < 0.5
+                ? 4 * progress * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2
+              
+              window.scrollTo(0, startY + distance * easeInOutCubic)
+              
+              if (progress < 1) {
+                requestAnimationFrame(animateScroll)
+              } else {
+                setIsGravityActive(false)
+              }
+            }
+            
+            requestAnimationFrame(animateScroll)
+          }, 2000)
+        }
+      } else {
+        // Clear timeout if less than 50% visible
+        if (gravitySection1TimeoutRef.current) {
+          clearTimeout(gravitySection1TimeoutRef.current)
+        }
+      }
+    }
+    
+    window.addEventListener('scroll', handleSection1Gravity, { passive: true })
+    
+    return () => {
+      window.removeEventListener('scroll', handleSection1Gravity)
+      if (gravitySection1TimeoutRef.current) {
+        clearTimeout(gravitySection1TimeoutRef.current)
+      }
+    }
+  }, [isGravityActive])
+  
+  // Gravity effect for section 2 (AI Impact Framework) when 50% visible
+  useEffect(() => {
+    const handleSection2Gravity = () => {
+      if (!section2Ref.current || isGravityActive) return
+      
+      const section2 = section2Ref.current
+      const rect2 = section2.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      
+      // Calculate visible portion of section 2
+      const section2VisibleTop = Math.max(0, Math.min(viewportHeight, rect2.top))
+      const section2VisibleBottom = Math.max(0, Math.min(viewportHeight, rect2.bottom))
+      const section2VisibleHeight = section2VisibleBottom - section2VisibleTop
+      const section2Percentage = section2VisibleHeight / viewportHeight
+      
+      // Trigger gravity when 50% or more of section 2 is visible
+      if (section2Percentage >= 0.5) {
+        // Check if section is already positioned correctly (-25px to get headline at ~20px from top)
+        const targetTop = -25
+        const section2AbsoluteTop = section2.offsetTop
+        const targetScrollY = section2AbsoluteTop - targetTop
+        const currentScrollY = window.scrollY
+        const offset = Math.abs(currentScrollY - targetScrollY)
+        
+        // Only trigger gravity if not already reasonably positioned
+        if (offset > 50) {
+          // Clear any existing timeout
+          if (gravitySection2TimeoutRef.current) {
+            clearTimeout(gravitySection2TimeoutRef.current)
+          }
+          
+          // Wait 2 seconds after user stops interacting
+          gravitySection2TimeoutRef.current = setTimeout(() => {
+            setIsGravityActive(true)
+            
+            // Calculate the absolute scroll position to position section at targetTop (-25px to get headline at ~20px from top)
+            const targetTop = -25
+            const section2AbsoluteTop = section2.offsetTop
+            const targetScrollY = section2AbsoluteTop - targetTop
+            
+            // Custom slower animation
+            const startY = window.scrollY
+            const distance = targetScrollY - startY
+            const duration = 1600
+            const startTime = performance.now()
+            
+            const animateScroll = (currentTime) => {
+              const elapsed = currentTime - startTime
+              const progress = Math.min(elapsed / duration, 1)
+              
+              // Easing function for smooth animation
+              const easeInOutCubic = progress < 0.5
+                ? 4 * progress * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2
+              
+              window.scrollTo(0, startY + distance * easeInOutCubic)
+              
+              if (progress < 1) {
+                requestAnimationFrame(animateScroll)
+              } else {
+                setIsGravityActive(false)
+              }
+            }
+            
+            requestAnimationFrame(animateScroll)
+          }, 2000)
+        }
+      } else {
+        // Clear timeout if less than 50% visible
+        if (gravitySection2TimeoutRef.current) {
+          clearTimeout(gravitySection2TimeoutRef.current)
+        }
+      }
+    }
+    
+    window.addEventListener('scroll', handleSection2Gravity, { passive: true })
+    
+    return () => {
+      window.removeEventListener('scroll', handleSection2Gravity)
+      if (gravitySection2TimeoutRef.current) {
+        clearTimeout(gravitySection2TimeoutRef.current)
+      }
+    }
+  }, [isGravityActive])
+  
+  // Gravity effect between section 2 and section 3 (framework to challenges)
   useEffect(() => {
     const handleSection2to3Gravity = () => {
       if (!section2Ref.current || !section3Ref.current || isGravityActive) return
@@ -226,15 +447,56 @@ const NeumorphScrollStory = () => {
         let targetSection, targetRect, targetHeight
         
         if (section2Percentage > 0.5) {
-          // Pull toward section 2
-          targetSection = section2
-          targetRect = rect2
-          targetHeight = rect2.height
+          // Section 2 gravity is handled by dedicated section 2 gravity effect
+          // Skip this transition gravity to avoid double gravity
+          return
         } else if (section3Percentage > 0.5) {
           // Pull toward section 3
           targetSection = section3
           targetRect = rect3
           targetHeight = rect3.height
+        } else if (section2Percentage > section3Percentage) {
+          // Pull toward section 2 (but use dedicated section 2 positioning logic)
+          const targetTop = -25
+          const section2AbsoluteTop = section2.offsetTop
+          const targetScrollY = section2AbsoluteTop - targetTop
+          const currentScrollY = window.scrollY
+          const offset = Math.abs(currentScrollY - targetScrollY)
+          
+          if (offset > 50) {
+            if (gravitySection3TimeoutRef.current) {
+              clearTimeout(gravitySection3TimeoutRef.current)
+            }
+            
+            gravitySection3TimeoutRef.current = setTimeout(() => {
+              setIsGravityActive(true)
+              
+              const startY = window.scrollY
+              const distance = targetScrollY - startY
+              const duration = 1600
+              const startTime = performance.now()
+              
+              const animateScroll = (currentTime) => {
+                const elapsed = currentTime - startTime
+                const progress = Math.min(elapsed / duration, 1)
+                
+                const easeInOutCubic = progress < 0.5
+                  ? 4 * progress * progress * progress
+                  : 1 - Math.pow(-2 * progress + 2, 3) / 2
+                
+                window.scrollTo(0, startY + distance * easeInOutCubic)
+                
+                if (progress < 1) {
+                  requestAnimationFrame(animateScroll)
+                } else {
+                  setIsGravityActive(false)
+                }
+              }
+              
+              requestAnimationFrame(animateScroll)
+            }, 1600)
+          }
+          return
         } else {
           // No clear majority, don't apply gravity
           return
@@ -533,6 +795,274 @@ const NeumorphScrollStory = () => {
     target: containerRef,
     offset: ["start start", "end end"]
   })
+
+  // Framework component data
+  const frameworkData = {
+    topGoal: {
+      icon: "/growth.png",
+      title: "Profitable, Sustainable, Ethical Growth",
+      summary: "This is the ultimate North Star: achieving holistic success where profitability, sustainability, and integrity are a single, unified objective. We begin with a 10x impact mindset to fuel a highly efficient, product-led growth engine. This growth is made durable by building an \"Ethical Moat\" of trust and a deep commitment to economic and environmental sustainability. The ultimate advantage, however, comes from the systemic mastery of this entire framework, creating a resilient, AI-powered organization that delivers compounding value for its customers, its people, and the wider world.",
+      levers: [
+        {
+          title: "AI-Driven 10x Impact Mindset",
+          description: "A 10x impact mindset is a fundamental cultural shift from linear, incremental improvement (e.g., \"10% better\") to exponential, order-of-magnitude thinking (\"10x better\"). It involves moving beyond optimizing existing processes and instead using AI to reimagine them from first principles. This mindset encourages teams to challenge core assumptions about what is possible, asking not \"How can AI make our current product faster?\" but \"What entirely new product, 10 times more valuable, can we build now that AI exists?\". It embraces bold experimentation and a willingness to create new, AI-native solutions, even if they disrupt existing business models."
+        },
+        {
+          title: "AI-Infused Product-Led Growth (PLG)",
+          description: "Product-Led Growth (PLG) is a go-to-market strategy that positions the product itself as the primary driver of customer acquisition, engagement, retention, and expansion. It operates on a self-reinforcing \"flywheel\" model of Acquisition, Activation, Retention, Referral, and Revenue. AI acts as a powerful strategic multiplier at every stage of this flywheel, transforming the product into an engine of adaptive growth. By orchestrating hyper-personalized, real-time, and dynamic experiences, AI accelerates the entire cycle, from identifying ideal customers and speeding up their \"Aha!\" moment to proactively preventing churn and engineering virality. This creates a highly efficient and sustainable growth model that is directly tied to the value customers receive, driving long-term profitable and sustainable growth."
+        },
+        {
+          title: "Architecting for Trust and Responsibility (The \"Ethical Moat\")",
+          description: "The elevation of AI Governance, Risk, Ethics, and Compliance (GRC) from a mere compliance task to a core strategic differentiator marks a pivotal strategic shift. In an environment of increasing AI skepticism, building verifiably trustworthy, fair, and transparent AI systems forges a sustainable competitive advantage known as an \"Ethical Moat\". This approach builds deep customer loyalty, attracts top talent, and mitigates significant financial and reputational risks, directly supporting the goal of sustainable and ethical growth."
+        },
+        {
+          title: "AI-Driven Economic & Environmental Sustainability",
+          description: "AI enables a transition to more sustainable business models by optimizing both economic and environmental resources. For economic sustainability, AI-driven operational intelligence enhances efficiency and reduces costs. For environmental sustainability, AI can optimize supply chains to reduce carbon footprints and power predictive maintenance to extend asset lifecycles. This dual focus ensures long-term viability by creating a business that is both financially robust and environmentally responsible."
+        },
+        {
+          title: "Sustainable Competitive Advantage through Systemic Mastery",
+          description: "A lasting competitive advantage is achieved not through a single product or feature, but by building a holistic, AI-native organization. By systematically mastering the value drivers (e.g., Customer Fit, Efficiency) and core capabilities (e.g., AI Platforms, Workflows) outlined in this framework, an organization creates a highly adaptive, intelligent, and resilient system. This systemic excellence is the ultimate moat—difficult for competitors to replicate and the true engine of sustainable, long-term market leadership."
+        }
+      ]
+    },
+    customerFit: {
+      icon: "/customer_fit.png",
+      title: "Customer/ Market Fit",
+      summary: "This is the heart of value creation. By harnessing AI to understand customers with unprecedented depth, continuously discover their evolving needs, and predict their future desires, we move beyond simply satisfying market needs to anticipating them. We forge an unbreakable bond through empathy, crafting dynamic, personalized experiences that make every user feel uniquely seen and valued, ensuring our product doesn't just fit the market, but defines it.",
+      levers: [
+        {
+          title: "AI-Augmented Customer Empathy at Scale",
+          description: "AI transforms customer empathy from an anecdotal art into a data-backed science. By analyzing immense volumes of qualitative data from sources like reviews, support tickets, and interviews, AI extracts key themes, sentiment patterns, and recurring pain points. This allows for the development of a deeper, more nuanced understanding of the \"why\" behind customer behavior, enabling product decisions that are genuinely and systemically customer-centric."
+        },
+        {
+          title: "AI-Powered Continuous Discovery",
+          description: "The habit of continuous discovery is supercharged by AI, evolving from periodic user interviews to a perpetual, automated stream of insight. AI systems can continuously monitor user behavior and feedback channels in real-time, automatically surfacing emerging trends, friction points, and shifts in user needs. This transforms discovery into an always-on capability, allowing teams to infuse their daily decisions with fresh, scalable customer intelligence and adapt with greater agility."
+        },
+        {
+          title: "AI-Driven Predictive Insights & Latent Need Discovery",
+          description: "A shift from reacting to stated needs to proactively anticipating unarticulated ones is made possible by AI. By analyzing complex patterns across disparate datasets, AI can forecast future user behavior and uncover latent needs that customers may not even be aware of themselves. This predictive prowess allows for the creation of truly innovative solutions that solve problems before they become widely recognized, establishing a significant competitive advantage by defining the next frontier of market demand."
+        },
+        {
+          title: "Dynamic User Modeling & Hyper-Personalization",
+          description: "A paradigm shift from static personas to dynamic, \"living\" user models enables a true \"segment of one\" experience. AI continuously updates millions of individual user profiles with real-time behavioral data, powering hyper-personalized experiences where content, features, and interactions are uniquely tailored. This transforms the product from a static tool into an intelligent partner that adapts and co-evolves with the user, forging deep engagement and loyalty."
+        }
+      ]
+    },
+    agility: {
+      icon: "/speed.png",
+      title: "Agility, Speed and Time-to-Market",
+      summary: "This is the engine of competitive momentum. We accelerate every stage of execution by embedding intelligence into our AI-driven Workflows and equipping our teams with AI-powered Platforms. By supercharging agile processes, compressing the development lifecycle, and ensuring launch readiness, we transform our ability to deliver value. This radically shortens the distance between a validated idea and market impact, making speed of delivery our most formidable advantage.",
+      levers: [
+        {
+          title: "AI-Supercharged Agile Execution",
+          description: "Agile methodologies are supercharged by AI, moving beyond manual processes. AI assists in sprint planning by analyzing historical data to provide more accurate effort estimations. It can draft detailed user stories and acceptance criteria from high-level concepts, ensuring clarity and consistency. AI also helps in backlog prioritization by analyzing user feedback and business impact data, allowing teams to focus on the most valuable work and accelerate the flow of value through the development process."
+        },
+        {
+          title: "AI-Accelerated Development Lifecycle",
+          description: "The core software development lifecycle experiences a \"velocity shock\" driven by AI. Generative AI tools act as co-pilots for developers, accelerating code generation, automating documentation, and suggesting bug fixes in real-time. This radical compression of coding, testing, and refactoring tasks significantly reduces the time required to build features, freeing up engineering capacity to tackle more complex challenges and shortening the overall time from backlog item to functional code."
+        },
+        {
+          title: "Intelligent CI/CD & Deployment",
+          description: "The final mile to market—delivery and deployment—is made faster and safer with AI. Intelligent Continuous Integration/Continuous Deployment (CI/CD) pipelines use AI to predict the risk of a new release, automatically flagging potentially problematic code changes before they reach production. AI can also optimize testing within the pipeline and even automate rollback procedures in case of failure, increasing deployment frequency while reducing downtime. This ensures that speed gained in development is not lost in a slow or risky release process."
+        },
+        {
+          title: "AI-Assisted Generation of Go-to-Market Assets",
+          description: "The creation of go-to-market assets like blog posts, ad copy, and sales enablement materials is significantly accelerated by AI. Generative AI can take product specifications and user stories as direct input to create accurate and compelling first drafts of all necessary launch content. This ensures that marketing and sales readiness keeps pace with the accelerated development cycle, eliminating a common bottleneck and shortening the critical path from code completion to a fully supported market launch."
+        }
+      ]
+    },
+    efficiency: {
+      icon: "/cost.png",
+      title: "Efficiency, Effectiveness and Cost",
+      summary: "This is the creation of a frictionless organization. We achieve exponential output by augmenting our People with AI co-pilots and re-architecting our operations with intelligent AI-driven Workflows. By empowering our teams to focus on the highest-value work, we build an enterprise that is not just lean, but profoundly intelligent and effective in its every action.",
+      levers: [
+        {
+          title: "AI-Augmented Workforce",
+          description: "This lever focuses on the exponential productivity gains from human-AI partnership. By embedding AI co-pilots into functional workflows, organizations augment employee capabilities, automating routine tasks and freeing human talent to focus on high-value strategic work. The result is a hyper-productive workforce where individuals and teams achieve significantly greater output, creativity, and effectiveness."
+        },
+        {
+          title: "Intelligent Process Automation",
+          description: "This lever delivers efficiency at scale by automating end-to-end business processes. Leveraging capabilities like NoCode/LowCode and cross-functional AI flows, organizations can drastically reduce operational costs, minimize human error, and shorten cycle times. This allows the business to scale its output and complexity without a proportional increase in headcount or resources, directly impacting the bottom line."
+        },
+        {
+          title: "Autonomous Operations",
+          description: "This lever unlocks new frontiers of efficiency through the deployment of autonomous systems. By leveraging agentic workflows, \"digital workers\" can manage entire operational functions—from software development to customer support—with minimal human intervention. This qualitative leap beyond simple automation allows human teams to transition from tactical execution to strategic oversight, driving a step-change in operational effectiveness."
+        },
+        {
+          title: "AI-Driven Operational Intelligence",
+          description: "This lever enhances strategic effectiveness through superior, AI-driven decision-making. AI provides advanced forecasting, simulation, and optimization capabilities that allow for more precise resource allocation, proactive risk mitigation (e.g., predicting supply chain disruptions), and identification of cost-saving opportunities. This layer of predictive intelligence leads to more effective, data-informed strategies that directly improve operational and financial outcomes."
+        }
+      ]
+    },
+    prototyping: {
+      icon: "/innovation.png",
+      title: "Rapid Iterations & Speed of Innovation",
+      summary: "This is where the future is forged. We de-risk innovation by empowering our People with AI-powered Platforms that make it cheap and fast to validate bold concepts. By exploring vast creative territories and testing ideas in hyper-fast build-measure-learn loops, we transform product development from a game of chance into a systematic engine where breakthroughs are the predictable outcome of high-velocity learning.",
+      levers: [
+        {
+          title: "AI-Assisted Exploration & Ideation",
+          description: "AI acts as an infinite brainstorming partner, moving beyond human cognitive biases to expand the field of creative possibilities. By analyzing vast customer datasets, it can identify latent needs and suggest novel areas for innovation. It can also map emerging AI capabilities to specific user experience challenges, generating inspiring and unconventional input for ideation sessions. This transforms discovery from being limited by existing knowledge to being propelled by AI-driven insight or inspired by AI-generated ideas."
+        },
+        {
+          title: "AI-Accelerated Build-Measure-Learn Loop",
+          description: "AI radically compresses the entire innovation cycle from concept to validated learning. \"Prompt-to-product\" tools allow product managers to generate high-fidelity prototypes in hours, not weeks. This Minimum Testable Prototype (MTP) is then validated using AI-powered user testing platforms that automatically analyze feedback and surface insights. This creates a hyper-fast, continuous loop where building, measuring, and learning happen with unprecedented velocity."
+        },
+        {
+          title: "Empowered Creators & Reduced Dependencies",
+          description: "AI democratizes capabilities previously exclusive to specialists, empowering an AI-augmented Product Manager to directly create UI mock-ups, analyze data, or generate functional code. This \"collapsing of the talent stack\" fundamentally changes team dynamics by reducing the handoffs and communication overhead that traditionally slow down innovation. A single person or small team can now achieve the initial validation output of a larger, multi-disciplinary squad."
+        }
+      ]
+    },
+    quality: {
+      icon: "/quality.png",
+      title: "Quality, Reliability, Precision",
+      summary: "This is our commitment to excellence. We recognize that speed without trust is a liability, so we architect quality into every step by mastering our AI-driven Workflows and Platforms. By leveraging AI for data-informed decisions, automated QA, proactive monitoring, and in-built compliance, we create a resilient framework for innovation. Guided by critical human oversight, this ensures that rapid development and uncompromising reliability become mutually reinforcing pillars, forging a powerful bond of trust with our customers.",
+      levers: [
+        {
+          title: "Data-Informed Decision-Making",
+          description: "Systematically replacing intuition with evidence becomes the basis for decisions. AI enhances this process by analyzing vast datasets to provide predictive insights, ensuring choices are based on probable outcomes, not just historical trends. Organizations leverage AI to define, track, and forecast Key Performance Indicators (KPIs), allowing for more precise identification of high-value features and avoiding investment in initiatives unlikely to succeed, directly improving the quality and impact of product development efforts."
+        },
+        {
+          title: "AI-Powered Quality Assurance & Testing",
+          description: "Quality is embedded into the development lifecycle through AI-driven automation and enhancement of testing processes. AI generates comprehensive test cases for greater coverage, automatically detects bugs and security vulnerabilities in real-time, and accelerates code reviews, allowing teams to move faster without sacrificing stability. Proactively identifying potential failures before they reach users transforms quality from a final gate into a continuous, automated discipline that ensures higher reliability from the outset."
+        },
+        {
+          title: "Proactive Monitoring & Anomaly Detection",
+          description: "A shift from reactive to proactive system oversight is achieved using AI-powered monitoring tools. These continuously analyze system performance and user behavior data to identify anomalies and predict potential issues, such as model drift or service degradation, before they escalate into critical failures. Teams can address reliability risks preemptively, ensuring a more stable and trustworthy user experience and transforming reliability into a predictive, preventative discipline that safeguards product precision."
+        },
+        {
+          title: "In-built Compliance",
+          description: "Compliance is architected directly into AI-driven workflows through programmatic guardrails. These automated rules ensure AI-generated outputs adhere to enterprise policies like coding conventions and security standards. The system can also be designed with triggers that automatically initiate checks against applicable laws, including data privacy rules (GDPR) and comprehensive AI regulations like the EU AI Act, whenever handling sensitive tasks. This transforms compliance from a manual review into an automated, preventative measure integrated directly into the workflow."
+        },
+        {
+          title: "The \"Editor-in-Chief\" for Quality Oversight",
+          description: "While AI radically accelerates development, this speed introduces a \"quality-at-scale\" challenge. The Lead Dev, Lead UX and Product Manager's role as a discerning \"Editor-in-Chief\" involves applying rigorous human judgment, domain expertise, and strategic understanding to curate, refine, and validate all AI-generated outputs—from code to content. This critical human oversight acts as a quality gatekeeper, ensuring the velocity gained from AI does not compromise the quality, reliability, and precision of the final product."
+        }
+      ]
+    },
+    platform: {
+      icon: "/platform.png",
+      title: "AI powered Platforms & Tools",
+      summary: "This is the foundation of empowerment. We build and master an intelligent technology stack that serves as the launching pad for all other capabilities. From an AI-infused data foundation and a robust MLOps factory to augmented development environments, specialized work tools, and platforms for autonomous agents, this integrated toolkit provides the technological leverage needed to turn ambitious visions into reality at scale.",
+      levers: [
+        {
+          title: "The Intelligent Data Foundation",
+          description: "The modern data platform is transformed from a passive repository into an active, intelligent system. AI infuses the data stack with capabilities like automated data discovery, quality monitoring, and governance. Natural language interfaces, such as Databricks' AI/BI Genie, democratize data access, allowing non-technical users to query complex datasets conversationally. This creates a more agile and accessible data foundation, ensuring high-quality fuel for all downstream AI applications and analytics."
+        },
+        {
+          title: "Foundation Model & MLOps Platforms",
+          description: "The core engine room for AI innovation is powered by platforms designed to manage the entire lifecycle of machine learning models. These MLOps (Machine Learning Operations) platforms streamline the process of building, training, deploying, and monitoring both proprietary and open-source foundation models. This provides a reliable and scalable \"AI factory,\" enabling teams to consistently deliver high-quality AI capabilities into products and ensuring that models in production remain accurate, fair, and effective over time."
+        },
+        {
+          title: "AI-Augmented Development Environments",
+          description: "The tools used by creators are infused with AI, dramatically accelerating development. Integrated Development Environments (IDEs) with AI co-pilots, like GitHub Copilot, provide real-time code suggestions and debugging assistance. \"Prompt-to-product\" platforms, such as v0 and lovable, allow for the rapid generation of UI and full-stack application prototypes from natural language. This creates a hyper-productive environment that lowers technical barriers and empowers teams to build and iterate with unprecedented speed."
+        },
+        {
+          title: "Specialized AI Work Tools & Co-pilots",
+          description: "A vast ecosystem of specialized AI-powered tools and co-pilots is emerging to augment specific professional workflows. These applications—from AI research assistants (Perplexity) and meeting summarizers (Fireflies.ai) to intelligent design tools (Miro AI) and sales enablement platforms (Gong)—offload routine cognitive tasks and provide data-driven insights directly within the user's workflow. This allows professionals across all functions to operate with greater efficiency and strategic focus."
+        },
+        {
+          title: "Agentic Automation Platforms",
+          description: "A new class of platforms enables the creation and orchestration of autonomous AI agents, or \"digital workers.\" Frameworks like crewAI and AutoGen allow organizations to build multi-agent systems that can manage complex, end-to-end business processes with minimal human intervention. This moves beyond simple task automation to deploying intelligent systems that can reason, plan, and collaborate to achieve strategic goals, unlocking new frontiers of operational efficiency."
+        }
+      ]
+    },
+    people: {
+      icon: "/people.png",
+      title: "People assisted/ augmented by AI",
+      summary: "Our people are our greatest asset, and technology serves to unleash their potential. We build a culture of psychological safety where human-AI teams can thrive. We empower individuals with AI co-pilots, architect symbiotic workflows for collaborative intelligence, and commit to continuous learning to build AI fluency. By investing in our people's ability to partner with AI, we transform our workforce into a community of innovators poised to solve the challenges of tomorrow.",
+      levers: [
+        {
+          title: "A Foundation of Psychological Safety for Human-AI Teaming",
+          description: "For people to effectively partner with AI, they must feel safe to experiment, question AI-generated outputs, and admit mistakes without fear. This psychological safety is the cultural bedrock that prevents automation bias and encourages the critical thinking necessary for responsible AI adoption. It creates an environment where teams can learn from both human and machine errors, fostering the trust required for true human-AI collaboration."
+        },
+        {
+          title: "AI as a Personal Co-pilot & Force Multiplier",
+          description: "AI acts as a collaborative partner for individuals, augmenting their specific skills and workflows. By offloading routine cognitive tasks—from research and data analysis to content generation—AI co-pilots free up employees to focus on uniquely human strengths like strategic judgment and creativity. This direct augmentation serves as a force multiplier, dramatically increasing individual productivity and enabling each person to achieve a greater level of impact."
+        },
+        {
+          title: "Human-AI Symbiosis & Collaborative Intelligence",
+          description: "This moves beyond individual augmentation to designing teams where humans and AI operate as a single, synergistic cognitive unit. In this model, workflows are architected to leverage the complementary strengths of human creativity and ethical oversight alongside AI's speed and analytical power. This creates a state of collaborative intelligence, enabling teams to solve more complex problems and achieve outcomes that would be impossible for either humans or AI to accomplish alone."
+        },
+        {
+          title: "Continuous Upskilling & AI Fluency",
+          description: "To thrive in an AI-assisted environment, the workforce must be equipped with the necessary skills and confidence. This involves a sustained commitment to building widespread AI fluency through tailored training and hands-on learning. By investing in continuous upskilling, organizations empower their people to move from being passive users of AI to becoming adept collaborators who can effectively guide, interpret, and leverage AI to its full potential."
+        }
+      ]
+    },
+    workflows: {
+      icon: "/process.png",
+      title: "AI driven Workflows & Processes",
+      summary: "This is the operational blueprint for the future of work. We move beyond rigid, linear processes to design intelligent, adaptive, and collaborative workflows. By augmenting functional experts, creating intelligent flows between them, and deploying autonomous agents, we build a highly efficient and resilient operational backbone that not only executes with precision but learns and improves with every cycle.",
+      levers: [
+        {
+          title: "AI-Augmented Functional Workflows",
+          description: "This capability involves embedding AI co-pilots and specialized tools directly into the workflows of specific disciplines to enhance their core tasks. For example, product managers use AI for research synthesis, UX designers for generating mockups from prompts, and developers use AI for code generation and debugging. This boosts the efficiency and quality of work within each disciplinary vertical."
+        },
+        {
+          title: "Cross-Functional Intelligence Flow",
+          description: "This capability uses AI to act as the automated \"connective tissue\" between disciplines, breaking down silos and eliminating manual handoffs. AI transforms outputs from one stage into inputs for the next—for instance, synthesizing user research (PM) into draft user stories, which then fuel AI-assisted code generation (Dev), and finally generating marketing copy (Marketing) from feature specifications."
+        },
+        {
+          title: "AI-Supercharged Agile Loops",
+          description: "Core agile processes like the Build-Measure-Learn loop are transformed into high-velocity, intelligent cycles. AI automates feedback analysis, accelerates development, and provides predictive insights, allowing teams to iterate and learn with unprecedented speed. This creates a foundational workflow for rapid, data-informed product evolution."
+        },
+        {
+          title: "NoCode/LowCode Automation",
+          description: "Developing the capacity to automate business processes and connect disparate applications using visual, NoCode/LowCode platforms. This capability empowers \"citizen developers\" to build and manage rule-based automations without extensive coding, creating a more agile and responsive operational layer. It serves as a foundational step towards more complex, intelligent process automation."
+        },
+        {
+          title: "Agentic Workflows & \"Digital Coworkers\"",
+          description: "This represents a fundamental reimagining of automation, shifting from executing pre-programmed tasks to achieving high-level goals. The core of this capability is the deployment of autonomous agents that can independently reason, plan, and execute complex actions. For instance, a code generation agent is not just a tool; it's a \"digital coworker\" that takes a high-level requirement and autonomously decides how to write, debug, and implement the solution, managing the end-to-end process with minimal human intervention."
+        }
+      ]
+    },
+    products: {
+      icon: "/product.png",
+      title: "\"AI first\" Products & Services",
+      summary: "This is our ultimate expression of value. We begin with an AI-First mindset to architect living systems that learn and adapt. These systems deliver intelligent and deeply personalized experiences that make our products indispensable partners to our users. By designing for compounding value loops, we create a virtuous cycle of improvement and engagement, forging an unbreakable, data-driven bond that redefines what is possible and sets a new standard for excellence in our industry.",
+      levers: [
+        {
+          title: "The \"AI-First\" Mindset & Architecture",
+          description: "An \"AI-First\" mindset is the foundational principle, where the capacity for systems to learn and adapt is the core of the product concept, not an added feature. This leads to architecting AI-native systems that are inherently intelligent, data-centric, and designed for continuous evolution. The product is envisioned from inception as a dynamic entity that learns from user interactions to deliver compounding value over time."
+        },
+        {
+          title: "Intelligent & Adaptive Experiences",
+          description: "Embedding AI makes the core product experience smarter, more context-aware, and more intuitive for all users. Capabilities like intelligent search that understands user intent, predictive features that anticipate needs, and adaptive interfaces that dynamically adjust to the user's current task transform the product from a static tool into an intelligent partner that is more effective and easier to use."
+        },
+        {
+          title: "Hyper-Personalization at Scale",
+          description: "A true \"segment of one\" experience is delivered by crafting interactions uniquely tailored to each individual user. Powered by AI that processes granular user data and real-time context, the product can dynamically adjust its content, recommendations, and even functionality. This deep level of personalization makes each user feel uniquely seen and valued, forging powerful engagement and loyalty."
+        },
+        {
+          title: "Designing for Compounding Value Loops",
+          description: "Products are architected to create self-reinforcing, virtuous cycles that drive compounding value and create a powerful, dynamic moat. This is the core mechanism of data network effects: user engagement generates unique data, which fuels the AI models to improve the product, which in turn attracts more users. The strategic goal is to design this efficient, compounding system as the true, enduring competitive advantage."
+        }
+      ]
+    },
+    dataAI: {
+      title: "Data + AI Foundation",
+      summary: "The bedrock enabling all capabilities: robust data infrastructure, scalable AI platforms, and systematic capture of proprietary data to fuel continuous learning.",
+      levers: [
+        {
+          title: "Robust Data Infrastructure",
+          description: "Building scalable systems for data acquisition, transformation, and analysis that serve as the foundation for all AI initiatives. This includes data lakes, warehouses, and real-time streaming platforms that ensure data quality, accessibility, and governance."
+        },
+        {
+          title: "AI Platform Excellence",
+          description: "Standing up an AI platform for experimentation-to-production across models and agent frameworks with safety and cost control. This includes model registries, experiment tracking, serving infrastructure, and monitoring systems."
+        },
+        {
+          title: "Proprietary Data Advantage",
+          description: "Systematically capturing and utilizing unique data generated through product usage to create defensible competitive advantages. This data becomes the fuel for continuous model improvement and personalization."
+        },
+        {
+          title: "Continuous Learning Systems",
+          description: "Implementing feedback loops that automatically improve models based on user interactions, creating products that get smarter over time. This includes A/B testing frameworks, reinforcement learning systems, and automated retraining pipelines."
+        }
+      ]
+    }
+  }
 
   const renderTextWithBold = (text) => {
     const parts = text.split(/(\*\*[^*]+\*\*)/g);
@@ -963,7 +1493,7 @@ const NeumorphScrollStory = () => {
 
   useEffect(() => {
     const unsubscribe = scrollYProgress.onChange(progress => {
-      const section = Math.floor(progress * 8) // Updated to 8 sections with How We Work
+      const section = Math.floor(progress * 8) // Updated to 8 sections after removing 5 Pillars section
       setActiveSection(section)
     })
     return () => unsubscribe()
@@ -971,27 +1501,32 @@ const NeumorphScrollStory = () => {
 
 
   // Parallax transforms
-  const heroY = useTransform(scrollYProgress, [0, 0.2], [0, -100])
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0])
+  const heroY = useTransform(scrollYProgress, [0, 0.15], [0, -100])
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0])
   
-  const statsScale = useTransform(scrollYProgress, [0.08, 0.14, 0.2, 0.28], [0.85, 1, 1, 0.95])
-  const statsOpacity = useTransform(scrollYProgress, [0.08, 0.14, 0.2, 0.28], [0.3, 1, 1, 0.5])
-  const statsBrightness = useTransform(scrollYProgress, [0.08, 0.14, 0.2, 0.28], [0.7, 1.2, 1.2, 0.8])
+  // AI Impact Framework section transforms
+  const frameworkScale = useTransform(scrollYProgress, [0.08, 0.14, 0.18, 0.22], [0.85, 1, 1, 0.95])
+  const frameworkOpacity = useTransform(scrollYProgress, [0.08, 0.14, 0.18, 0.22], [0.3, 1, 1, 0.5])
+  const frameworkBrightness = useTransform(scrollYProgress, [0.08, 0.14, 0.18, 0.22], [0.7, 1.2, 1.2, 0.8])
+  
+  const statsScale = useTransform(scrollYProgress, [0.16, 0.22, 0.28, 0.34], [0.85, 1, 1, 0.95])
+  const statsOpacity = useTransform(scrollYProgress, [0.16, 0.22, 0.28, 0.34], [0.3, 1, 1, 0.5])
+  const statsBrightness = useTransform(scrollYProgress, [0.16, 0.22, 0.28, 0.34], [0.7, 1.2, 1.2, 0.8])
 
-  // Challenges section starts emerging when 1/3 of stats section is still visible
-  const challengesX = useTransform(scrollYProgress, [0.16, 0.26], [-100, 0])
-  const challengesOpacity = useTransform(scrollYProgress, [0.16, 0.26, 0.38, 0.42], [0, 1, 1, 0])
-  const challengesBrightness = useTransform(scrollYProgress, [0.16, 0.25, 0.38, 0.42], [0.6, 1.4, 1.4, 0.8])
-  const challengesScale = useTransform(scrollYProgress, [0.16, 0.25, 0.38, 0.42], [0.85, 1.05, 1.05, 0.95])
+  // Challenges section starts emerging after AI Framework section
+  const challengesX = useTransform(scrollYProgress, [0.18, 0.25], [-100, 0])
+  const challengesOpacity = useTransform(scrollYProgress, [0.18, 0.25, 0.40, 0.45], [0, 1, 1, 0])
+  const challengesBrightness = useTransform(scrollYProgress, [0.18, 0.25, 0.40, 0.45], [0.6, 1.4, 1.4, 0.8])
+  const challengesScale = useTransform(scrollYProgress, [0.18, 0.25, 0.40, 0.45], [0.85, 1.05, 1.05, 0.95])
   
   // Removed gallery transforms - section deleted
   // const galleryScale = useTransform(scrollYProgress, [0.35, 0.45], [0.85, 1])
   // const galleryOpacity = useTransform(scrollYProgress, [0.35, 0.45], [0, 1])
 
-  const solutionsScale = useTransform(scrollYProgress, [0.45, 0.55], [0.9, 1])
+  const solutionsScale = useTransform(scrollYProgress, [0.53, 0.63], [0.9, 1])
 
   return (
-    <div className="neumorph-scroll-story" ref={containerRef}>
+    <div className="neumorph-scroll-story" ref={containerRef} style={{ position: 'relative' }}>
       {/* Animated particles background */}
       <div className="particles">
         {[...Array(20)].map((_, i) => (
@@ -1024,7 +1559,46 @@ const NeumorphScrollStory = () => {
             <p className="hero-subtitle">
               Are you ready to shift gears?
             </p>
-            <div className="scroll-indicator neumorph-button">
+            <div 
+              className="scroll-indicator neumorph-button"
+              onClick={() => {
+                if (section2Ref.current) {
+                  const section2 = section2Ref.current
+                  const rect2 = section2.getBoundingClientRect()
+                  const viewportHeight = window.innerHeight
+                  
+                  // Calculate position to center the section
+                  const sectionCenter = rect2.top + rect2.height / 2
+                  const viewportCenter = viewportHeight / 2
+                  const targetScrollY = window.scrollY + (sectionCenter - viewportCenter)
+                  
+                  // Smooth scroll animation
+                  const startY = window.scrollY
+                  const distance = targetScrollY - startY
+                  const duration = 1200
+                  const startTime = performance.now()
+                  
+                  const animateScroll = (currentTime) => {
+                    const elapsed = currentTime - startTime
+                    const progress = Math.min(elapsed / duration, 1)
+                    
+                    // Easing function for smooth animation
+                    const easeInOutCubic = progress < 0.5
+                      ? 4 * progress * progress * progress
+                      : 1 - Math.pow(-2 * progress + 2, 3) / 2
+                    
+                    window.scrollTo(0, startY + distance * easeInOutCubic)
+                    
+                    if (progress < 1) {
+                      requestAnimationFrame(animateScroll)
+                    }
+                  }
+                  
+                  requestAnimationFrame(animateScroll)
+                }
+              }}
+              style={{ cursor: 'pointer' }}
+            >
               <Icons.ChevronDown size={24} />
               <span>Scroll to explore</span>
             </div>
@@ -1032,14 +1606,13 @@ const NeumorphScrollStory = () => {
         </motion.div>
       </section>
 
-      {/* Section 2: 5 Pillars of 10X Product Organization */}
-      <section className="neumorph-section pillars-section" ref={section2Ref} style={{ position: 'relative' }}>
-        {/* Dynamic background glow */}
+      {/* Section 2: AI Impact Framework */}
+      <section id="ai-impact-framework" className="neumorph-section framework-section" ref={section2Ref} style={{ position: 'relative' }}>
         <motion.div 
           className="section-glow"
           style={{
-            opacity: useTransform(scrollYProgress, [0.08, 0.14, 0.2, 0.28], [0, 0.6, 0.6, 0]),
-            background: 'radial-gradient(circle at center, rgba(59, 130, 246, 0.3), transparent 70%)',
+            opacity: useTransform(scrollYProgress, [0.08, 0.14, 0.18, 0.22], [0, 0.6, 0.6, 0]),
+            background: 'radial-gradient(circle at center, rgba(139, 92, 246, 0.2), transparent 70%)',
             position: 'absolute',
             inset: 0,
             pointerEvents: 'none'
@@ -1048,100 +1621,264 @@ const NeumorphScrollStory = () => {
         <motion.div 
           className="section-content"
           style={{ 
-            scale: statsScale, 
-            opacity: statsOpacity,
-            filter: useTransform(statsBrightness, value => `brightness(${value})`)
+            scale: frameworkScale, 
+            opacity: frameworkOpacity,
+            filter: useTransform(frameworkBrightness, value => `brightness(${value})`)
           }}
         >
-          <div className="neumorph-card central">
+          <div className="neumorph-card central" style={{ marginTop: '-20px', marginBottom: 'calc((3rem - 50px) / 2)', paddingTop: '5px', paddingBottom: '5px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
             <h2>
-              In the Age of AI
+              The AI Impact Framework
               <br />
-              product organizations must shift from seeking 10% Improvements to aiming at <span style={{ color: '#3979e9' }}>10X Impact.</span>
+              <span style={{ fontSize: '0.765em', fontWeight: 'normal', opacity: 0.9, lineHeight: '1.4', marginTop: '15px', display: 'inline-block' }}>
+                In the Age of AI product organizations must shift<br />from seeking 10% Improvements to aiming at <span style={{ color: '#3979e9' }}>10X Impact.</span>
+              </span>
             </h2>
           </div>
-          
+
+          {/* Top Growth Tile - Centered */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0', marginTop: '25px' }}>
+            <motion.div 
+              className="pillar-image-wrapper value-card clickable"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              style={{ width: '200px', flex: 'none' }}
+              onClick={() => setSelectedFrameworkComponent('topGoal')}
+            >
+              <div className="click-indicator" style={{ animationDelay: `${iconDelays[0] || 0}s` }}>
+                <Icons.Maximize2 size={16} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1rem' }}>
+                <div style={{ width: '90%', aspectRatio: '1', margin: '0 auto 0 auto', borderRadius: '4px', backgroundColor: 'black', overflow: 'hidden' }}>
+                  <img src="/growth.png" alt="Profitable, sustainable and ethical Growth" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                </div>
+                <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95' }}>
+                  Profitable, sustainable and ethical Growth
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+
+          {/* Value Dimensions */}
           <div className="pillars-images-container">
-            <div className="pillars-row">
-              <motion.div 
-                className="pillar-image-wrapper"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                onClick={() => setSelectedPillar(0)}
-              >
-                <div className="click-indicator" style={{ animationDelay: `${iconDelays[0] || 0}s` }}>
-                  <Icons.Maximize2 size={16} />
+            <div className="pillars-row" style={{ justifyContent: 'center', gap: '20px' }}>
+            <motion.div 
+              className="pillar-image-wrapper value-card clickable"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              style={{ width: '200px', flex: 'none' }}
+              onClick={() => setSelectedFrameworkComponent('customerFit')}
+            >
+              <div className="click-indicator" style={{ animationDelay: `${iconDelays[1] || 1.5}s` }}>
+                <Icons.Maximize2 size={16} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1rem' }}>
+                <div style={{ width: '90%', aspectRatio: '1', margin: '0 auto 0 auto', borderRadius: '4px', backgroundColor: 'black', overflow: 'hidden' }}>
+                  <img src="/customer_fit.png" alt="Customer/ Market Fit" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
-                <img src="/image1.png" alt="Exponential Speed & Agility" className="pillar-image" />
-              </motion.div>
-              <motion.div 
-                className="pillar-image-wrapper"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-                onClick={() => setSelectedPillar(1)}
-              >
-                <div className="click-indicator" style={{ animationDelay: `${iconDelays[1] || 1.5}s` }}>
-                  <Icons.Maximize2 size={16} />
+                <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95' }}>
+Customer/ Market Fit
                 </div>
-                <img src="/image2.png" alt="Customer-Centric Value Delivery" className="pillar-image" />
-              </motion.div>
-              <motion.div 
-                className="pillar-image-wrapper"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3 }}
-                onClick={() => setSelectedPillar(2)}
-              >
-                <div className="click-indicator" style={{ animationDelay: `${iconDelays[2] || 3}s` }}>
-                  <Icons.Maximize2 size={16} />
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="pillar-image-wrapper value-card clickable"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+              style={{ width: '200px', flex: 'none' }}
+              onClick={() => setSelectedFrameworkComponent('agility')}
+            >
+              <div className="click-indicator" style={{ animationDelay: `${iconDelays[0] || 0}s` }}>
+                <Icons.Maximize2 size={16} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1rem' }}>
+                <div style={{ width: '90%', aspectRatio: '1', margin: '0 auto 0 auto', borderRadius: '4px', backgroundColor: 'black', overflow: 'hidden' }}>
+                  <img src="/speed.png" alt="Agility, Speed and Time-to-Market" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
-                <img src="/image3.png" alt="Unleashing Innovation through Experimentation" className="pillar-image" />
-              </motion.div>
-              <motion.div 
-                className="pillar-image-wrapper"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4 }}
-                onClick={() => setSelectedPillar(3)}
-              >
-                <div className="click-indicator" style={{ animationDelay: `${iconDelays[3] || 4.5}s` }}>
-                  <Icons.Maximize2 size={16} />
+                <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95' }}>
+Agility, Speed and Time-to-Market
                 </div>
-                <img src="/image4.png" alt="AI-Augmented Teams & Talent" className="pillar-image" />
-              </motion.div>
-              <motion.div 
-                className="pillar-image-wrapper"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.5 }}
-                onClick={() => setSelectedPillar(4)}
-              >
-                <div className="click-indicator" style={{ animationDelay: `${iconDelays[4] || 6}s` }}>
-                  <Icons.Maximize2 size={16} />
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="pillar-image-wrapper value-card clickable"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5 }}
+              style={{ width: '200px', flex: 'none' }}
+              onClick={() => setSelectedFrameworkComponent('efficiency')}
+            >
+              <div className="click-indicator" style={{ animationDelay: `${iconDelays[3] || 4.5}s` }}>
+                <Icons.Maximize2 size={16} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1rem' }}>
+                <div style={{ width: '90%', aspectRatio: '1', margin: '0 auto 0 auto', borderRadius: '4px', backgroundColor: 'black', overflow: 'hidden' }}>
+                  <img src="/cost.png" alt="Efficiency, Effectiveness and Cost" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
-                <img src="/image5.png" alt="Built-In Quality, Compliance & Resilience" className="pillar-image" />
-              </motion.div>
+                <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95' }}>
+Efficiency, Effectiveness and Cost
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="pillar-image-wrapper value-card clickable"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.6 }}
+              style={{ width: '200px', flex: 'none' }}
+              onClick={() => setSelectedFrameworkComponent('prototyping')}
+            >
+              <div className="click-indicator" style={{ animationDelay: `${iconDelays[2] || 3}s` }}>
+                <Icons.Maximize2 size={16} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1rem' }}>
+                <div style={{ width: '90%', aspectRatio: '1', margin: '0 auto 0 auto', borderRadius: '4px', backgroundColor: 'black', overflow: 'hidden' }}>
+                  <img src="/innovation.png" alt="Rapid Iterations & Speed of Innovation" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                </div>
+                <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95' }}>
+Rapid Iterations & Speed of Innovation
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="pillar-image-wrapper value-card clickable"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.7 }}
+              style={{ width: '200px', flex: 'none' }}
+              onClick={() => setSelectedFrameworkComponent('quality')}
+            >
+              <div className="click-indicator" style={{ animationDelay: `${iconDelays[4] || 6}s` }}>
+                <Icons.Maximize2 size={16} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1rem' }}>
+                <div style={{ width: '90%', aspectRatio: '1', margin: '0 auto 0 auto', borderRadius: '4px', backgroundColor: 'black', overflow: 'hidden' }}>
+                  <img src="/quality.png" alt="Quality, Reliability, Precision" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                </div>
+                <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95' }}>
+Quality, Reliability, Precision
+                </div>
+              </div>
+            </motion.div>
             </div>
           </div>
-          
-          <div className="insight-box neumorph-card">
-            <div className="insight-icon neumorph-raised round">
-              <Icons.TrendingUp size={24} />
+
+          {/* Core Capabilities */}
+          <div className="pillars-images-container">
+            <div className="pillars-row" style={{ justifyContent: 'center', gap: '20px' }}>
+            <motion.div 
+              className="pillar-image-wrapper capability-card clickable"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.8 }}
+              style={{ width: '200px', flex: 'none' }}
+              onClick={() => setSelectedFrameworkComponent('platform')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <div className="click-indicator" style={{ animationDelay: `${iconDelays[0] || 0}s` }}>
+                <Icons.Maximize2 size={16} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1rem' }}>
+                <div style={{ width: '90%', aspectRatio: '1', margin: '0 auto 0 auto', borderRadius: '4px', backgroundColor: 'black', overflow: 'hidden' }}>
+                  <img src="/platform.png" alt="AI powered Platforms & Tools" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                </div>
+                <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95' }}>
+AI powered Platforms & Tools
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="pillar-image-wrapper capability-card clickable"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.9 }}
+              style={{ width: '200px', flex: 'none' }}
+              onClick={() => setSelectedFrameworkComponent('people')}
+            >
+              <div className="click-indicator" style={{ animationDelay: `${iconDelays[1] || 1.5}s` }}>
+                <Icons.Maximize2 size={16} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1rem' }}>
+                <div style={{ width: '90%', aspectRatio: '1', margin: '0 auto 0 auto', borderRadius: '4px', backgroundColor: 'black', overflow: 'hidden' }}>
+                  <img src="/people.png" alt="People assisted/ augmented by AI" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                </div>
+                <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95' }}>
+People assisted/ augmented by AI
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="pillar-image-wrapper capability-card clickable"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 1.0 }}
+              style={{ width: '200px', flex: 'none' }}
+              onClick={() => setSelectedFrameworkComponent('workflows')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <div className="click-indicator" style={{ animationDelay: `${iconDelays[2] || 3}s` }}>
+                <Icons.Maximize2 size={16} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1rem' }}>
+                <div style={{ width: '90%', aspectRatio: '1', margin: '0 auto 0 auto', borderRadius: '4px', backgroundColor: 'black', overflow: 'hidden' }}>
+                  <img src="/process.png" alt="AI driven Workflows & Processes" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                </div>
+                <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95' }}>
+AI driven Workflows & Processes
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="pillar-image-wrapper capability-card clickable"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 1.1 }}
+              style={{ width: '200px', flex: 'none' }}
+              onClick={() => setSelectedFrameworkComponent('products')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <div className="click-indicator" style={{ animationDelay: `${iconDelays[4] || 6}s` }}>
+                <Icons.Maximize2 size={16} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1rem' }}>
+                <div style={{ width: '90%', aspectRatio: '1', margin: '0 auto 0 auto', borderRadius: '4px', backgroundColor: 'black', overflow: 'hidden' }}>
+                  <img src="/product.png" alt="AI first Products & Services" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                </div>
+                <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95' }}>
+"AI first" Products & Services
+                </div>
+              </div>
+            </motion.div>
             </div>
-            <p>
-              Adopting a 10× mindset is quickly becoming the right playbook<br />
-              in an era where AI is rewriting the rules of the game.
-            </p>
           </div>
+
         </motion.div>
       </section>
+
 
       {/* Section 3: The Challenges */}
       <section className="neumorph-section challenges-story" ref={section3Ref} style={{ position: 'relative' }}>
@@ -1149,7 +1886,7 @@ const NeumorphScrollStory = () => {
         <motion.div 
           className="section-glow"
           style={{
-            opacity: useTransform(scrollYProgress, [0.16, 0.25, 0.38, 0.42], [0, 0.8, 0.8, 0]),
+            opacity: useTransform(scrollYProgress, [0.18, 0.25, 0.40, 0.45], [0, 0.8, 0.8, 0]),
             background: 'radial-gradient(circle at center, rgba(59, 130, 246, 0.3), transparent 60%)',
             position: 'absolute',
             inset: 0,
@@ -1200,8 +1937,8 @@ const NeumorphScrollStory = () => {
 
 
 
-      {/* Section 6: Process Chart */}
-      <section className="neumorph-section process-section" ref={section4Ref} style={{ position: 'relative' }}>
+      {/* Section 5: Process Chart */}
+      <section className="neumorph-section process-section" ref={section5Ref} style={{ position: 'relative' }}>
         <div className="animated-bg">
           <div className="bg-gradient-1"></div>
           <div className="bg-gradient-2"></div>
@@ -1275,8 +2012,8 @@ const NeumorphScrollStory = () => {
         {/* Robot CTA for Process Section */}
       </section>
 
-      {/* Section 7: Our Solutions */}
-      <section className="neumorph-section solutions-story" ref={section5Ref}>
+      {/* Section 6: Our Solutions */}
+      <section className="neumorph-section solutions-story" ref={section6Ref}>
         <motion.div 
           className="section-content"
           style={{ scale: solutionsScale }}
@@ -1353,7 +2090,7 @@ const NeumorphScrollStory = () => {
       </section>
 
       {/* Section 7: How We Work */}
-      <section className="neumorph-section how-we-work-section" ref={section6Ref} style={{ position: 'relative' }}>
+      <section className="neumorph-section how-we-work-section" ref={section7Ref} style={{ position: 'relative' }}>
         <motion.div 
           className="section-content"
           initial={{ opacity: 0 }}
@@ -1538,7 +2275,7 @@ const NeumorphScrollStory = () => {
       </section>
 
       {/* Section 8: CTA */}
-      <section className="neumorph-section cta-story" ref={section7Ref}>
+      <section className="neumorph-section cta-story" ref={section8Ref}>
         <motion.div 
           className="section-content"
           initial={{ opacity: 0, scale: 0.9 }}
@@ -1804,6 +2541,135 @@ const NeumorphScrollStory = () => {
         )}
       </AnimatePresence>
       </LayoutGroup>
+      
+      {/* Framework Component Modal */}
+      <AnimatePresence>
+        {selectedFrameworkComponent && frameworkData[selectedFrameworkComponent] && (
+          <>
+            <motion.div
+              className="modal-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedFrameworkComponent(null)}
+              transition={{ duration: 0.3 }}
+            />
+            <div className="modal-wrapper">
+              <motion.div
+                className="modal-container neumorph-raised"
+                initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.8, y: 50 }}
+                transition={{ type: "spring", damping: 40, stiffness: 250, mass: 0.8 }}
+              >
+                <motion.button
+                  className="modal-close"
+                  onClick={() => setSelectedFrameworkComponent(null)}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <Icons.X size={20} />
+                </motion.button>
+                
+                <motion.div 
+                  className="framework-modal-content"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="framework-modal-header">
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.5rem' }}>
+                      <div style={{ 
+                        width: '80px', 
+                        height: '80px',
+                        marginTop: '20px',
+                        marginBottom: '1rem',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderRadius: '12px',
+                        padding: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <img 
+                          src={frameworkData[selectedFrameworkComponent].icon} 
+                          alt={frameworkData[selectedFrameworkComponent].title}
+                          style={{ 
+                            width: '100%', 
+                            height: '100%', 
+                            objectFit: 'contain',
+                            filter: 'brightness(1.2)'
+                          }} 
+                        />
+                      </div>
+                      <h2 style={{ color: '#3b82f6', marginBottom: '0.5rem', textAlign: 'center' }}>
+                        {frameworkData[selectedFrameworkComponent].title}
+                      </h2>
+                    </div>
+                    <p className="framework-modal-summary" style={{ fontSize: '1.1em', marginBottom: '1.5rem', opacity: 0.9, textAlign: 'center', padding: '0 2rem' }}>
+                      {frameworkData[selectedFrameworkComponent].summary}
+                    </p>
+                    <div style={{ padding: '0 2rem', marginBottom: '1rem' }}>
+                      <h3 style={{ 
+                        color: '#06b6d4', 
+                        fontSize: '1.2em', 
+                        fontWeight: '600',
+                        textAlign: 'left',
+                        marginBottom: '0',
+                        paddingLeft: '2ch'
+                      }}>
+                        -  AI driven Opportunity Areas -
+                      </h3>
+                    </div>
+                  </div>
+                  
+                  <div className="framework-modal-levers" style={{ maxHeight: '400px', overflowY: 'auto', padding: '0 2rem' }}>
+                    {frameworkData[selectedFrameworkComponent].levers.map((lever, index) => (
+                      <motion.div
+                        key={index}
+                        className="lever-item neumorph-card"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        style={{ 
+                          marginBottom: '1.5rem', 
+                          padding: '1.5rem',
+                          background: 'rgba(59, 130, 246, 0.03)',
+                          border: '1px solid rgba(59, 130, 246, 0.1)',
+                          marginLeft: '0',
+                          marginRight: '0'
+                        }}
+                      >
+                        <h3 style={{ 
+                          color: '#06b6d4', 
+                          fontSize: '1.1em', 
+                          marginBottom: '0.75rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem'
+                        }}>
+                          <Icons.ChevronRight size={18} />
+                          {lever.title}
+                        </h3>
+                        <p style={{ 
+                          fontSize: '0.95em', 
+                          lineHeight: '1.6',
+                          opacity: 0.85 
+                        }}>
+                          {lever.description}
+                        </p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
       
       {/* Robot Modal */}
       <AnimatePresence>
