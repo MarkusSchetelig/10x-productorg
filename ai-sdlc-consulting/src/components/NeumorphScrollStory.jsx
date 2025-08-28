@@ -30,6 +30,63 @@ const RobotCTA = ({ show, onClick }) => {
   )
 }
 
+const SupportTile = ({ show, onClick }) => {
+  if (!show) return null
+  
+  return (
+    <motion.div
+      className="pillar-image-wrapper support-card clickable"
+      initial={{ opacity: 0, scale: 0.5, y: 50 }}
+      animate={{ 
+        opacity: 1, 
+        scale: 1, 
+        y: 0 
+      }}
+      exit={{ opacity: 0, scale: 0.5, y: 50 }}
+      transition={{ type: "spring", damping: 20, stiffness: 300 }}
+      onClick={onClick}
+      style={{ 
+        position: 'fixed',
+        bottom: '40px',
+        right: '40px',
+        width: '200px',
+        height: '200px', // Same height as other framework tiles
+        backgroundColor: '#4a2c3a', // Subtle muted pink background
+        zIndex: 1000
+      }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+    >
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        height: '100%', 
+        padding: '1rem',
+        textAlign: 'center'
+      }}>
+        <div style={{ 
+          fontSize: '0.9em', 
+          color: 'white', 
+          lineHeight: '1.2',
+          fontWeight: '500',
+          backgroundColor: 'black',
+          borderRadius: '50%',
+          width: '140px',
+          height: '140px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px',
+          boxSizing: 'border-box'
+        }}>
+          Check the Implementation Framework
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
 const NeumorphScrollStory = () => {
   const containerRef = useRef(null)
   const [activeSection, setActiveSection] = useState(0)
@@ -59,6 +116,8 @@ const NeumorphScrollStory = () => {
   const gravitySection5TimeoutRef = useRef(null)
   const robotCTATimeoutRef = useRef(null)
   const [challengesInView, setChallengesInView] = useState(false)
+  const [frameworkInView, setFrameworkInView] = useState(false)
+  const [showSupportTile, setShowSupportTile] = useState(false)
   
   // Generate random animation delays for icons
   const generateRandomDelays = () => {
@@ -902,6 +961,54 @@ const NeumorphScrollStory = () => {
     }
   }, [challengesInView])
 
+  // Track framework section visibility to hide global robot
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setFrameworkInView(entry.isIntersecting)
+        })
+      },
+      {
+        threshold: 0.2 // Trigger when 20% of the section is visible
+      }
+    )
+
+    if (section2Ref.current) {
+      observer.observe(section2Ref.current)
+    }
+
+    return () => {
+      if (section2Ref.current) {
+        observer.unobserve(section2Ref.current)
+      }
+    }
+  }, [])
+
+  // Support tile visibility with 5-second delay when framework is in view
+  useEffect(() => {
+    let timer = null
+    
+    if (frameworkInView) {
+      // Show support tile after 10 seconds when framework section is in view
+      timer = setTimeout(() => {
+        setShowSupportTile(true)
+      }, 10000)
+    } else {
+      // Hide support tile when framework section is not in view
+      setShowSupportTile(false)
+      if (timer) {
+        clearTimeout(timer)
+      }
+    }
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer)
+      }
+    }
+  }, [frameworkInView])
+
   // Global robot visibility with scroll-based hide/show
   useEffect(() => {
     let timer = null
@@ -1024,7 +1131,7 @@ const NeumorphScrollStory = () => {
     },
     customerFit: {
       icon: "/customer_fit.png",
-      title: "Customer/ Market Fit",
+      title: "Market & Customer\nFit/ Value",
       summary: "This is the heart of value creation. By harnessing AI to understand customers with unprecedented depth, continuously discover their evolving needs, and predict their future desires, we move beyond simply satisfying market needs to anticipating them. We forge an unbreakable bond through empathy, crafting dynamic, personalized experiences that make every user feel uniquely seen and valued, ensuring our product doesn't just fit the market, but defines it.",
       levers: [
         {
@@ -1139,7 +1246,7 @@ const NeumorphScrollStory = () => {
     },
     platform: {
       icon: "/platform.png",
-      title: "AI powered Platforms & Tools",
+      title: "AI powered\nPlatforms & Tools",
       summary: "This is the foundation of empowerment. We build and master an intelligent technology stack that serves as the launching pad for all other capabilities. From an AI-infused data foundation and a robust MLOps factory to augmented development environments, specialized work tools, and platforms for autonomous agents, this integrated toolkit provides the technological leverage needed to turn ambitious visions into reality at scale.",
       levers: [
         {
@@ -1166,7 +1273,7 @@ const NeumorphScrollStory = () => {
     },
     people: {
       icon: "/people.png",
-      title: "People assisted/ augmented by AI",
+      title: "AI assisted/ augmented\nIndividuals & Teams",
       summary: "Our people are our greatest asset, and technology serves to unleash their potential. We build a culture of psychological safety where human-AI teams can thrive. We empower individuals with AI co-pilots, architect symbiotic workflows for collaborative intelligence, and commit to continuous learning to build AI fluency. By investing in our people's ability to partner with AI, we transform our workforce into a community of innovators poised to solve the challenges of tomorrow.",
       levers: [
         {
@@ -1841,14 +1948,14 @@ const NeumorphScrollStory = () => {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              style={{ width: '200px', flex: 'none' }}
+              style={{ width: '200px', flex: 'none', backgroundColor: '#003a3a' }}
               onClick={() => setSelectedFrameworkComponent('topGoal')}
             >
               <div className="click-indicator" style={{ animationDelay: `${iconDelays[0] || 0}s` }}>
                 <Icons.Maximize2 size={16} />
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1rem' }}>
-                <div style={{ width: '90%', aspectRatio: '1', margin: '0 auto 0 auto', borderRadius: '4px', backgroundColor: 'black', overflow: 'hidden' }}>
+                <div style={{ width: '90%', aspectRatio: '1', margin: '0 auto 0 auto', borderRadius: '4px', overflow: 'hidden', backgroundColor: 'black' }}>
                   <img src="/growth.png" alt="Profitable, sustainable and ethical Growth" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
                 <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95' }}>
@@ -1876,10 +1983,11 @@ const NeumorphScrollStory = () => {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1rem' }}>
                 <div style={{ width: '90%', aspectRatio: '1', margin: '0 auto 0 auto', borderRadius: '4px', backgroundColor: 'black', overflow: 'hidden' }}>
-                  <img src="/customer_fit.png" alt="Customer/ Market Fit" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  <img src="/customer_fit.png" alt="Market & Customer Fit/ Value" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
-                <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95' }}>
-Customer/ Market Fit
+                <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95', display: 'flex', flexDirection: 'column' }}>
+                  <span>Market & Customer</span>
+                  <span>Fit/ Value</span>
                 </div>
               </div>
             </motion.div>
@@ -1995,8 +2103,9 @@ Quality, Reliability, Precision
                 <div style={{ width: '90%', aspectRatio: '1', margin: '0 auto 0 auto', borderRadius: '4px', backgroundColor: 'black', overflow: 'hidden' }}>
                   <img src="/platform.png" alt="AI powered Platforms & Tools" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
-                <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95' }}>
-AI powered Platforms & Tools
+                <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95', display: 'flex', flexDirection: 'column' }}>
+                  <span>AI powered</span>
+                  <span>Platforms & Tools</span>
                 </div>
               </div>
             </motion.div>
@@ -2015,10 +2124,11 @@ AI powered Platforms & Tools
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1rem' }}>
                 <div style={{ width: '90%', aspectRatio: '1', margin: '0 auto 0 auto', borderRadius: '4px', backgroundColor: 'black', overflow: 'hidden' }}>
-                  <img src="/people.png" alt="People assisted/ augmented by AI" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  <img src="/people.png" alt="Individuals & Teams assisted/ augmented by AI" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
-                <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95' }}>
-People assisted/ augmented by AI
+                <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95', display: 'flex', flexDirection: 'column' }}>
+                  <span>AI assisted/ augmented</span>
+                  <span>Individuals & Teams</span>
                 </div>
               </div>
             </motion.div>
@@ -2070,8 +2180,10 @@ AI driven Workflows & Processes
                 </div>
               </div>
             </motion.div>
+
             </div>
           </div>
+
 
         </motion.div>
       </section>
@@ -2258,9 +2370,9 @@ AI driven Workflows & Processes
           style={{ scale: solutionsScale }}
         >
           <div className="neumorph-card central">
-            <h2>Key Pillars of Success</h2>
+            <h2>Implementation Framework</h2>
             <p className="section-lead">
-              Comprehensive consulting services designed for the AI era
+              Key pillars of success
             </p>
           </div>
           
@@ -3172,7 +3284,7 @@ AI driven Workflows & Processes
       
       {/* Global Fixed Robot CTA */}
       <RobotCTA
-        show={showGlobalRobot && robotVisible && !showRobotModal}
+        show={showGlobalRobot && robotVisible && !showRobotModal && !frameworkInView}
         onClick={() => {
           // Close any other open modals first
           setSelectedArea(null)
@@ -3181,6 +3293,44 @@ AI driven Workflows & Processes
           setShowDataProtectionModal(false)
           // Then open robot modal
           setShowRobotModal(true)
+        }}
+      />
+      
+      {/* Support Tile - Fixed position, only shown in framework section after 10s delay */}
+      <SupportTile
+        show={showSupportTile && !showRobotModal}
+        onClick={() => {
+          // Scroll to section 5 (Implementation Framework)
+          if (section5Ref.current) {
+            const section5 = section5Ref.current
+            const section5AbsoluteTop = section5.offsetTop
+            const targetTop = -20 // Same positioning as section 5 gravity
+            const targetScrollY = section5AbsoluteTop - targetTop
+            
+            // Smooth scroll animation
+            const startY = window.scrollY
+            const distance = targetScrollY - startY
+            const duration = 1200
+            const startTime = performance.now()
+            
+            const animateScroll = (currentTime) => {
+              const elapsed = currentTime - startTime
+              const progress = Math.min(elapsed / duration, 1)
+              
+              // Easing function for smooth animation
+              const easeInOutCubic = progress < 0.5
+                ? 4 * progress * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2
+              
+              window.scrollTo(0, startY + distance * easeInOutCubic)
+              
+              if (progress < 1) {
+                requestAnimationFrame(animateScroll)
+              }
+            }
+            
+            requestAnimationFrame(animateScroll)
+          }
         }}
       />
     </div>
