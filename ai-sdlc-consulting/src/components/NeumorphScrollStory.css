@@ -1821,6 +1821,11 @@
   }
 }
 
+/* Top Goal Tile - Special Cyan Background */
+.top-goal-background {
+  background-color: #003c46 !important;
+}
+
 /* Footer */
 .footer-section {
   background: #000000;

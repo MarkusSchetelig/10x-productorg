@@ -298,6 +298,40 @@ const NeumorphScrollStory = () => {
         }
         
         requestAnimationFrame(animateScroll)
+      } else if (hash === 'implementation-framework' && section5Ref.current) {
+        // Smooth scroll to the Implementation Framework section (section 5)
+        const section5 = section5Ref.current
+        const rect5 = section5.getBoundingClientRect()
+        const viewportHeight = window.innerHeight
+        
+        // Calculate position to center the section (consistent with section 2)
+        const sectionCenter = rect5.top + rect5.height / 2
+        const viewportCenter = viewportHeight / 2
+        const targetScrollY = window.scrollY + (sectionCenter - viewportCenter)
+        
+        // Smooth scroll animation
+        const startY = window.scrollY
+        const distance = targetScrollY - startY
+        const duration = 1200
+        const startTime = performance.now()
+        
+        const animateScroll = (currentTime) => {
+          const elapsed = currentTime - startTime
+          const progress = Math.min(elapsed / duration, 1)
+          
+          // Easing function for smooth animation
+          const easeInOutCubic = progress < 0.5
+            ? 4 * progress * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 3) / 2
+          
+          window.scrollTo(0, startY + distance * easeInOutCubic)
+          
+          if (progress < 1) {
+            requestAnimationFrame(animateScroll)
+          }
+        }
+        
+        requestAnimationFrame(animateScroll)
       }
     }
     
@@ -1105,34 +1139,34 @@ const NeumorphScrollStory = () => {
     topGoal: {
       icon: "/growth.png",
       title: "Profitable, Sustainable, Ethical Growth",
-      summary: "This is the ultimate North Star: achieving holistic success where profitability, sustainability, and integrity are a single, unified objective. We begin with a 10x impact mindset to fuel a highly efficient, product-led growth engine. This growth is made durable by building an \"Ethical Moat\" of trust and a deep commitment to economic and environmental sustainability. The ultimate advantage, however, comes from the systemic mastery of this entire framework, creating a resilient, AI-powered organization that delivers compounding value for its customers, its people, and the wider world.",
+      summary: "This is your ultimate North Star: achieving holistic success where profitability, integrity, and sustainability are a unified objective. Lasting success is not born from a single strategy, but from the systemic mastery of this entire framework. It begins by building foundational Core Capabilities—from AI-powered platforms and augmented teams to intelligent workflows and 'AI First' products. These capabilities unlock the crucial Value Drivers of your business: radical efficiency, unprecedented speed, deep customer empathy, and uncompromising quality. This powerful combination is what fuels the engines of Profitable Growth, from PLG to strategic expansion. The entire system is fortified by your \"Ethical Moat\", ensuring your success is not only significant but also sustainable. It is this integrated, systemic design—the seamless interplay between your capabilities, the value you create, and the growth you achieve—that creates a resilient, intelligent organization and an insurmountable competitive advantage.",
       levers: [
         {
-          title: "AI-Driven 10x Impact Mindset",
-          description: "A 10x impact mindset is a fundamental cultural shift from linear, incremental improvement (e.g., \"10% better\") to exponential, order-of-magnitude thinking (\"10x better\"). It involves moving beyond optimizing existing processes and instead using AI to reimagine them from first principles. This mindset encourages teams to challenge core assumptions about what is possible, asking not \"How can AI make our current product faster?\" but \"What entirely new product, 10 times more valuable, can we build now that AI exists?\". It embraces bold experimentation and a willingness to create new, AI-native solutions, even if they disrupt existing business models."
+          title: "AI-Driven Profitability Optimization",
+          description: "Growth without profitability is unsustainable. Therefore, applying AI to directly enhance financial performance and margin is the foundational strategy for durable success. AI models analyze market dynamics, customer behavior, and internal costs to power dynamic pricing strategies that maximize revenue without sacrificing volume. It also optimizes resource allocation and operational spending—from cloud infrastructure costs and external foundation model usage to supply chain logistics—to reduce the cost of goods sold (COGS) and operating expenses. By embedding this financial intelligence into core business processes, the organization moves from static budgeting to a dynamic, AI-guided model of continuous profitability optimization."
         },
         {
           title: "AI-Infused Product-Led Growth (PLG)",
-          description: "Product-Led Growth (PLG) is a go-to-market strategy that positions the product itself as the primary driver of customer acquisition, engagement, retention, and expansion. It operates on a self-reinforcing \"flywheel\" model of Acquisition, Activation, Retention, Referral, and Revenue. AI acts as a powerful strategic multiplier at every stage of this flywheel, transforming the product into an engine of adaptive growth. By orchestrating hyper-personalized, real-time, and dynamic experiences, AI accelerates the entire cycle, from identifying ideal customers and speeding up their \"Aha!\" moment to proactively preventing churn and engineering virality. This creates a highly efficient and sustainable growth model that is directly tied to the value customers receive, driving long-term profitable and sustainable growth."
+          description: "Successful enterprises use their products as the primary driver of customer acquisition, engagement, and expansion—a strategy known as Product-Led Growth (PLG). AI acts as a powerful multiplier at every stage of this PLG flywheel, transforming the product into an engine of adaptive growth. By orchestrating hyper-personalized experiences, AI accelerates the entire cycle—from identifying ideal customers and speeding up their \"Aha!\" moment to proactively preventing churn and engineering virality, creating a highly efficient and sustainable growth model."
         },
         {
-          title: "Architecting for Trust and Responsibility (The \"Ethical Moat\")",
-          description: "The elevation of AI Governance, Risk, Ethics, and Compliance (GRC) from a mere compliance task to a core strategic differentiator marks a pivotal strategic shift. In an environment of increasing AI skepticism, building verifiably trustworthy, fair, and transparent AI systems forges a sustainable competitive advantage known as an \"Ethical Moat\". This approach builds deep customer loyalty, attracts top talent, and mitigates significant financial and reputational risks, directly supporting the goal of sustainable and ethical growth."
+          title: "AI-Augmented Commercial Motions",
+          description: "Complementing PLG by infusing intelligence into all other go-to-market motions creates a holistic commercial system. For Sales-Led Growth, AI identifies high-intent leads and provides real-time coaching to sales teams. For Marketing-Led Growth, it powers hyper-personalized campaigns and optimizes ad spend. For customer success, it automates workflows and predicts churn risk. This creates a cohesive, AI-powered commercial system where every customer-facing team operates with maximum effectiveness."
         },
         {
-          title: "AI-Driven Economic & Environmental Sustainability",
-          description: "AI enables a transition to more sustainable business models by optimizing both economic and environmental resources. For economic sustainability, AI-driven operational intelligence enhances efficiency and reduces costs. For environmental sustainability, AI can optimize supply chains to reduce carbon footprints and power predictive maintenance to extend asset lifecycles. This dual focus ensures long-term viability by creating a business that is both financially robust and environmentally responsible."
+          title: "AI-Driven Strategic Expansion & Innovation",
+          description: "Using AI for strategic \"big bets\" and market creation enables proactive growth. By analyzing vast market, technology, and competitive datasets, AI identifies adjacent market opportunities, predicts emerging customer needs, and simulates the potential ROI of new ventures. This transforms growth strategy from a reactive process into a predictive science, enabling the organization to confidently enter new markets and launch breakthrough products that define future demand."
         },
         {
-          title: "Sustainable Competitive Advantage through Systemic Mastery",
-          description: "A lasting competitive advantage is achieved not through a single product or feature, but by building a holistic, AI-native organization. By systematically mastering the value drivers (e.g., Customer Fit, Efficiency) and core capabilities (e.g., AI Platforms, Workflows) outlined in this framework, an organization creates a highly adaptive, intelligent, and resilient system. This systemic excellence is the ultimate moat—difficult for competitors to replicate and the true engine of sustainable, long-term market leadership."
+          title: "The \"Ethical Moat\" (Architecting for Trust and Responsibility)",
+          description: "The elevation of AI Governance, Risk, Ethics, and Compliance (GRC) from a mere compliance task to a core strategic differentiator marks a pivotal strategic shift. In an environment of increasing AI skepticism, building verifiably trustworthy, fair, and transparent AI systems forges a sustainable competitive advantage known as an \"Ethical Moat\". This approach builds deep customer loyalty, attracts top talent, and mitigates significant financial and reputational risks."
         }
       ]
     },
     customerFit: {
       icon: "/customer_fit.png",
       title: "Market & Customer\nFit/ Value",
-      summary: "This is the heart of value creation. By harnessing AI to understand customers with unprecedented depth, continuously discover their evolving needs, and predict their future desires, we move beyond simply satisfying market needs to anticipating them. We forge an unbreakable bond through empathy, crafting dynamic, personalized experiences that make every user feel uniquely seen and valued, ensuring our product doesn't just fit the market, but defines it.",
+      summary: "This is the heart of value creation. By harnessing AI to understand customers with unprecedented depth, continuously discover their evolving needs, and predict their future desires, you move beyond simply satisfying market needs to anticipating them. You forge an unbreakable bond through empathy, crafting dynamic, personalized experiences that make every user feel uniquely seen and valued, ensuring your product doesn't just fit the market, but defines it.",
       levers: [
         {
           title: "AI-Augmented Customer Empathy at Scale",
@@ -1155,7 +1189,7 @@ const NeumorphScrollStory = () => {
     agility: {
       icon: "/speed.png",
       title: "Agility, Speed and Time-to-Market",
-      summary: "This is the engine of competitive momentum. We accelerate every stage of execution by embedding intelligence into our AI-driven Workflows and equipping our teams with AI-powered Platforms. By supercharging agile processes, compressing the development lifecycle, and ensuring launch readiness, we transform our ability to deliver value. This radically shortens the distance between a validated idea and market impact, making speed of delivery our most formidable advantage.",
+      summary: "This is the engine of competitive momentum. You accelerate every stage of execution by embedding intelligence into your AI-driven Workflows and equipping your teams with AI-powered Platforms. By supercharging agile processes, compressing the development lifecycle, and ensuring launch readiness, you transform your ability to deliver value. This radically shortens the distance between a validated idea and market impact, making speed of delivery your most formidable advantage.",
       levers: [
         {
           title: "AI-Supercharged Agile Execution",
@@ -1178,7 +1212,7 @@ const NeumorphScrollStory = () => {
     efficiency: {
       icon: "/cost.png",
       title: "Efficiency, Effectiveness and Cost",
-      summary: "This is the creation of a frictionless organization. We achieve exponential output by augmenting our People with AI co-pilots and re-architecting our operations with intelligent AI-driven Workflows. By empowering our teams to focus on the highest-value work, we build an enterprise that is not just lean, but profoundly intelligent and effective in its every action.",
+      summary: "This is the creation of a frictionless organization. You achieve exponential output by augmenting your People with AI co-pilots and re-architecting your operations with intelligent AI-driven Workflows. By empowering your teams to focus on the highest-value work, you build an enterprise that is not just lean, but profoundly intelligent and effective in its every action.",
       levers: [
         {
           title: "AI-Augmented Workforce",
@@ -1201,7 +1235,7 @@ const NeumorphScrollStory = () => {
     prototyping: {
       icon: "/innovation.png",
       title: "Rapid Iterations & Speed of Innovation",
-      summary: "This is where the future is forged. We de-risk innovation by empowering our People with AI-powered Platforms that make it cheap and fast to validate bold concepts. By exploring vast creative territories and testing ideas in hyper-fast build-measure-learn loops, we transform product development from a game of chance into a systematic engine where breakthroughs are the predictable outcome of high-velocity learning.",
+      summary: "This is where the future is forged. You de-risk innovation by empowering your People with AI-powered Platforms that make it cheap and fast to validate bold concepts. By exploring vast creative territories and testing ideas in hyper-fast build-measure-learn loops, you transform product development from a game of chance into a systematic engine where breakthroughs are the predictable outcome of high-velocity learning.",
       levers: [
         {
           title: "AI-Assisted Exploration & Ideation",
@@ -1220,7 +1254,7 @@ const NeumorphScrollStory = () => {
     quality: {
       icon: "/quality.png",
       title: "Quality, Reliability, Precision",
-      summary: "This is our commitment to excellence. We recognize that speed without trust is a liability, so we architect quality into every step by mastering our AI-driven Workflows and Platforms. By leveraging AI for data-informed decisions, automated QA, proactive monitoring, and in-built compliance, we create a resilient framework for innovation. Guided by critical human oversight, this ensures that rapid development and uncompromising reliability become mutually reinforcing pillars, forging a powerful bond of trust with our customers.",
+      summary: "This is your commitment to excellence. You recognize that speed without trust is a liability, so you architect quality into every step by mastering your AI-driven Workflows and Platforms. By leveraging AI for data-informed decisions, automated QA, proactive monitoring, and in-built compliance, you create a resilient framework for innovation. Guided by critical human oversight, this ensures that rapid development and uncompromising reliability become mutually reinforcing pillars, forging a powerful bond of trust with your customers.",
       levers: [
         {
           title: "Data-Informed Decision-Making",
@@ -1247,7 +1281,7 @@ const NeumorphScrollStory = () => {
     platform: {
       icon: "/platform.png",
       title: "AI powered\nPlatforms & Tools",
-      summary: "This is the foundation of empowerment. We build and master an intelligent technology stack that serves as the launching pad for all other capabilities. From an AI-infused data foundation and a robust MLOps factory to augmented development environments, specialized work tools, and platforms for autonomous agents, this integrated toolkit provides the technological leverage needed to turn ambitious visions into reality at scale.",
+      summary: "This is the foundation of empowerment. You build and master an intelligent technology stack that serves as the launching pad for all other capabilities. From an AI-infused data foundation and a robust MLOps factory to augmented development environments, specialized work tools, and platforms for autonomous agents, this integrated toolkit provides the technological leverage needed to turn ambitious visions into reality at scale.",
       levers: [
         {
           title: "The Intelligent Data Foundation",
@@ -1274,15 +1308,15 @@ const NeumorphScrollStory = () => {
     people: {
       icon: "/people.png",
       title: "AI assisted/ augmented\nIndividuals & Teams",
-      summary: "Our people are our greatest asset, and technology serves to unleash their potential. We build a culture of psychological safety where human-AI teams can thrive. We empower individuals with AI co-pilots, architect symbiotic workflows for collaborative intelligence, and commit to continuous learning to build AI fluency. By investing in our people's ability to partner with AI, we transform our workforce into a community of innovators poised to solve the challenges of tomorrow.",
+      summary: "Your people are your greatest asset, and technology serves to unleash their potential. You build a culture of psychological safety where human-AI teams can thrive. You empower individuals with AI co-pilots, architect symbiotic workflows for collaborative intelligence, and commit to continuous learning to build AI fluency. By investing in your people's ability to partner with AI, you transform your workforce into a community of innovators poised to solve the challenges of tomorrow.",
       levers: [
         {
-          title: "A Foundation of Psychological Safety for Human-AI Teaming",
-          description: "For people to effectively partner with AI, they must feel safe to experiment, question AI-generated outputs, and admit mistakes without fear. This psychological safety is the cultural bedrock that prevents automation bias and encourages the critical thinking necessary for responsible AI adoption. It creates an environment where teams can learn from both human and machine errors, fostering the trust required for true human-AI collaboration."
+          title: "AI-Driven 10x Impact Mindset",
+          description: "A 10x impact mindset is a fundamental cultural shift from linear, incremental improvement (e.g., \"10% better\") to exponential, order-of-magnitude thinking (\"10x better\"). It involves moving beyond optimizing existing processes and instead using AI to reimagine them from first principles. This mindset encourages teams to challenge core assumptions about what is possible, asking not \"How can AI make your current product faster?\" but \"What entirely new product, 10 times more valuable, can we build now that AI exists?\". It embraces bold experimentation and a willingness to create new, AI-native solutions, even if they disrupt existing business models."
         },
         {
           title: "AI as a Personal Co-pilot & Force Multiplier",
-          description: "AI acts as a collaborative partner for individuals, augmenting their specific skills and workflows. By offloading routine cognitive tasks—from research and data analysis to content generation—AI co-pilots free up employees to focus on uniquely human strengths like strategic judgment and creativity. This direct augmentation serves as a force multiplier, dramatically increasing individual productivity and enabling each person to achieve a greater level of impact."
+          description: "AI acts as a collaborative partner for individuals, augmenting their specific skills and workflows. By offloading routine cognitive tasks—from research and data analysis to content generation (writing meeting minutes, user stories, documenting code, writing testcases, updating marketing materials, etc.) AI co-pilots free up employees to focus on uniquely human strengths like strategic judgment and creativity. This direct augmentation serves as a force multiplier, dramatically increasing individual productivity and enabling each person to achieve a greater level of impact."
         },
         {
           title: "Human-AI Symbiosis & Collaborative Intelligence",
@@ -1291,13 +1325,17 @@ const NeumorphScrollStory = () => {
         {
           title: "Continuous Upskilling & AI Fluency",
           description: "To thrive in an AI-assisted environment, the workforce must be equipped with the necessary skills and confidence. This involves a sustained commitment to building widespread AI fluency through tailored training and hands-on learning. By investing in continuous upskilling, organizations empower their people to move from being passive users of AI to becoming adept collaborators who can effectively guide, interpret, and leverage AI to its full potential."
+        },
+        {
+          title: "A Foundation of Psychological Safety for Human-AI Teaming",
+          description: "For people to effectively partner with AI, they must feel safe to experiment, question AI-generated outputs, and admit mistakes without fear. This psychological safety is the cultural bedrock that prevents automation bias and encourages the critical thinking necessary for responsible AI adoption. It creates an environment where teams can learn from both human and machine errors, fostering the trust required for true human-AI collaboration."
         }
       ]
     },
     workflows: {
       icon: "/process.png",
       title: "AI driven Workflows & Processes",
-      summary: "This is the operational blueprint for the future of work. We move beyond rigid, linear processes to design intelligent, adaptive, and collaborative workflows. By augmenting functional experts, creating intelligent flows between them, and deploying autonomous agents, we build a highly efficient and resilient operational backbone that not only executes with precision but learns and improves with every cycle.",
+      summary: "This is the operational blueprint for the future of work. You move beyond rigid, linear processes to design intelligent, adaptive, and collaborative workflows. By augmenting functional experts, creating intelligent flows between them, and deploying autonomous agents, you build a highly efficient and resilient operational backbone that not only executes with precision but learns and improves with every cycle.",
       levers: [
         {
           title: "AI-Augmented Functional Workflows",
@@ -1324,7 +1362,7 @@ const NeumorphScrollStory = () => {
     products: {
       icon: "/product.png",
       title: "\"AI first\" Products & Services",
-      summary: "This is our ultimate expression of value. We begin with an AI-First mindset to architect living systems that learn and adapt. These systems deliver intelligent and deeply personalized experiences that make our products indispensable partners to our users. By designing for compounding value loops, we create a virtuous cycle of improvement and engagement, forging an unbreakable, data-driven bond that redefines what is possible and sets a new standard for excellence in our industry.",
+      summary: "This is your ultimate expression of value. You begin with an AI-First mindset to architect living systems that learn and adapt. These systems deliver intelligent and deeply personalized experiences that make your products indispensable partners to your users. By designing for compounding value loops, you create a virtuous cycle of improvement and engagement, forging an unbreakable, data-driven bond that redefines what is possible and sets a new standard for excellence in your industry.",
       levers: [
         {
           title: "The \"AI-First\" Mindset & Architecture",
@@ -1341,28 +1379,6 @@ const NeumorphScrollStory = () => {
         {
           title: "Designing for Compounding Value Loops",
           description: "Products are architected to create self-reinforcing, virtuous cycles that drive compounding value and create a powerful, dynamic moat. This is the core mechanism of data network effects: user engagement generates unique data, which fuels the AI models to improve the product, which in turn attracts more users. The strategic goal is to design this efficient, compounding system as the true, enduring competitive advantage."
-        }
-      ]
-    },
-    dataAI: {
-      title: "Data + AI Foundation",
-      summary: "The bedrock enabling all capabilities: robust data infrastructure, scalable AI platforms, and systematic capture of proprietary data to fuel continuous learning.",
-      levers: [
-        {
-          title: "Robust Data Infrastructure",
-          description: "Building scalable systems for data acquisition, transformation, and analysis that serve as the foundation for all AI initiatives. This includes data lakes, warehouses, and real-time streaming platforms that ensure data quality, accessibility, and governance."
-        },
-        {
-          title: "AI Platform Excellence",
-          description: "Standing up an AI platform for experimentation-to-production across models and agent frameworks with safety and cost control. This includes model registries, experiment tracking, serving infrastructure, and monitoring systems."
-        },
-        {
-          title: "Proprietary Data Advantage",
-          description: "Systematically capturing and utilizing unique data generated through product usage to create defensible competitive advantages. This data becomes the fuel for continuous model improvement and personalization."
-        },
-        {
-          title: "Continuous Learning Systems",
-          description: "Implementing feedback loops that automatically improve models based on user interactions, creating products that get smarter over time. This includes A/B testing frameworks, reinforcement learning systems, and automated retraining pipelines."
         }
       ]
     }
@@ -1956,10 +1972,10 @@ const NeumorphScrollStory = () => {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '1rem' }}>
                 <div style={{ width: '90%', aspectRatio: '1', margin: '0 auto 0 auto', borderRadius: '4px', overflow: 'hidden', backgroundColor: 'black' }}>
-                  <img src="/growth.png" alt="Profitable, sustainable and ethical Growth" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  <img src="/growth.png" alt="Profitable, Sustainable, Ethical Growth" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
                 <div style={{ textAlign: 'center', fontSize: '0.7497em', color: 'white', backgroundColor: 'black', padding: '0.5rem', borderRadius: '4px', width: '90%', margin: '0 auto', marginTop: '-22px', lineHeight: '0.95' }}>
-                  Profitable, sustainable and ethical Growth
+                  Profitable, Sustainable, Ethical Growth
                 </div>
               </div>
             </motion.div>
