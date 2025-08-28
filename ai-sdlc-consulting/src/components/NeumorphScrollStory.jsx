@@ -3312,6 +3312,14 @@ AI driven Workflows & Processes
       <SupportTile
         show={showSupportTile && !showRobotModal}
         onClick={() => {
+          // Close any open modals first
+          setSelectedArea(null)
+          setSelectedPillar(null)
+          setSelectedFrameworkComponent(null)
+          setShowRobotModal(false)
+          setShowImprintModal(false)
+          setShowDataProtectionModal(false)
+          
           // Scroll to section 5 (Implementation Framework)
           if (section5Ref.current) {
             const section5 = section5Ref.current
