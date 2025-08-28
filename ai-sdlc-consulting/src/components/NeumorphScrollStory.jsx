@@ -2384,7 +2384,7 @@ AI driven Workflows & Processes
           <div className="neumorph-card central">
             <h2>Implementation Framework</h2>
             <p className="section-lead">
-              Key pillars of success
+              Key Pillars for Success
             </p>
           </div>
           
