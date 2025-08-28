@@ -301,13 +301,9 @@ const NeumorphScrollStory = () => {
       } else if (hash === 'implementation-framework' && section5Ref.current) {
         // Smooth scroll to the Implementation Framework section (section 5)
         const section5 = section5Ref.current
-        const rect5 = section5.getBoundingClientRect()
-        const viewportHeight = window.innerHeight
-        
-        // Calculate position to center the section (consistent with section 2)
-        const sectionCenter = rect5.top + rect5.height / 2
-        const viewportCenter = viewportHeight / 2
-        const targetScrollY = window.scrollY + (sectionCenter - viewportCenter)
+        const section5AbsoluteTop = section5.offsetTop
+        const targetTop = -140 // Same positioning as section 5 gravity system
+        const targetScrollY = section5AbsoluteTop - targetTop
         
         // Smooth scroll animation
         const startY = window.scrollY
@@ -2340,7 +2336,7 @@ AI driven Workflows & Processes
               if (section5Ref.current) {
                 const section5 = section5Ref.current
                 const section5AbsoluteTop = section5.offsetTop
-                const targetTop = -20 // Same positioning as section 5 gravity
+                const targetTop = -140 // Same positioning as section 5 gravity
                 const targetScrollY = section5AbsoluteTop - targetTop
                 
                 // Smooth scroll animation
@@ -3320,7 +3316,7 @@ AI driven Workflows & Processes
           if (section5Ref.current) {
             const section5 = section5Ref.current
             const section5AbsoluteTop = section5.offsetTop
-            const targetTop = -20 // Same positioning as section 5 gravity
+            const targetTop = -140 // Same positioning as section 5 gravity
             const targetScrollY = section5AbsoluteTop - targetTop
             
             // Smooth scroll animation
