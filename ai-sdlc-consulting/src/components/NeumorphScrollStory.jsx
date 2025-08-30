@@ -3093,10 +3093,11 @@ AI driven Workflows & Processes
                     <a 
                       href="mailto:contact@10x-productorg.com" 
                       className="neumorph-button primary email-button" 
-                      style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '20px' }}
+                      style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', fontSize: '20px', padding: '20px 30px' }}
                     >
-                      <Icons.Mail size={20} style={{ color: '#4fc3f7' }} />
-                      <span><span style={{ color: '#4fc3f7' }}>Contact us at:</span>&nbsp;&nbsp;<strong>contact@10x-productorg.com</strong></span>
+                      <Icons.Mail size={24} style={{ color: '#4fc3f7' }} />
+                      <span style={{ color: '#4fc3f7' }}>Contact us:</span>
+                      <strong style={{ color: 'white' }}>contact@10x-productorg.com</strong>
                     </a>
                   </div>
                 </div>
