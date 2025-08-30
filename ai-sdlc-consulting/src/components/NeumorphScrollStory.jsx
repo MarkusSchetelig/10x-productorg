@@ -1982,7 +1982,7 @@ const NeumorphScrollStory = () => {
             onMouseLeave={() => setShowFrameworkTooltip(false)}
           >
             <h2>
-              The AI Impact Framework
+              Impact Framework
               <br />
               <span style={{ fontSize: '0.765em', fontWeight: 'normal', opacity: 0.9, lineHeight: '1.4', marginTop: '15px', display: 'inline-block' }}>
                 In the Age of AI product organizations must shift<br />from seeking 10% Improvements to aiming at <span style={{ color: '#00bcd4' }}>10X Impact.</span>
