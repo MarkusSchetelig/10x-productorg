@@ -2290,7 +2290,7 @@ AI driven Workflows & Processes
                     zIndex: '10',
                     opacity: '1'
                   }}>
-                    Value by<br />Data&nbsp;&amp;&nbsp;AI
+                    Product<br />Excellence
                   </div>
                 )}
               </div>
