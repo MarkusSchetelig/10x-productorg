@@ -3076,16 +3076,16 @@ AI driven Workflows & Processes
                 </div>
                 
                 <div className="robot-modal-content">
-                  <p className="robot-greeting">Welcome! We're excited to help you discover the incredible opportunities AI can unlock for your organization.</p>
+                  <p className="robot-greeting" style={{ textAlign: 'center' }}>Welcome! We're excited to help you identify, develop & harvest the incredible opportunities AI can unlock for your organization.</p>
                   
-                  <div className="robot-suggestions">
-                    <h3>Together, we will:</h3>
-                    <ul>
-                      <li>🎯 <strong>Listen & Understand</strong> - Immerse ourselves in your unique context, ambitions, and challenges</li>
-                      <li>🚀 <strong>Discover AI Opportunities</strong> - Map your customer journeys and workflows to identify transformative AI applications</li>
-                      <li>📊 <strong>Create Focus & Alignment</strong> - Facilitate prioritization and establish clear objectives that unite your teams</li>
-                      <li>⚡ <strong>Transform with Purpose</strong> - Combine analytical rigor with human empathy to ensure successful adoption</li>
-                      <li>💡 <strong>Achieve 10X Impact</strong> - Turn your product organization into a competitive advantage</li>
+                  <div className="robot-suggestions" style={{ textAlign: 'center' }}>
+                    <h3 style={{ color: '#4fc3f7' }}>Together, we will:</h3>
+                    <ul style={{ textAlign: 'center', listStyle: 'none', padding: 0 }}>
+                      <li>🎯 <strong style={{ color: 'white', fontSize: '110%' }}>Listen & Understand</strong><br />Immerse ourselves in your unique context, ambitions, and challenges</li>
+                      <li>🚀 <strong style={{ color: 'white', fontSize: '110%' }}>Discover AI Opportunities</strong><br />Map your customer journeys and workflows to identify transformative AI applications</li>
+                      <li>📊 <strong style={{ color: 'white', fontSize: '110%' }}>Create Focus & Alignment</strong><br />Facilitate prioritization and establish clear objectives that unite your teams</li>
+                      <li>⚡ <strong style={{ color: 'white', fontSize: '110%' }}>Transform with Purpose</strong><br />Combine analytical rigor with human empathy to ensure successful adoption</li>
+                      <li>💡 <strong style={{ color: 'white', fontSize: '110%' }}>Achieve 10X Impact</strong><br />Turn your product organization into a competitive advantage</li>
                     </ul>
                   </div>
                   
