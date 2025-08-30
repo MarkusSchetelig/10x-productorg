@@ -100,6 +100,7 @@ const NeumorphScrollStory = () => {
   const [scrollTimer, setScrollTimer] = useState(null)
   const [showImprintModal, setShowImprintModal] = useState(false)
   const [showDataProtectionModal, setShowDataProtectionModal] = useState(false)
+  const [showFrameworkTooltip, setShowFrameworkTooltip] = useState(false)
   const section1Ref = useRef(null) // Hero section
   const section2Ref = useRef(null) // AI Impact Framework section
   const section3Ref = useRef(null) // Challenges section
@@ -1208,23 +1209,23 @@ const NeumorphScrollStory = () => {
     efficiency: {
       icon: "/cost.png",
       title: "Efficiency, Effectiveness and Cost",
-      summary: "This is the creation of a frictionless organization. We achieve exponential output by augmenting your People with AI co-pilots and re-architecting your operations with intelligent AI-driven Workflows. By empowering your teams to focus on the highest-value work, we build an enterprise that is not just lean, but profoundly intelligent and effective in its every action.",
+      summary: "This is the creation of a frictionless organization. By augmenting your People with AI co-pilots and re-architecting operations with intelligent AI-driven Workflows, we achieve breakthrough performance and unlock significant cost savings. Empowering teams to focus on the highest-value work builds an enterprise that is not just lean, but profoundly intelligent and effective in its every action.",
       levers: [
         {
           title: "AI-Augmented Workforce",
-          description: "This lever focuses on the exponential productivity gains from human-AI partnership. By embedding AI co-pilots into functional workflows, organizations augment employee capabilities, automating routine tasks and freeing human talent to focus on high-value strategic work. The result is a hyper-productive workforce where individuals and teams achieve significantly greater output, creativity, and effectiveness."
+          description: "Augmentation is the strategy of using AI to enhance, rather than replace, human capabilities. By embedding AI co-pilots into functional workflows, organizations unlock exponential productivity gains. This approach automates routine tasks, freeing human talent to concentrate on high-value strategic work like critical thinking and innovation. The primary benefit is a hyper-productive workforce, where individuals and teams achieve significantly greater output, creativity, and overall effectiveness."
         },
         {
           title: "Intelligent Process Automation",
-          description: "This lever delivers efficiency at scale by automating end-to-end business processes. Leveraging capabilities like NoCode/LowCode and cross-functional AI flows, organizations can drastically reduce operational costs, minimize human error, and shorten cycle times. This allows the business to scale its output and complexity without a proportional increase in headcount or resources, directly impacting the bottom line."
+          description: "While augmentation enhances individual productivity, intelligent automation takes efficiency to the next level by orchestrating entire end-to-end business processes. This approach moves beyond assisting with single tasks to systematically connecting them into a seamless, automated flow. By leveraging capabilities like NoCode/LowCode and cross-functional AI, organizations can drastically reduce operational costs, minimize human error, and shorten cycle times, allowing the business to scale its output without a proportional increase in resources."
         },
         {
           title: "Autonomous Operations",
-          description: "This lever unlocks new frontiers of efficiency through the deployment of autonomous systems. By leveraging agentic workflows, \"digital workers\" can manage entire operational functions—from software development to customer support—with minimal human intervention. This qualitative leap beyond simple automation allows human teams to transition from tactical execution to strategic oversight, driving a step-change in operational effectiveness."
+          description: "Autonomous operations represent the next evolutionary step beyond automation. While automation excels at streamlining pre-defined processes, autonomy introduces agentic systems that can independently reason, plan, and execute complex tasks to achieve high-level goals. These \"digital workers\" manage entire operational functions with minimal human intervention. The key benefit is a qualitative leap in capability, allowing human teams to transition from tactical execution to strategic oversight. This shift unlocks new frontiers of efficiency and enables the organization to tackle complexity at a scale previously unimaginable, driving a true step-change in operational effectiveness."
         },
         {
           title: "AI-Driven Operational Intelligence",
-          description: "This lever enhances strategic effectiveness through superior, AI-driven decision-making. AI provides advanced forecasting, simulation, and optimization capabilities that allow for more precise resource allocation, proactive risk mitigation (e.g., predicting supply chain disruptions), and identification of cost-saving opportunities. This layer of predictive intelligence leads to more effective, data-informed strategies that directly improve operational and financial outcomes."
+          description: "Strategic effectiveness is enhanced through superior, AI-driven decision-making. AI provides advanced forecasting, simulation, and optimization capabilities that allow for more precise resource allocation, proactive risk mitigation (e.g., predicting supply chain disruptions), and identification of cost-saving opportunities. This layer of predictive intelligence leads to more effective, data-informed strategies that directly improve operational and financial outcomes."
         }
       ]
     },
@@ -1843,6 +1844,37 @@ const NeumorphScrollStory = () => {
 
   return (
     <div className="neumorph-scroll-story" ref={containerRef} style={{ position: 'relative' }}>
+      {/* Framework Header Tooltip - positioned at top level for proper viewport alignment */}
+      <div 
+        className="framework-header-tooltip"
+        style={{
+          position: 'fixed',
+          top: '40px',
+          right: '40px',
+          width: '200px',
+          height: '480px',
+          padding: '15px',
+          background: 'rgba(0, 0, 0, 0.95)',
+          border: '1px solid #00bcd4',
+          borderRadius: '12px',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.8)',
+          fontSize: '13px',
+          lineHeight: '1.5',
+          color: '#00bcd4',
+          opacity: showFrameworkTooltip ? '1' : '0',
+          visibility: showFrameworkTooltip ? 'visible' : 'hidden',
+          transition: 'all 0.3s ease',
+          zIndex: '9999999',
+          pointerEvents: 'none',
+          textAlign: 'left',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        There's a lot of excitement about AI "agents" that can handle tasks on their own, and for good reason. But focusing only on agents is like seeing one powerful new tool and missing the entire workshop. AI's true potential is unlocked when it transforms how your whole organization works. This framework is a guide to that bigger picture. It helps you see beyond any single technology to understand all the ways AI can make your business smarter, faster, and more creative—from helping teams innovate to building better products. It's a map for building a truly intelligent company.
+      </div>
+
       {/* Animated particles background */}
       <div className="particles">
         {[...Array(20)].map((_, i) => (
@@ -1942,7 +1974,12 @@ const NeumorphScrollStory = () => {
             filter: useTransform(frameworkBrightness, value => `brightness(${value})`)
           }}
         >
-          <div className="neumorph-card central" style={{ marginTop: '-20px', marginBottom: 'calc((3rem - 50px) / 2)', paddingTop: '5px', paddingBottom: '5px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+          <div 
+            className="neumorph-card central framework-header-container" 
+            style={{ marginTop: '-20px', marginBottom: 'calc((3rem - 50px) / 2)', paddingTop: '5px', paddingBottom: '5px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', position: 'relative', cursor: 'help' }}
+            onMouseEnter={() => setShowFrameworkTooltip(true)}
+            onMouseLeave={() => setShowFrameworkTooltip(false)}
+          >
             <h2>
               The AI Impact Framework
               <br />
@@ -1951,6 +1988,7 @@ const NeumorphScrollStory = () => {
               </span>
             </h2>
           </div>
+
 
           {/* Top Growth Tile - Centered */}
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0', marginTop: '25px' }}>

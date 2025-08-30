@@ -2916,6 +2916,13 @@
   transform: translateX(-50%) scale(1);
 }
 
+/* Framework Header Tooltip */
+.framework-header-container:hover ~ .framework-header-tooltip {
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 9999999 !important;
+}
+
 /* Adjust tooltip position if near edges */
 @media (max-width: 768px) {
   .keyword-tooltip {
