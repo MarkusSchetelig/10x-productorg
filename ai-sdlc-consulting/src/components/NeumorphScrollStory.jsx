@@ -1875,6 +1875,7 @@ const NeumorphScrollStory = () => {
         There's a lot of excitement about AI "agents" that can handle tasks on their own, and for good reason. But focusing only on agents is like seeing one powerful new tool and missing the entire workshop. AI's true potential is unlocked when it transforms how your whole organization works. This framework is a guide to that bigger picture. It helps you see beyond any single technology to understand all the ways AI can make your business smarter, faster, and more creative—from helping teams innovate to building better products. It's a map for building a truly intelligent company.
       </div>
 
+
       {/* Animated particles background */}
       <div className="particles">
         {[...Array(20)].map((_, i) => (
@@ -2234,6 +2235,67 @@ AI driven Workflows & Processes
             </div>
           </div>
 
+          {/* Decorative triangles underneath tiles */}
+          <div style={{ 
+            position: 'absolute', 
+            bottom: '0px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            gap: '50px',
+            zIndex: '-1'
+          }}>
+            {[0, 1, 2].map((index) => (
+              <div
+                key={index}
+                style={{
+                  position: 'relative',
+                  width: '0',
+                  height: '0',
+                  borderLeft: '341.25px solid transparent',
+                  borderRight: '341.25px solid transparent',
+                  borderBottom: '682.5px solid #666666',
+                  opacity: '0.225',
+                  transform: index === 0 ? 'translateX(500px)' : index === 2 ? 'translateX(-500px)' : 'none'
+                }}
+              >
+                {index === 0 && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '135px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    color: '#ffffff',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    pointerEvents: 'none',
+                    zIndex: '10',
+                    opacity: '1'
+                  }}>
+                    Business<br />Agility
+                  </div>
+                )}
+                {index === 2 && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '135px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    color: '#ffffff',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    pointerEvents: 'none',
+                    zIndex: '10',
+                    opacity: '1'
+                  }}>
+                    Value by<br />Data&nbsp;&amp;&nbsp;AI
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
 
         </motion.div>
       </section>
